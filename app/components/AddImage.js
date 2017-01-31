@@ -5,14 +5,13 @@ import store from '../store';
 
 // keys are in seperate file and is added to the .gitignore so that our account secrets arenot exposed through github or deployment
 import keys from 'APP/keys.js';
+const id = process.env.CLIENT_ID || keys.CLIENT_ID;
+const secret = process.env.CLIENT_SECRET || keys.CLIENT_SECRET;
 
 // require the client
 var Clarifai = require('clarifai');
 // instantiate a new Clarifai app passing in your clientId and clientSecret
-var app = new Clarifai.App(
-  keys.CLIENT_ID,
-  keys.CLIENT_SECRET
-);
+var app = new Clarifai.App(id, secret);
 
 /* ----- COMPONENT ----- */
 
