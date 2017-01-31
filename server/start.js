@@ -6,7 +6,7 @@ const {resolve} = require('path')
 const passport = require('passport')
 const PrettyError = require('pretty-error')
 
-const User = require('APP/db/models/user')
+// const User = require('APP/db/models/user')
 
 // Bones has a symlink from node_modules/APP to the root of the app.
 // That means that we can require paths relative to the app root by
@@ -47,19 +47,19 @@ module.exports = app
   .use(passport.session())
 
   // Create anonymous user in db & link to session
-  .use((req, res, next) => {
-    if(!req.session.userId) {
-      User.create()
-      .then(newUser => {
-        console.log("new user created");
-        req.session.userId = newUser.id
-      })
-      .then(() => next())
-      .catch(console.log("user not created sucessfully"));
-    } else {
-      next();
-    }  
-  })
+  // .use((req, res, next) => {
+  //   if(!req.session.userId) {
+  //     User.create()
+  //     .then(newUser => {
+  //       console.log("new user created");
+  //       req.session.userId = newUser.id
+  //     })
+  //     .then(() => next())
+  //     .catch(console.log("user not created sucessfully"));
+  //   } else {
+  //     next();
+  //   }  
+  // })
 
   // Serve static files from ../public
   .use(express.static(resolve(__dirname, '..', 'public')))
