@@ -24,7 +24,7 @@ export const Welcome = () => {
 
 					<div style={ styles.txt }>
 						<h2 style={ styles.heading2 }>try to crack her riddle...! <br/><br/>
-							<Link to={'/login'} style={ styles.adopt }>start where you left off  </Link>
+							<Link to={'/login'} style={ styles.adopt }>login  </Link>
 							  or
 							<Link to={'/sphinx'} style={ styles.adopt }>  continue as a guest</Link>
 						</h2>
