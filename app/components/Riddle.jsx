@@ -9,14 +9,14 @@ const Riddle = props => {
       <div id="riddle">
         {props.currentRiddle}
       </div>
-
-      <AddImage
-        riddle={props.currentRiddle}
-        solution={props.solution}
-        dispatchAddImage={props.dispatchAddImmage}
-        dispatchUpdateGuessed={props.dispatchUpdateGuessed}
-      />
-
+      <div id="addImage">
+        <AddImage
+          riddle={props.currentRiddle}
+          solution={props.solution}
+          dispatchAddImage={props.dispatchAddImmage}
+          dispatchUpdateGuessed={props.dispatchUpdateGuessed}
+        />
+      </div>
       <div id="feedback">
         {props.feedback}
       </div>

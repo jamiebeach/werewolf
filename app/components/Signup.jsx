@@ -65,9 +65,9 @@ export default connect (null, mapDispatchToProps) (
     render(){
      return (
         <div>
-          <div style={ style.container }>
-            <Paper style={style.form} zDepth={2} >
-              <h1 style={ style.title } >Sign Up</h1>
+          <div className="formContain">
+            <Paper className="signUpPaper" zDepth={2} >
+              <h1 className="formHeader">Sign Up</h1>
               <form onSubmit={this.handleSubmit}>
                 <div>
                   <TextField
@@ -75,13 +75,11 @@ export default connect (null, mapDispatchToProps) (
                     hintText="Name"
                     floatingLabelText="Name"
                   /><br />
-                  <br />
                   <TextField
                     name="email"
                     hintText="Email"
                     floatingLabelText="Email"
                   /><br />
-                  <br />
                   <TextField
                     name="password"
                     hintText="Password"
@@ -89,7 +87,6 @@ export default connect (null, mapDispatchToProps) (
                     type="password"
                     onChange={this.handleChangePassword}
                   /><br />
-                  <br />
                   <TextField
                     name="passwordConfirm"
                     hintText="Confirm Password"
@@ -98,8 +95,7 @@ export default connect (null, mapDispatchToProps) (
                     errorText={this.state.errorText}
                     onChange={this.handleChangeConfirm}
                   /><br />
-                  <br />
-                  <RaisedButton type="submit" value="signUp" label="Sign Up" backgroundColor="#FA8072" style={ style.button } disabled={this.state.disabled} labelStyle={{color: 'white'}}/>
+                  <RaisedButton type="submit" value="signUp" label="Sign Up" backgroundColor="#FA8072" className="button" disabled={this.state.disabled} labelStyle={{color: 'white'}}/>
                 </div>
               </form>
             </Paper>
@@ -110,25 +106,7 @@ export default connect (null, mapDispatchToProps) (
 })
 
 
-const style = {
-  button : {
-    margin: 20
-  },
-  title : {
-    fontFamily : "Roboto, sans-serif",
-    color : "#57D5FF"
-  },
-  container : {
-    textAlign : "center",
-    paddingTop : "5%"
-  },
-  form : {
-    width: '50%',
-    height: '50%',
-    marginLeft: '25%',
-    paddingTop : '5px'
-  }
-};
+
 
 
 

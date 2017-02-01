@@ -1,39 +1,10 @@
-.alert {
-  padding: 0.75rem 1.25rem;
-  margin-bottom: 1rem;
+
+body {
+  font-family: 'Roboto', sans-serif;
+
 }
 
-.alert-warning {
-  background-color: #fcf8e3;
-  color: #8a6d3b;
-}
-
-.home {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-}
-
-.chat {
-  width: 45%;
-  margin-top: 10%;
-  display: inline-block;
-}
-
-.chat img {
-  width: 50%;
-}
-
-.cat {
-  width: 45%;
-  margin-top: 10%;
-}
-
-.cat img {
-width: 70%;
-}
-
+/* ----- LANDING PAGE ----- */
 .splash {
   height: 100vh;
   display: flex;
@@ -48,11 +19,176 @@ width: 70%;
   justify-content: center;
 }
 
-#riddle {
-  font-size: 25px;
+
+/* ----- SPHINX PAGE ----- */
+
+.home {
+  width: 100%;
+  height: 100%;
+  text-align: center;
 }
 
-#feedback {
-  font-size: 35px;
+#riddle {
+  font-size: 2rem;
 }
+
+.question {
+  width: 45%;
+  margin-top: 10%;
+  display: inline-block;
+  padding-left: 10%;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+#addImage {
+  padding-top: 10%;
+}
+
+.cat {
+  width: 45%;
+  margin-top: 10%;
+}
+
+.cat img {
+width: 70%;
+}
+
+/* ----- FORM PAGES ----- */
+
+.formContain {
+  width: 50%;
+  margin-left: 25%;
+  padding-top : 2%;
+}
+
+.loginPaper {
+  text-align : center;
+  padding-top : 5%;
+}
+
+.signUpPaper {
+  text-align : center;
+  padding-top : 5%;
+}
+
+.button {
+  margin: 20%;
+}
+
+.formHeader {
+  color : #57D5FF
+}
+
+/* ----- ADD IMAGE ----- */
+
+.alert {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.alert-warning {
+  background-color: #fcf8e3;
+  color: #8a6d3b;
+}
+
+/*-----  MEDIA QUERIES ----- */
+
+
+/*Desktops */
+@media (min-width : 769px) {
+  .home{
+    display: flex;
+  }
+
+}
+
+/*Tablets */
+@media only screen and (max-width : 768px) {
+  .home{
+    width: 100%;
+    display: block;
+    overflow: hidden;
+  }
+
+  .cat {
+    width: 100%;
+  }
+  .question {
+    width: 100%;
+    padding-right: 5%;
+  }
+  #riddle {
+    font-size: 1rem; 
+  }
+}
+
+/* Phones */ 
+@media only screen and (max-width : 570px) and (orientation: portrait) {
+  /* SPHINX PAGE */
+  .home{
+    width: 100%;
+    display: block;
+    overflow: hidden;
+  }
+  .cat {
+    width: 100%;
+  }
+  .question {
+    width: 100%;
+    padding-right: 5%;
+  }
+  #riddle {
+    font-size: 1rem; 
+  }
+
+  /* FORM PAGES */
+  .formContain {
+    width: 95%;
+    margin: auto;
+  }
+
+  .loginPaper, .signUpPaper{
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width : 700px) and (orientation: landscape) {
+  /* SPHINX PAGE */
+  .home{
+    width: 100%;
+    display: block;
+    overflow: hidden;
+  }
+  .cat {
+    width: 30%;
+    float: left;
+  }
+  .question {
+    display: block;
+    width: 65%;
+    padding-right: 5%;
+    float: left;
+  }
+  #riddle {
+    font-size: 1rem; 
+  }
+
+  /* FORM PAGES */
+  .loginPaper {
+    width: 100%;
+  }
+
+  .formContain {
+    width: 80%;
+    height: 100%;
+    margin: auto;
+  }
+
+  .signUpPaper {
+    width: 100%;
+  }
+}
+
+
 
