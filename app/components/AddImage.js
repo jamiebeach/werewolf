@@ -15,6 +15,15 @@ var app = new Clarifai.App(
 );
 
 import md5 from 'js-md5';
+import Dialog from 'material-ui/Dialog';
+import IconButton from 'material-ui/IconButton';
+import AddPhotoIcon from 'material-ui/svg-icons/image/add-a-photo';
+import LinkIcon from 'material-ui/svg-icons/content/link';
+import PublicIcon from 'material-ui/svg-icons/social/public';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+
 
 /* ----- COMPONENT ----- */
 
@@ -29,6 +38,7 @@ export default class AddImage extends React.Component {
       tags: [],
       loading: false,
       error: '',
+      open: false
     };
 
     firebase.auth().onAuthStateChanged(
@@ -47,7 +57,18 @@ export default class AddImage extends React.Component {
     this.validFile = this.validFile.bind(this);
     this.useClarifaiAPI = this.useClarifaiAPI.bind(this);
     this.storeTags = this.storeTags.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
+
+  handleOpen = () => {
+    this.setState({open: true});
+  };
+
+  handleClose = (e) => {
+    //if (buttonClicked) this.handleURLSubmit();
+    this.setState({open: false});
+  };
 
   // check that the image provided is a supported type by clarifai
   validFile(imageName){
@@ -274,38 +295,65 @@ export default class AddImage extends React.Component {
   render(){
     return (
       <div className="container">
-      { this.state.error && <div className="alert alert-warning">{this.state.error}</div> }
-        <form onSubmit={this.handleURLSubmit}>
-          <input
-            type="submit"
-            value="Use this image URL"
-            size="80"
-          />
-          <input
-            type="text"
-            id="imgurl"
-            placeholder="Image URL"
-          />
-        </form>
-
-        <br/><br/>
-
-        <input
-          type="file"
-          id="take-picture"
-          accept="image/*"
-          onChange={this.handleImgUpload}
-        ></input>
-
         <div>
-          <img
-            id="show-picture"
-            className="img-responsive"
-            src={this.state.imgURL}
-            height="auto"
-            width="300"
-            ></img>
+          <div>To answer this riddle, choose an image URL or use one of your own.</div>
+          <div style={{display: "inline-block"}}>
+            <IconButton onTouchTap={this.handleOpen} children={[<LinkIcon/>]}/>
+
+                <Dialog
+                    title="Use a link from the web:"
+                    modal={false}
+                    open={this.state.open}
+                    onRequestClose={this.handleClose}
+                  >
+
+                  <form onSubmit={this.handleURLSubmit}>
+                    <TextField
+                      id="imgurl"
+                      hintText="Image URL"
+                      fullWidth={true}
+                    />
+                    <RaisedButton
+                      type="submit"
+                      primary
+                      id="urlsubmit"
+                      label="Use this image URL"
+                      onTouchTap={this.handleClose}
+                    />
+                  </form>
+              </Dialog>
+
+          </div>
+          <div style={{display: "inline-block"}}>
+          <input type="file"
+              id="take-picture"
+              accept="image/*"
+              onChange={this.handleImgUpload}
+              ref={(ref) => this.myInput = ref}
+              style={{ display: 'none' }} />
+          <IconButton onClick={(e) => this.myInput.click() }>
+            <AddPhotoIcon/>
+          </IconButton>
         </div>
+      </div>
+
+        { this.state.error && <div className="alert alert-warning">{this.state.error}</div> }
+        {(this.state.imgURL)
+          ?
+          (
+          <div>
+            <img
+              id="show-picture"
+              className="img-responsive"
+              src={this.state.imgURL}
+              height="auto"
+              width="300"
+            ></img>
+          </div>
+          )
+          : null
+        }
+
 
 
       </div>
