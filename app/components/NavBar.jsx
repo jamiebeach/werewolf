@@ -41,6 +41,12 @@ class Navbar extends Component {
           label="faq"
           labelStyle={{color:'white'}}
           containerElement={<Link to={'about'} />} />
+        <Button
+          label="logout"
+          labelStyle={{color:'white'}}
+          onClick={this.props.logout}
+          containerElement={<Link to={'home'} />}
+        />
       </div>
     )
   }
