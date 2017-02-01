@@ -34,7 +34,7 @@ export default class AddImage extends React.Component {
     this.state = {
       files: {},
       holdingURL: '',
-      imgURL: '',
+      imgURL: this.props.imageUrl,
       tags: [],
       loading: false,
       error: '',
@@ -196,6 +196,7 @@ export default class AddImage extends React.Component {
         tags: [],
         error: '',
       })
+      this.props.dispatchAddImageUrl(e.target.imgurl.value);
     }
 
     else {
@@ -243,6 +244,9 @@ export default class AddImage extends React.Component {
         this.setState({
           imgURL: imgURL
         })
+
+        this.props.dispatchAddImageUrl(imgURL);
+
         var uploadName = "";
         const fileReader = new FileReader()
         fileReader.readAsDataURL(file)
@@ -268,10 +272,11 @@ export default class AddImage extends React.Component {
         try {
           // Fallback if createObjectURL is not supported
           var fileReader = new FileReader();
-          fileReader.onload = function (event) {
+          fileReader.onload = (event) => {
             this.setState({
               imgURL: event.target.result,
             })
+            this.props.dispatchAddImageUrl(event.target.result);
           };
           fileReader.readAsDataURL(file);
         }

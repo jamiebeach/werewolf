@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Sphinx from './Sphinx';
 import Riddle from './Riddle';
-import {addImage,updateGuessed} from '../reducers/riddle';
+import {addImageUrl, updateGuessed} from '../reducers/riddle';
 
 
 const SphinxContainer = props => {
@@ -14,9 +14,10 @@ const SphinxContainer = props => {
           solution={props.solution}
           guessed={props.guessed}
           guessedCorrectly={props.guessedCorrectly}
-          images={props.images}
+          imageUrl={props.imageUrl}
           feedback={props.feedback}
           dispatchUpdateGuessed={props.dispatchUpdateGuessed}
+          dispatchAddImageUrl={props.dispatchAddImageUrl}
         />
       </div>
       <div className="cat">
@@ -32,15 +33,15 @@ const mapStateToProps = state => {
     solution: state.riddle.solution,
     guessed: state.riddle.guessed,
     guessedCorrectly: state.riddle.guessedCorrectly,
-    images: state.riddle.images,
+    imageUrl: state.riddle.imageUrl,
     feedback: state.riddle.feedback
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return ({
-    dispatchAddImage (image) {
-      return dispatch(addImage(image));
+    dispatchAddImageUrl (imageUrl) {
+      return dispatch(addImageUrl(imageUrl));
     },
     dispatchUpdateGuessed (tags) {
       return dispatch(updateGuessed(tags));

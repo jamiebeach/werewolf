@@ -5,7 +5,7 @@ const initialState = {
   guessed: false,
   guessedCorrectly: false,
   feedback: '',
-  images: []
+  imageUrl: ''
 
 }
 
@@ -15,8 +15,8 @@ const reducer = (state=initialState, action) => {
 
   switch(action.type) {
 
-    case ADD_IMAGE:
-      return Object.assign({}, state, {images: [...state.images, action.image]});
+    case IMAGE_URL:
+        return Object.assign({}, state, {imageUrl: action.imageUrl});
       break;
 
     case UPDATE_RIDDLE:
@@ -42,14 +42,14 @@ const reducer = (state=initialState, action) => {
 
 /* -----------------    ACTIONS     ------------------ */
 
-const ADD_IMAGE = 'ADD_IMAGE';
+const IMAGE_URL = 'IMAGE_URL';
 const UPDATE_RIDDLE = 'UPDATE_RIDDLE';
 const GUESSED = 'GUESSED';
 
 /* ------------     ACTION CREATORS     ------------------ */
 
-export const addImage = image => ({
-  type: ADD_IMAGE, image
+export const addImageUrl = imageUrl => ({
+  type: IMAGE_URL, imageUrl
 })
 
 export const updateRiddle = riddle => ({
