@@ -28,12 +28,12 @@ render(
   <MuiThemeProvider>
     <Provider store={store}>
       <Router history={browserHistory}>
-        <Route path="/" component={App}>
+        <Route path="/" component={App} onEnter={onSphinxEnter}>
           <IndexRedirect to="/home" />
           <Route path="/home" component={Welcome} />
           <Route path="/signup" component={Signup} />
           <Route path="/login" component={Login} />
-          <Route path="/sphinx" component={SphinxContainer} onEnter={onSphinxEnter}/>
+          <Route path="/sphinx" component={SphinxContainer}/>
         </Route>
       </Router>
     </Provider>
