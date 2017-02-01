@@ -129,6 +129,7 @@ export default class AddImage extends React.Component {
       this.props.dispatchUpdateGuessed(tags);
 
       // update user data in firebase
+      let didWin = false;
       if (!uploadName) uploadName = input;
       var newPostKey = this.database.ref().child(`/users/${this.user.uid}/pictures`).push().key;
       var updates = {};
@@ -137,6 +138,7 @@ export default class AddImage extends React.Component {
       for (let i = 0; i < tags.length; i++) {
           if (this.props.solution.includes(tags[i])) {
             updates[`/users/${this.user.uid}/won`] = true;
+            didWin = true;
           }
       }
       if (this.firstEnter) {
@@ -146,7 +148,7 @@ export default class AddImage extends React.Component {
           }
           if (this.firstEnter) {
             updates[`/users/${this.user.uid}/enter`] = this.enterTime;
-            updates[`users/${this.user.uid}/won`] = false;
+            if (!didWin) updates[`users/${this.user.uid}/won`] = false;
           }
           this.database.ref().update(updates);
         });
