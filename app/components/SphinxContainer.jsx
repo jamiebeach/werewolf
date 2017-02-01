@@ -8,7 +8,7 @@ import {addImage,updateGuessed} from '../reducers/riddle';
 const SphinxContainer = props => {
   return(
     <div className="home">
-      <div className="chat">
+      <div className="question">
         <Riddle
           currentRiddle={props.currentRiddle}
           solution={props.solution}
