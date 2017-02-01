@@ -8,7 +8,7 @@ const secret = process.env.CLIENT_SECRET;
 // require the client
 var Clarifai = require('clarifai');
 // instantiate a new Clarifai app passing in your clientId and clientSecret
-var app = new Clarifai.App(id, secret);
+var app = new Clarifai.App(id, secret, {});
 
 import md5 from 'js-md5';
 
