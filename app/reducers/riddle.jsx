@@ -1,7 +1,7 @@
 const initialState = {
   //hard-code currentRiddle and solution until we hook these up to DB.
-  currentRiddle: "What is the creature that walks on four legs in the morning, two legs at noon and three in the evening?",
-  solution: ["human", "man", "person"],
+  currentRiddle: '',
+  solution: [],
   guessed: false,
   guessedCorrectly: false,
   feedback: '',

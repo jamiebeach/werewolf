@@ -18,9 +18,10 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 const onSphinxEnter = () => {
-  let today = new Date();
-  let todayNum = today.getDay();
-  store.dispatch(getRiddle(todayNum));
+  // let today = new Date();
+  // let todayNum = today.getDay();
+  let randomNum = Math.floor((Math.random() * 9) + 1 )
+  store.dispatch(getRiddle(randomNum));
 }
 
 render(
