@@ -55,6 +55,7 @@ body {
 width: 70%;
 }
 
+<<<<<<< HEAD
 /* ----- FORM PAGES ----- */
 
 .formContain {
@@ -78,6 +79,11 @@ width: 70%;
 .button {
   margin: 20%;
 }
+=======
+.splash {
+  height: 100vh;
+  display: flex;
+>>>>>>> d266eacd459894ce1446639f1d5dae08b6030a0d
 
 .formHeader {
   color : #57D5FF
@@ -90,6 +96,7 @@ width: 70%;
   margin-bottom: 1rem;
 }
 
+<<<<<<< HEAD
 .alert-warning {
   background-color: #fcf8e3;
   color: #8a6d3b;
@@ -195,3 +202,13 @@ width: 70%;
 }
 
 
+=======
+#riddle {
+  font-size: 25px;
+}
+
+#feedback {
+  font-size: 35px;
+}
+
+>>>>>>> d266eacd459894ce1446639f1d5dae08b6030a0d

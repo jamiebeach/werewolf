@@ -14,6 +14,8 @@ var app = new Clarifai.App(
   keys.CLIENT_SECRET
 );
 
+import md5 from 'js-md5';
+
 /* ----- COMPONENT ----- */
 
 export default class AddImage extends React.Component {
@@ -28,6 +30,17 @@ export default class AddImage extends React.Component {
       loading: false,
       error: '',
     };
+
+    firebase.auth().onAuthStateChanged(
+      user => {
+        if (user) this.user = user;
+      },
+      error => console.log(error))
+
+
+    this.database = firebase.database();
+    this.enterTime = new Date().toJSON();
+    this.firstEnter = true;
 
     this.handleURLSubmit = this.handleURLSubmit.bind(this);
     this.handleImgUpload = this.handleImgUpload.bind(this);
@@ -47,9 +60,9 @@ export default class AddImage extends React.Component {
     )
   }
 
-  useClarifaiAPI(input){
+  useClarifaiAPI(input, uploadName){
 
-    console.log('input', input)
+    //console.log('input', input)
     // clarifai provides this shortcut way of sending a req with the correct headers (ie. instead of sending a post request to the 3rd party server ourselves and getting the response) you only need to provide either the image in bytes OR a url for the image
     // https://developer.clarifai.com/guide/predict
 
@@ -75,24 +88,49 @@ export default class AddImage extends React.Component {
       // for clarifying purposes only
       //  - jenny
 
-      console.log(
-        'this is the whole response that clarifai sends back ',
-        response
-      )
-      console.log(
-        'inside the response, the outputs array has data on the words associated with the input image, which i call predictions ',
-        predictions
-        )
-      console.log(
-        'i like to filter that array of objects down to just single words of at least 80% certainty',
-        tags
-      )
+      // console.log(
+      //   'this is the whole response that clarifai sends back ',
+      //   response
+      // )
+      // console.log(
+      //   'inside the response, the outputs array has data on the words associated with the input image, which i call predictions ',
+      //   predictions
+      //   )
+      // console.log(
+      //   'i like to filter that array of objects down to just single words of at least 80% certainty',
+      //   tags
+      // )
 
       // this changes the local state, which will
       this.storeTags(tags);
 
       //Update the store:
       this.props.dispatchUpdateGuessed(tags);
+
+      // update user data in firebase
+      if (!uploadName) uploadName = input;
+      var newPostKey = this.database.ref().child(`/users/${this.user.uid}/pictures`).push().key;
+      var updates = {};
+      updates[`/users/${this.user.uid}/pictures/` + newPostKey] = {storage: uploadName, tags: tags.toString(), riddle: this.props.riddle};
+      updates[`/users/${this.user.uid}/exit`] = new Date().toJSON();
+      for (let i = 0; i < tags.length; i++) {
+          if (this.props.solution.includes(tags[i])) {
+            updates[`/users/${this.user.uid}/won`] = true;
+          }
+      }
+      if (this.firstEnter) {
+        this.database.ref('/users/' + this.user.uid).once('value').then((snapshot) => {
+          if (snapshot.val() && snapshot.val().enter && (snapshot.val().enter.slice(0, 10) === this.enterTime.slice(0, 10))) {
+            this.firstEnter = false;
+          }
+          if (this.firstEnter) {
+            updates[`/users/${this.user.uid}/enter`] = this.enterTime;
+            updates[`users/${this.user.uid}/won`] = false;
+          }
+          this.database.ref().update(updates);
+        });
+      }
+      else this.database.ref().update(updates);
 
     },
     err => {
@@ -153,6 +191,7 @@ export default class AddImage extends React.Component {
     // get the file off of the submit event
     var files = e.target.files,
         file;
+    if (!files[0]) return;
 
     if (!this.validFile(files[0].name)) {
       this.setState({
@@ -176,18 +215,31 @@ export default class AddImage extends React.Component {
         // Get window.URL object
         var URL = window.URL || window.webkitURL;
 
-        this.setState({
-          imgURL: URL.createObjectURL(file)
-        })
+        var imgURL = URL.createObjectURL(file);
 
+        this.setState({
+          imgURL: imgURL
+        })
+        var uploadName = "";
         const fileReader = new FileReader()
         fileReader.readAsDataURL(file)
         // you only have access to the read file inside of this callback(?)function
         fileReader.onload = () => {
 
           const imgBytes = fileReader.result.split(',')[1]
-          this.useClarifaiAPI(imgBytes)
+          var extension = file.name.split('.')[1];
+          uploadName = md5(imgBytes) + '.' + extension;
+
+          this.useClarifaiAPI(imgBytes, uploadName)
+
+          var storageRef = firebase.storage().ref();
+          var imgRef = storageRef.child(uploadName);
+
+          imgRef.put(file).then(function(snapshot){
+            console.log('uploaded blob!')
+          })
         }
+
       }
       catch (err) {
         try {

@@ -11,8 +11,9 @@ const Riddle = props => {
       </div>
       <div id="addImage">
         <AddImage
+          riddle={props.currentRiddle}
           solution={props.solution}
-          dispatchAddImmage={props.dispatchAddImmage}
+          dispatchAddImage={props.dispatchAddImmage}
           dispatchUpdateGuessed={props.dispatchUpdateGuessed}
         />
       </div>
