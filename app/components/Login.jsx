@@ -9,24 +9,27 @@ import Paper from 'material-ui/Paper';
 export const Login = ({ login }) => (
   <div className="formContain">
     <Paper className="loginPaper">
+      <h1 className="formHeader">Login</h1>
       <form onSubmit={evt => {
         evt.preventDefault()
         login(evt.target.username.value, evt.target.password.value)
       } }>
         <br />
         <TextField
-          hintText="email"
+          hintText="Email"
           name="username"
+          floatingLabelText="Email"
         />
         <br />
         <TextField
-          hintText="password"
+          hintText="Password"
           name="password"
           type="password"
+          floatingLabelText="Password"
         />
         <br />
         <Button 
-          label="login"
+          label="Login"
           name="submit"
           type="submit"
           style={style.button}

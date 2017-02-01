@@ -58,7 +58,6 @@ width: 70%;
 
 .formContain {
   width: 50%;
-  height: 50%;
   margin-left: 25%;
   padding-top : 2%;
 }
@@ -66,7 +65,6 @@ width: 70%;
 .loginPaper {
   text-align : center;
   padding-top : 5%;
-  transform: translateY(50%);
 }
 
 .signUpPaper {
@@ -178,7 +176,6 @@ width: 70%;
 
   /* FORM PAGES */
   .loginPaper {
-    transform: translateY(0);
     width: 100%;
   }
 

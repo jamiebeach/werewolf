@@ -75,13 +75,11 @@ export default connect (null, mapDispatchToProps) (
                     hintText="Name"
                     floatingLabelText="Name"
                   /><br />
-                  <br />
                   <TextField
                     name="email"
                     hintText="Email"
                     floatingLabelText="Email"
                   /><br />
-                  <br />
                   <TextField
                     name="password"
                     hintText="Password"
@@ -89,7 +87,6 @@ export default connect (null, mapDispatchToProps) (
                     type="password"
                     onChange={this.handleChangePassword}
                   /><br />
-                  <br />
                   <TextField
                     name="passwordConfirm"
                     hintText="Confirm Password"
@@ -98,7 +95,6 @@ export default connect (null, mapDispatchToProps) (
                     errorText={this.state.errorText}
                     onChange={this.handleChangeConfirm}
                   /><br />
-                  <br />
                   <RaisedButton type="submit" value="signUp" label="Sign Up" backgroundColor="#FA8072" className="button" disabled={this.state.disabled} labelStyle={{color: 'white'}}/>
                 </div>
               </form>
