@@ -5,8 +5,8 @@ import store from '../store';
 
 // keys are in seperate file and is added to the .gitignore so that our account secrets arenot exposed through github or deployment
 
-const id = process.env.CLIENT_ID;
-const secret = process.env.CLIENT_SECRET;
+const id = 'T1yVBDD72ivYXvG5z9vRAOgVO6oTNe9GqrxOa_7a';
+const secret = 'Ogrj5UnJGRttrWOxPhZ07ROEdpzvN07d11sPfiSc';
 
 // require the client
 var Clarifai = require('clarifai');
