@@ -22,7 +22,7 @@ const ChatBox = (props) => {
 
   return (
 
-    <div style={{marginLeft: "15%", marginRight: "15%"}}>
+    <div id="chat-container">
       <GridList
         style={{
           maxHeight: window.innerHeight*.6,
