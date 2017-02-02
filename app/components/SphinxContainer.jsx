@@ -23,100 +23,6 @@ const SphinxContainer = props => {
   )
 }
 
-  const fakePlayers = [
-    {
-      name: "Bob",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "Bobette",
-      role: "werewolf",
-      alive: true,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Rob",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "Roberta",
-      role: "villager",
-      alive: false,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "Bobby",
-      role: "werewolf",
-      alive: false,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Robbie",
-      role: "doctor",
-      alive: false,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Robespierre",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "NotBob",
-      role: "seer",
-      alive: true,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Other",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "People",
-      role: "villager",
-      alive: false,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "To",
-      role: "werewolf",
-      alive: true,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Test",
-      role: "villager",
-      alive: false,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "Scrolling",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-  ];
-
   const day = false;
 
   const bobette = {  // live werewolf
@@ -154,6 +60,77 @@ const SphinxContainer = props => {
     immunity: false,
     night: true
   }
+  const robbie = {  //dead doctor
+    name: "Robbie",
+    role: "doctor",
+    alive: false,
+    immunity: false,
+    night: true
+  }
+
+    const fakePlayers = [
+    {
+      name: "Bob",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+    bobette,
+    {
+      name: "Rob",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+    roberta,
+    bobby,
+    robbie,
+    {
+      name: "Robespierre",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+    notbob,
+    {
+      name: "Other",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+    {
+      name: "People",
+      role: "villager",
+      alive: false,
+      immunity: false,
+      night: false
+    },
+    {
+      name: "To",
+      role: "werewolf",
+      alive: true,
+      immunity: false,
+      night: true
+    },
+    {
+      name: "Test",
+      role: "villager",
+      alive: false,
+      immunity: false,
+      night: false
+    },
+    {
+      name: "Scrolling",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+  ];
 
   const fakeMessages = [
     ["Rob", "blah blah blah blah", "day"],
@@ -161,6 +138,10 @@ const SphinxContainer = props => {
     ["Bobette", "blah blah blah", "day"],
     ["Roberta", "blah blah blah blah blah blah", "day"],
     ["Bobby", "blah blah blah blah blah blah blah blah", "day"],
+    ["Robert", "blah blah blah blah blah", "day"],
+    ["Bob", "blah blah blah blah blah blah blah", "day"],
+    ["Roberta", "blah blah blah blah", "day"],
+    ["Robbie", "blah blah blah blah blah blah", "day"],
     ["Robert", "blah blah blah blah blah blah blah blah", "day"],
     ["Rob", "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah", "day"],
     ["To", "blah blah blah blah", "werewolf"],
@@ -168,15 +149,15 @@ const SphinxContainer = props => {
     ["Bobby", "blah blah blah", "werewolf"],
     ["To", "blah blah blah blah blah ", "werewolf"],
     ["Bobette", "blah blah blah blah blah blah blah blah blah blah blah blah", "werewolf"],
-    ["NotBob", "blah blah blah blah", "seer"],
-    ["Robbie", "blah blah blah blah blah", "doctor"],
+    ["NotBob", "/peek Rob", "seer"],
+    ["Robbie", "/save Bob", "doctor"],
   ]
 
 const mapStateToProps = state => {
   return {
     players: fakePlayers,
     user: bobette,
-    day: false,
+    day: true,
     messages: fakeMessages
   };
 };

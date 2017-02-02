@@ -9,7 +9,9 @@ import Paper from 'material-ui/Paper';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import {List, ListItem} from 'material-ui/List';
-import ActionGrade from 'material-ui/svg-icons/action/grade';
+import ActionGrade from 'material-ui/svg-icons/action/grade';  // star
+import Healing from 'material-ui/svg-icons/image/healing';
+import Eye from 'material-ui/svg-icons/image/remove-red-eye';
 import Checkbox from 'material-ui/Checkbox';
 
 // expects players, user, and day from props
@@ -33,6 +35,12 @@ const PlayersList = (props) => {
     else return null;
   }
 
+  const getIcon = (player, user) => {
+    if (((!user.alive) || (user.role === "doctor")) && (player.role === "doctor")) return <Healing/>;
+    else if (((!user.alive) || (user.role === "seer")) && (player.role === "seer")) return <Eye/>;
+    else return null;
+  }
+
   return (
     <div style={{marginLeft: "15%", marginRight: "15%"}}>
       <GridList
@@ -49,6 +57,7 @@ const PlayersList = (props) => {
             id="player"
             key={index}
             primaryText={player.name}
+            leftIcon={getIcon(player, user)}
             leftCheckbox={(((player.name === user.name) || !player.alive) || !user.alive) ? null :<Checkbox />}
             insetChildren={true}
             style={{
