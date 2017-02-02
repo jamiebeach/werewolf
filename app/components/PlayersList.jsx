@@ -17,123 +17,9 @@ import ActionGrade from 'material-ui/svg-icons/action/grade';
 
 
 const PlayersList = (props) => {
-  const fakePlayers = [
-    {
-      name: "Bob",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "Bobette",
-      role: "werewolf",
-      alive: true,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Rob",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "Roberta",
-      role: "villager",
-      alive: false,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "Bobby",
-      role: "werewolf",
-      alive: false,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Robbie",
-      role: "doctor",
-      alive: false,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Robespierre",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "NotBob",
-      role: "seer",
-      alive: true,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Other",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "People",
-      role: "villager",
-      alive: false,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "To",
-      role: "werewolf",
-      alive: true,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Test",
-      role: "villager",
-      alive: false,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "Scrolling",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-  ];
-
-  const user = {
-    name: "Bobette",
-    role: "werewolf",
-    alive: true,
-    immunity: false,
-    night: true
-  };
-  // const user = {
-  //   name: "NotBob",
-  //   role: "seer",
-  //   alive: true,
-  //   immunity: false,
-  //   night: true
-  // };
-  // const user = {
-  //   name: "Rob",
-  //   role: "villager",
-  //   alive: true,
-  //   immunity: false,
-  //   night: false
-  // };
-
-  const day = true;
+  const day = props.day;
+  const user = props.user;
+  const players = props.players;
 
   const pickColor = (player, user, day) => {
     if ((user.role === "werewolf") && (player.role === "werewolf")) return "thistle";
@@ -157,7 +43,7 @@ const PlayersList = (props) => {
         cellHeight="auto"
         >
         <List>
-        {fakePlayers.map((player, index) => {return (
+        {players.map((player, index) => {return (
           <ListItem
             id="player"
             key={index}
