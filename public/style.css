@@ -74,6 +74,7 @@ body {
 #all-statements {
   margin-left: 10px;
   margin-right: 10px;
+}
 
 .chat img {
   width: 100%;
@@ -214,6 +215,46 @@ body {
     width: 100%;
   }
 }
+
+/* RULES PAGE */
+
+.rules-container {
+  width: 70%;
+  margin-left: 15%;
+  padding-top : 2%;
+}
+
+.rules-paper {
+  text-align : center;
+  padding-top : 5%;
+  margin-bottom: 5%;
+}
+
+.rules-header {
+  color : #57D5FF
+}
+
+.grid {
+  color: gray;
+}
+
+.row {
+  margin-right: 5%;
+  margin-left: 5%;
+}
+
+.col-4 {
+  display:inline-block;
+  width: 30%;
+  vertical-align: top;
+  text-align: left;
+}
+
+.col-8 {
+  display:inline-block;
+  width: 70%;
+}
+
 
 
 
