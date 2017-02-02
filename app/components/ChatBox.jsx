@@ -50,7 +50,7 @@ class ChatBox extends Component {
                 id="all-statements"
                 style={{textAlign: (message[0] !== user.name) ? "left" : "right"}}
                 ref={(div) => {
-                this.lastMessage = div;
+                  if ((messages.length - 1) === index) this.lastMessage = div;
                 }}
               >
                 <Paper id="statement-bubble" zDepth={1} style={{display: "inline-block"}} className={`statement-by-${message[0]}`}>
