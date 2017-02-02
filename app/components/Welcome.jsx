@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router'
 
+import fetchUsers from '../reducers/game';
+
 //import ChatBox from './ChatBox';
 // import NavBar from './Navbar';
 
@@ -19,7 +21,7 @@ export const Welcome = () => {
        </div>*/}
 
 					<div style={ styles.txt }>
-						<h1 style={ styles.heading1 }>Sphinx</h1>
+						<h1 style={ styles.heading1 } onClick={fetchUsers}>Sphinx</h1>
 					</div>
 
 					<div style={ styles.txt }>
