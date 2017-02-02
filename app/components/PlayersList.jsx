@@ -9,7 +9,10 @@ import Paper from 'material-ui/Paper';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import {List, ListItem} from 'material-ui/List';
-import ActionGrade from 'material-ui/svg-icons/action/grade';
+import ActionGrade from 'material-ui/svg-icons/action/grade';  // star
+import Healing from 'material-ui/svg-icons/image/healing';
+import Eye from 'material-ui/svg-icons/image/remove-red-eye';
+import Checkbox from 'material-ui/Checkbox';
 
 // expects players, user, and day from props
 
@@ -22,13 +25,19 @@ const PlayersList = (props) => {
   const players = props.players;
 
   const pickColor = (player, user, day) => {
-    if ((user.role === "werewolf") && (player.role === "werewolf")) return "thistle";
+    if ((user.role === "werewolf") && (player.role === "werewolf") || (!user.alive && (player.role === "werewolf"))) return "thistle";
     if ((!user.night && !day) || ((user.night && !day) && (player.role !== user.role))) return "lightgrey";
     else return "white";
   }
 
   const dead = (player) => {
     if (!player.alive) return "line-through";
+    else return null;
+  }
+
+  const getIcon = (player, user) => {
+    if (((!user.alive) || (user.role === "doctor")) && (player.role === "doctor")) return <Healing/>;
+    else if (((!user.alive) || (user.role === "seer")) && (player.role === "seer")) return <Eye/>;
     else return null;
   }
 
@@ -48,8 +57,9 @@ const PlayersList = (props) => {
             id="player"
             key={index}
             primaryText={player.name}
-            leftIcon={(player.name === user.name) ? <ActionGrade /> : null}
-            insetChildren={(player.name !== user.name)}
+            leftIcon={getIcon(player, user)}
+            leftCheckbox={(((player.name === user.name) || !player.alive) || !user.alive) ? null :<Checkbox />}
+            insetChildren={true}
             style={{
               backgroundColor: pickColor(player, user, day),
               textDecoration: dead(player)
