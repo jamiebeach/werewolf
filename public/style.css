@@ -55,10 +55,6 @@ body {
   margin-top: 3%;
 }
 
-.cat img {
-  width: 70%;
-}
-
 #player-name {
   font-size: 18px;
   margin: 5px;
@@ -72,6 +68,9 @@ body {
 #all-statements {
   margin-left: 10px;
   margin-right: 10px;
+
+.chat img {
+  width: 100%;
 }
 
 /* ----- FORM PAGES ----- */
