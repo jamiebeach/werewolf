@@ -1,12 +1,13 @@
+const initialState = {
+  users: {},
+  messages: [],
+  votes: [],
+  day: true,
+}
 
-
-
-// const initialState = {
-//   allUsers: [],
-// }
 /* ------------       REDUCER     ------------------ */
 
-const reducer = (state = {}, action) => {
+const reducer = (state = initialState, action) => {
 
   const newState = Object.assign({}, state)
 
@@ -16,29 +17,35 @@ const reducer = (state = {}, action) => {
       newState.users = action.users;
       break;
 
-    case SEND_MESSAGE:
-      newState.messages = [...newState.messages, action.message];
+    case RECIEVE_MESSAGE:
+      let msg = {
+        text: action.message,
+        user: action.user,
+        time: action.time
+      }
+      newState.messages = [...newState.messages, msg]
       break;
 
-    case SEND_VOTE:
-      newState.votes = [...newState.votes, action.votes];
+    case RECIEVE_VOTE:
+      let vote = {
+        killUser: action.vote,
+        user: action.user
+      }
+      newState.votes = [...newState.votes, vote];
       break;
 
     // case KILLING:
     //   newState.players
-
     //   break;
 
     case SWITCH_TIME:
-      newState.day = action.timeofday;
+      if (action.timeofday === 'daytime'){
+        newState.day = true;
+      } else if (action.timeofday === 'nighttime') {
+        newState.day = false;
+      }
       newState.votes = [];
       break;
-
-    // case NIGHTTIME:
-    //   newState.day = 'false';
-    //   newState.votes = [];
-    //   break;
-
   }
 
   return newState;
@@ -46,34 +53,26 @@ const reducer = (state = {}, action) => {
 
 /* -----------------    ACTIONS     ------------------ */
 
-const SEND_MESSAGE = 'SEND_MESSAGE';
 const RECIEVE_MESSAGE = 'RECIEVE_MESSAGE';
-
-const SEND_VOTE = 'SEND_VOTE';
 const RECIEVE_VOTE = 'RECIEVE_VOTE';
-
-const KILLING = 'KILLING';
-
 const SWITCH_TIME = 'SWITCH_TIME';
-
 const GET_USERS = 'GET_USERS';
 
 /*
 const PEEKING = 'PEEKING';
 const SAVING = 'SAVING';
-const DAYTIME = 'DAYTIME';
-const NIGHTTIME = 'NIGHTTIME';
-*/
+// const KILLING = 'KILLING';
 
 
 /* ------------     ACTION CREATORS     ------------------ */
-export const sendMessage = message => ({
-  type: SEND_MESSAGE, message
-})
+// export const recieveMessage = message => ({
+//   type: RECIEVE_MESSAGE,
+//   message
+// })
 
-export const sendVote = vote => ({
-  type: SEND_VOTE, vote
-})
+// export const recieveVote = vote => ({
+//   type: RECIEVE_VOTE, vote
+// })
 
 export const switchTime = timeofday => ({
   type: SWITCH_TIME, timeofday
@@ -83,6 +82,9 @@ export const getAllUsers = users => ({
   type: GET_USERS, users
 })
 
+export const firebaseUpdate = update => {
+  return update;
+}
 
 
 /* ------------       DISPATCHERS     ------------------ */
@@ -99,7 +101,7 @@ export const fetchUsers = () => {
 
 export const sendMessageAction = (user, message, time) => {
   return dispatch => {
-    firebase.database().ref('/actions/').set({
+    firebase.database().ref(`/actions/${time}`).set({
       type: RECIEVE_MESSAGE,
       user: user,
       message: message,
@@ -110,22 +112,24 @@ export const sendMessageAction = (user, message, time) => {
   }
 }
 
-
-
-
-export const updateGameActions = () => {
+export const sendVoteAction = (user, vote, time) => {
   return dispatch => {
-    firebase.database().ref('/actions/').on('value', function(action){
-      // have generic function that will send approp thing to the reducer
-      console.log(action)
-
+    firebase.database().ref(`/actions/${time}`).set({
+      type: RECIEVE_VOTE,
+      user: user,
+      vote: vote
     })
-
-
+    .catch(err => console.error('Error getting the lastest votes from firebase', err))
   }
 }
 
-
+export const updateGameActions = () => {
+  return dispatch => {
+    firebase.database().ref('/actions/').on('child_added', function(action){
+      dispatch(firebaseUpdate(action.val()))
+    })
+  }
+}
 
 /* ------------------  default export     ------------------ */
 
