@@ -46,7 +46,8 @@ body {
 }
 
 #statement-bubble {
-  border-radius: 15px !important;
+  border-radius: 10px !important;
+  margin: 5px;
 }
 
 .playerslist {
@@ -55,7 +56,22 @@ body {
 }
 
 .cat img {
-width: 70%;
+  width: 70%;
+}
+
+#player-name {
+  font-size: 18px;
+  margin: 5px;
+}
+
+#statement {
+  font-size: 15px;
+  margin: 5px;
+}
+
+#all-statements {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 /* ----- FORM PAGES ----- */
