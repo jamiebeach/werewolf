@@ -3,24 +3,18 @@ import { connect } from 'react-redux';
 import Sphinx from './Sphinx';
 import Riddle from './Riddle';
 import {addImage,updateGuessed} from '../reducers/riddle';
+import ChatBox from './ChatBox';
 
 
 const SphinxContainer = props => {
   return(
     <div className="home">
-      <div className="question">
-        <Riddle
-          currentRiddle={props.currentRiddle}
-          solution={props.solution}
-          guessed={props.guessed}
-          guessedCorrectly={props.guessedCorrectly}
-          images={props.images}
-          feedback={props.feedback}
-          dispatchUpdateGuessed={props.dispatchUpdateGuessed}
+      <div className="chat">
+        <ChatBox
         />
       </div>
-      <div className="cat">
-        <Sphinx />
+      <div className="playerslist">
+        <div />
       </div>
     </div>
   )
