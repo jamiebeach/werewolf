@@ -4,7 +4,7 @@ import Sphinx from './Sphinx';
 import Riddle from './Riddle';
 import {addImage,updateGuessed} from '../reducers/riddle';
 import ChatBox from './ChatBox';
-
+import PlayersList from './PlayersList';
 
 const SphinxContainer = props => {
   return(
@@ -14,7 +14,7 @@ const SphinxContainer = props => {
         />
       </div>
       <div className="playerslist">
-        <div />
+        <PlayersList />
       </div>
     </div>
   )
