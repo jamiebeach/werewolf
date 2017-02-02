@@ -10,6 +10,7 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import {List, ListItem} from 'material-ui/List';
 import ActionGrade from 'material-ui/svg-icons/action/grade';
+import Checkbox from 'material-ui/Checkbox';
 
 // expects players, user, and day from props
 
@@ -22,7 +23,7 @@ const PlayersList = (props) => {
   const players = props.players;
 
   const pickColor = (player, user, day) => {
-    if ((user.role === "werewolf") && (player.role === "werewolf")) return "thistle";
+    if ((user.role === "werewolf") && (player.role === "werewolf") || (!user.alive && (player.role === "werewolf"))) return "thistle";
     if ((!user.night && !day) || ((user.night && !day) && (player.role !== user.role))) return "lightgrey";
     else return "white";
   }
@@ -48,8 +49,8 @@ const PlayersList = (props) => {
             id="player"
             key={index}
             primaryText={player.name}
-            leftIcon={(player.name === user.name) ? <ActionGrade /> : null}
-            insetChildren={(player.name !== user.name)}
+            leftCheckbox={(((player.name === user.name) || !player.alive) || !user.alive) ? null :<Checkbox />}
+            insetChildren={true}
             style={{
               backgroundColor: pickColor(player, user, day),
               textDecoration: dead(player)

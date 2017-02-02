@@ -28,10 +28,12 @@ class Chat extends Component {
         <form onSubmit={this.handleSubmit}>
           <TextField
             id="message"
-            hintText="Enter message here"
+            hintText={(this.props.user.alive) ? "Enter message here" : "You can't chat when you're dead"}
+            disabled={(!this.props.user.alive)}
             style={{width: "75%"}}
           />
           <RaisedButton
+            disabled={(!this.props.user.alive)}
             id="entertext"
             type="submit"
             label="Enter"

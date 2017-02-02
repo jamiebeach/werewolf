@@ -7,18 +7,13 @@ import Paper from 'material-ui/Paper';
 //import FontIcon from 'material-ui/FontIcon';
 
 const ChatBox = (props) => {
-  const fakeMessages = [
-    ["you", "blah blah"],
-    ["cat", "blah blah"],
-    ["you", "blah blah"],
-    ["cat", "blah blah"],
-    ["you", "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"],
-    ["cat", "blah blah"],
-    ["you", "blah blah"],
-    ["cat", "blah blah"],
-    ["you", "blah blah"],
-    ["cat", "blah blah blah blah blah blah blah blah blah blah blah blah blah blah  blah blah blah blah blah blah blah blah blah blah blah blah"],
-  ]
+  const day = props.day;
+  const user = props.user;
+  const messages = props.messages.filter(message => {
+    if (day) return (message[2] === "day");
+    else if (!user.alive) return (message[2] !== "day");
+    else return (message[2] === user.role);
+  })
 
   return (
 
@@ -31,8 +26,8 @@ const ChatBox = (props) => {
         cols={1}
         cellHeight="auto"
         >
-        {fakeMessages.map((message, index) => {return (
-          <div key={index} id="all-statements" style={{textAlign: (message[0] === 'cat') ? "left" : "right"}}>
+        {messages.map((message, index) => {return (
+          <div key={index} id="all-statements" style={{textAlign: (message[0] !== user.name) ? "left" : "right"}}>
             <Paper id="statement-bubble" zDepth={1} style={{display: "inline-block"}} className={`statement-by-${message[0]}`}>
               <div id="player-name">
                 {message[0].toUpperCase()}
@@ -44,7 +39,7 @@ const ChatBox = (props) => {
           </div>
         )})}
       </GridList>
-      <InputChat addMessage={()=> {}}/>
+      <InputChat addMessage={()=> {}} user={user}/>
     </div>
   )
 }
