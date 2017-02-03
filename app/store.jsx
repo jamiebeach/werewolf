@@ -12,19 +12,10 @@ export default store
 
 // Set the auth info at start
 // store.dispatch(whoami())
-// store.dispatch(fetchUsers())
-
-
+store.dispatch(fetchUsers())
 
 store.dispatch(updateGameActions())
 
 // store.dispatch(sendMessageAction('emily', 'whats the error'))
 
-store.dispatch(tallyVotes())
-
-
-
-
-
-
-
+// store.dispatch(tallyVotes())

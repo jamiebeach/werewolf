@@ -1,34 +1,9 @@
 const initialState = {
-  users: {
-    garity : {
-      role: 'villager',
-      alive: true,
-      won: false,
-      uid: 1,
-      color: '#FFF',
-      immunity: false,
-    },
-    gladys : {
-      role: 'werewolf',
-      alive: true,
-      won: false,
-      uid: 2,
-      color: '#000',
-      immunity: false,
-    },
-    jenny : {
-       role: 'priest',
-      alive: true,
-      won: false,
-      uid: 3,
-      color: '#0EF',
-      immunity: false,
-    },
-  },
+  users: {},
   messages: [],
   seerMessages: [],
   priestMessages: [],
-  votes: [{killUser: 'garity', user:'jenny'}, {killUser: 'garity', user:'gladys'}, {killUser: 'jenny', user:'garity'}],
+  votes: [],
   day: true,
   test:''
 }
