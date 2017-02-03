@@ -58,21 +58,41 @@ export const whoami = () =>
       },
       error => console.log(error))
 
-// // this will overwrite any user's info, not just anon ones, need to fix later
-// export const signUp = (name, email, password) => {
-//   return dispatch => {
-//     const user = firebase.auth().currentUser;
-//     user.updatePassword(password)
-//     .then(() => user.updateEmail(email))
-//     .then(() => user.updateProfile({displayName: name}))
-//     .then(() => {
-//       dispatch(authenticated({...user}));
-//       browserHistory.push('/sphinx');
-//     })
+export const checkValidName = name => {
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid
+    console.log("uid = ", uid);
+    firebase.database().ref(`/users/${name}`).once('value')
+    .then(res => {
+      console.log(res, res.val())
+      if(res.val() === null) {
+        firebase.database().ref(`/users/${name}`).set({
+             alive: true,
+             won: false,
+             uid: uid,
+             //TODO add color somehow
+             color: null,
+           })
+        dispatch(changeName(name))
+      }
+      else console.log("name is already in use")
+     })
+     .catch(console.error);
+  }
+}
 
-//     .catch((error) => console.log(error))
-//   }
-// }
+// this will overwrite any user's info, not just anon ones, need to fix later
+export const changeName = (name) => {
+  return dispatch => {
+    const user = firebase.auth().currentUser;
+    user.updateProfile({displayName: name})
+    .then(() => {
+      dispatch(authenticated({...user}));
+    })
+
+    .catch((error) => console.log(error))
+  }
+}
 
 
 

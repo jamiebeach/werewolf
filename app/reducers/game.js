@@ -17,7 +17,7 @@ const initialState = {
       immunity: false,
     },
     jenny : {
-       role: 'preist',
+      role: 'preist',
       alive: true,
       won: false,
       uid: 3,
@@ -25,12 +25,21 @@ const initialState = {
       immunity: false,
     },
   },
-  messages: [],
-  seerMessages: [],
-  priestMessages: [],
+  villager: [],
+  seer: [],
+  priest: [],
+  wolf: [],
   votes: [{killUser: 'garity', user:'jenny'}, {killUser: 'garity', user:'gladys'}, {killUser: 'jenny', user:'garity'}],
   day: true,
 }
+
+//TODOS
+// Majority votes
+// Trigger timeofday toggle
+// do we want to delay daytime voting?
+// night ends when time is up or all night players have completed their actions
+// day ends when  majority vote has been reached or maybe also time is up
+
 
 /* ------------       REDUCER     ------------------ */
 
@@ -48,9 +57,8 @@ const reducer = (state = initialState, action) => {
       let msg = {
         text: action.message,
         user: action.user,
-        time: action.time
       }
-      newState.messages = [...newState.messages, msg]
+      newState[action.role] = [...newState[action.role], msg]
       break;
 
     case RECIEVE_VOTE:
@@ -61,7 +69,12 @@ const reducer = (state = initialState, action) => {
       newState.votes = [...newState.votes, vote];
       break;
 
+    case ADD_TALLY:
+      newState.tally = tally;
+      break;
+
     case KILLING:
+      newState.tally = {};
       newState.users[action.user].alive = false;
       break;
 
@@ -72,7 +85,10 @@ const reducer = (state = initialState, action) => {
         newState.day = false;
       }
       newState.votes = [];
-      newState.messages = [];
+      newState.villager = [];
+      newState.seer = [];
+      newState.priest = [];
+      newState.wolf = [];
       break;
   }
 
@@ -86,11 +102,13 @@ const RECIEVE_VOTE = 'RECIEVE_VOTE';
 const SWITCH_TIME = 'SWITCH_TIME';
 const GET_USERS = 'GET_USERS';
 
+
 const ADD_USER = 'ADD_USER';
 
 const PEEKING = 'PEEKING';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
+const ADD_TALLY = 'ADD_TALLY';
 
 
 /* ------------     ACTION CREATORS     ------------------ */
@@ -119,6 +137,9 @@ export const killUser = user => ({
   type: KILLING, user
 })
 
+export const addTally = tally => ({
+  type: ADD_TALLY, tally
+})
 
 /* ------------       DISPATCHERS     ------------------ */
 
@@ -146,19 +167,21 @@ export const addUser = (username, role) => {
   }
 }
 
-
-export const sendMessageAction = (user, message) => {
+// send Message to firebase
+export const sendMessageAction = (user, message, role) => {
   return dispatch => {
     firebase.database().ref('actions').push({
       type: RECIEVE_MESSAGE,
       user: user,
       message: message,
+      role: role,
     })
     .then(res => console.log('message sent to firebase'))
     .catch(err => console.error('Error sending message to firebase', err))
   }
 }
 
+// send votes to firebase
 export const sendVoteAction = (user, vote) => {
   return dispatch => {
     firebase.database().ref('actions').push({
@@ -170,10 +193,40 @@ export const sendVoteAction = (user, vote) => {
   }
 }
 
+export const sendSwitchTimeAction = (timeofday) => {
+  return dispatch => {
+    firebase.database().ref('actions').push({
+    type: SWITCH_TIME, 
+    timeofday,
+    })
+    .catch(err => console.error('Error getting the lastest timeofday from firebase', err))
+  }
+}
+
+export const sendKillUserAction = (user) => {
+  return dispatch => {
+    firebase.database().ref('actions').push({
+    type: KILLING, 
+    user
+    })
+    .catch(err => console.error('Error getting the lastest killUser from firebase', err))
+  }
+}
+
+export const sendAddTallyAction = (tally) => {
+  return dispatch => {
+    firebase.database().ref('actions').push({
+    type: ADD_TALLY, 
+    tally,
+    })
+    .catch(err => console.error('Error getting the lastest addTally from firebase', err))
+  }
+}
+
+// tallys votes. Kills user if majority is reached, otherwise tally is added to store
 export const tallyVotes = () => {
   return (dispatch, getState) => {
-    const votes = getState().game.votes;
-    console.log("inside tallyVotes, votes = ", votes);
+    const {votes, users, day} = getState().game;
     const tally = {};
     votes.forEach(vote => {
       const killUser = vote.killUser;
@@ -191,14 +244,20 @@ export const tallyVotes = () => {
         maxVotes = tally[key];
       } 
     })
-    dispatch(killUser(maxUser));
+    const numOfPlayers = Object.keys(users).length;
+    if(maxVotes > numOfPlayers / 2) {
+      dispatch(sendKillUserAction(maxUser));
+      dispatch(sendSwitchTimeAction(day ? 'nighttime' : 'daytime'))
+    }
+    else dispatch(sendAddTallyAction(tally));
   }
 }
 
+// Generic Action Listner, will recieve actions whenever firebase/actions updates
 export const updateGameActions = () => {
   return dispatch => {
     firebase.database().ref('/actions/').on('child_added', function(action){
-      dispatch(firebaseUpdate(action.val()))
+        dispatch(firebaseUpdate(action.val()))
     })
   }
 }
