@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import AddImage from './AddImage';
+// import AddImage from './AddImage';
 
 const Riddle = props => {
   return (
@@ -10,12 +10,12 @@ const Riddle = props => {
         {props.currentRiddle}
       </div>
       <div id="addImage">
-        <AddImage
+        {/*<AddImage
           riddle={props.currentRiddle}
           solution={props.solution}
           dispatchAddImage={props.dispatchAddImmage}
           dispatchUpdateGuessed={props.dispatchUpdateGuessed}
-        />
+        />*/}
       </div>
       <div id="feedback">
         {props.feedback}
