@@ -30,12 +30,11 @@ const initialState = {
   wolf: [],
   votes: [{killUser: 'garity', user:'jenny'}, {killUser: 'garity', user:'gladys'}, {killUser: 'jenny', user:'garity'}],
   day: true,
-  self: {}
+  self: {},
+  tally: {}
 }
 
 //TODOS
-// Majority votes
-// Trigger timeofday toggle
 // do we want to delay daytime voting?
 // night ends when time is up or all night players have completed their actions
 // day ends when  majority vote has been reached or maybe also time is up
@@ -100,11 +99,6 @@ const reducer = (state = initialState, action) => {
     case SET_SELF:
       newState.self = action.self;
       break;
-
-    case PEEKING:
-      // check format of message later
-      newState.seer = [...newState.seer, {user: 'moderator', message: action.message}];
-      break;
   }
 
   return newState;
@@ -122,7 +116,7 @@ const GET_USERS = 'GET_USERS';
 const UPDATE_USER = 'UPDATE_USER';
 const SET_SELF = 'SET_SELF';
 
-const PEEKING = 'PEEKING';
+// const PEEKING = 'PEEKING';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
 const ADD_TALLY = 'ADD_TALLY';
@@ -160,10 +154,6 @@ export const killUser = user => ({
 
 export const addTally = tally => ({
   type: ADD_TALLY, tally
-})
-
-export const seerMessage = message => ({
-  type: PEEKING, message
 })
 
 /* ------------       DISPATCHERS     ------------------ */
@@ -219,6 +209,7 @@ export const sendVoteAction = (user, vote) => {
   }
 }
 
+// dispatched after a majority vote is reached
 export const sendSwitchTimeAction = (timeofday) => {
   return dispatch => {
     firebase.database().ref(`${game}/actions`).push({
@@ -229,6 +220,7 @@ export const sendSwitchTimeAction = (timeofday) => {
   }
 }
 
+// dispatched after a majority vote is reached
 export const sendKillUserAction = (user) => {
   return dispatch => {
     firebase.database().ref(`${game}/actions`).push({
@@ -239,6 +231,8 @@ export const sendKillUserAction = (user) => {
   }
 }
 
+// dispatched if a majority vote is not reached
+// might have to turn into a moderator message
 export const sendAddTallyAction = (tally) => {
   return dispatch => {
     firebase.database().ref(`${game}/actions`).push({
@@ -279,6 +273,7 @@ export const tallyVotes = () => {
   }
 }
 
+// helper function for assigning roles, for moderator use
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -298,6 +293,7 @@ function shuffle(array) {
   return array;
 }
 
+// assign roles at start, for moderator
 export const assignRoles = () => {
   return (dispatch, getState) => {
     const {users} = getState().game;
@@ -310,7 +306,6 @@ export const assignRoles = () => {
     roles = shuffle(roles);
 
     names.forEach((name, index) => {
-      // write to users in firebase?
       firebase.database().ref(`${game}/actions`).push({
         type: UPDATE_USER,
         name,
@@ -321,6 +316,7 @@ export const assignRoles = () => {
   }
 }
 
+// for seers, should we call it scry?
 export const sendPeekAction = (seerName, targetName) => {
   return (dispatch, getState) => {
     dispatch(sendMessageAction(seerName, `/peek ${targetName}`, 'seer'));

@@ -67,7 +67,6 @@ export const checkValidName = name => {
     console.log("uid = ", uid);
     firebase.database().ref(`${game}/users/${name}`).once('value')
     .then(res => {
-      console.log(res, res.val())
       if(res.val() === null) {
         const self = {
           alive: true,
