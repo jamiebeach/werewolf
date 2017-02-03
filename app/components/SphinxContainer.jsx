@@ -3,37 +3,162 @@ import { connect } from 'react-redux';
 import Sphinx from './Sphinx';
 import Riddle from './Riddle';
 import {addImage,updateGuessed} from '../reducers/riddle';
-
+import ChatBox from './ChatBox';
+import PlayersList from './PlayersList';
 
 const SphinxContainer = props => {
   return(
     <div className="home">
-      <div className="question">
-        <Riddle
-          currentRiddle={props.currentRiddle}
-          solution={props.solution}
-          guessed={props.guessed}
-          guessedCorrectly={props.guessedCorrectly}
-          images={props.images}
-          feedback={props.feedback}
-          dispatchUpdateGuessed={props.dispatchUpdateGuessed}
-        />
+      <div className="chat">
+        {
+          (props.day || props.user.night || !props.user.alive)
+          ? <ChatBox user={props.user} messages={props.messages} day={props.day}/>
+          : <Sphinx/>
+        }
       </div>
-      <div className="cat">
-        <Sphinx />
+      <div className="playerslist">
+        <PlayersList user={props.user} players={props.players} day={props.day}/>
       </div>
     </div>
   )
 }
 
+  const day = false;
+
+  const bobette = {  // live werewolf
+    name: "Bobette",
+    role: "werewolf",
+    alive: true,
+    immunity: false,
+    night: true
+  };
+  const notbob = {  // live seer
+    name: "NotBob",
+    role: "seer",
+    alive: true,
+    immunity: false,
+    night: true
+  };
+  const rob = {  // live villager
+    name: "Rob",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: false
+  };
+  const roberta = {  // dead villager
+    name: "Roberta",
+    role: "villager",
+    alive: false,
+    immunity: false,
+    night: false
+  }
+  const bobby = {  // dead werewolf
+    name: "Bobby",
+    role: "werewolf",
+    alive: false,
+    immunity: false,
+    night: true
+  }
+  const robbie = {  //dead doctor
+    name: "Robbie",
+    role: "doctor",
+    alive: false,
+    immunity: false,
+    night: true
+  }
+
+    const fakePlayers = [
+    {
+      name: "Bob",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+    bobette,
+    {
+      name: "Rob",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+    roberta,
+    bobby,
+    robbie,
+    {
+      name: "Robespierre",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+    notbob,
+    {
+      name: "Other",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+    {
+      name: "People",
+      role: "villager",
+      alive: false,
+      immunity: false,
+      night: false
+    },
+    {
+      name: "To",
+      role: "werewolf",
+      alive: true,
+      immunity: false,
+      night: true
+    },
+    {
+      name: "Test",
+      role: "villager",
+      alive: false,
+      immunity: false,
+      night: false
+    },
+    {
+      name: "Scrolling",
+      role: "villager",
+      alive: true,
+      immunity: false,
+      night: false
+    },
+  ];
+
+  const fakeMessages = [
+    ["Rob", "blah blah blah blah", "day"],
+    ["NotBob", "blah blah", "day"],
+    ["Bobette", "blah blah blah", "day"],
+    ["Roberta", "blah blah blah blah blah blah", "day"],
+    ["Bobby", "blah blah blah blah blah blah blah blah", "day"],
+    ["Robert", "blah blah blah blah blah", "day"],
+    ["Bob", "blah blah blah blah blah blah blah", "day"],
+    ["Roberta", "blah blah blah blah", "day"],
+    ["Robbie", "blah blah blah blah blah blah", "day"],
+    ["Robert", "blah blah blah blah blah blah blah blah", "day"],
+    ["Rob", "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah", "day"],
+    ["To", "blah blah blah blah", "werewolf"],
+    ["Bobette", "blah blah blah blah blah blah", "werewolf"],
+    ["Bobby", "blah blah blah", "werewolf"],
+    ["To", "blah blah blah blah blah ", "werewolf"],
+    ["Bobette", "blah blah blah blah blah blah blah blah blah blah blah blah", "werewolf"],
+    ["NotBob", "/peek Rob", "seer"],
+    ["Robbie", "/save Bob", "doctor"],
+  ]
+
 const mapStateToProps = state => {
   return {
-    currentRiddle: state.riddle.currentRiddle,
-    solution: state.riddle.solution,
-    guessed: state.riddle.guessed,
-    guessedCorrectly: state.riddle.guessedCorrectly,
-    images: state.riddle.images,
-    feedback: state.riddle.feedback
+    players: fakePlayers,
+    user: bobette,
+    day: true,
+    messages: fakeMessages
   };
 };
 
