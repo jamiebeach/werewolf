@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {browserHistory} from 'react-router';
+import {setSelf} from './game';
+
+const game = 'game1';
 
 const initialState = {
   user: null,
@@ -62,18 +65,21 @@ export const checkValidName = name => {
   return (dispatch, getState) => {
     const uid = getState().auth.uid
     console.log("uid = ", uid);
-    firebase.database().ref(`/users/${name}`).once('value')
+    firebase.database().ref(`${game}/users/${name}`).once('value')
     .then(res => {
       console.log(res, res.val())
       if(res.val() === null) {
-        firebase.database().ref(`/users/${name}`).set({
-             alive: true,
-             won: false,
-             uid: uid,
-             //TODO add color somehow
-             color: null,
-           })
-        dispatch(changeName(name))
+        const self = {
+          alive: true,
+          won: false,
+          uid: uid,
+          //TODO add color somehow
+          color: null,
+        }
+        firebase.database().ref(`${game}/users/${name}`).set(self);
+        self.name = name;
+        dispatch(setSelf(self));
+        dispatch(changeName(name));
       }
       else console.log("name is already in use")
      })
