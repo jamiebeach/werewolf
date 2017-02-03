@@ -1,5 +1,5 @@
 const initialState = {
-  users: { 
+  users: {
     garity : {
       role: 'villager',
       alive: true,
@@ -17,7 +17,7 @@ const initialState = {
       immunity: false,
     },
     jenny : {
-       role: 'preist',
+       role: 'priest',
       alive: true,
       won: false,
       uid: 3,
@@ -30,6 +30,7 @@ const initialState = {
   priestMessages: [],
   votes: [{killUser: 'garity', user:'jenny'}, {killUser: 'garity', user:'gladys'}, {killUser: 'jenny', user:'garity'}],
   day: true,
+  test:''
 }
 
 /* ------------       REDUCER     ------------------ */
@@ -51,6 +52,7 @@ const reducer = (state = initialState, action) => {
         time: action.time
       }
       newState.messages = [...newState.messages, msg]
+      newState.test = action.message
       break;
 
     case RECIEVE_VOTE:
@@ -189,7 +191,7 @@ export const tallyVotes = () => {
       if (tally[key] > maxVotes) {
         maxUser = key;
         maxVotes = tally[key];
-      } 
+      }
     })
     dispatch(killUser(maxUser));
   }

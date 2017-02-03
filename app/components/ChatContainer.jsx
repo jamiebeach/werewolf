@@ -1,23 +1,26 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import Sphinx from './Sphinx';
+import NightImage from './NightImage';
 import Riddle from './Riddle';
 import {addImage,updateGuessed} from '../reducers/riddle';
 import ChatBox from './ChatBox';
 import PlayersList from './PlayersList';
 
-const SphinxContainer = props => {
+const ChatContainer = props => {
+  console.log("props.messages", props.messages)
+  console.log("props.test", props.test)
+
   return(
     <div className="home">
       <div className="chat">
         {
           (props.day || props.user.night || !props.user.alive)
-          ? <ChatBox user={props.user} messages={props.messages} day={props.day}/>
-          : <Sphinx/>
+          ? <ChatBox user={props.user} messages={props.game.messages} players={props.game.players} day={props.game.day}/>
+          : <NightImage/>
         }
       </div>
       <div className="playerslist">
-        <PlayersList user={props.user} players={props.players} day={props.day}/>
+
       </div>
     </div>
   )
@@ -27,7 +30,7 @@ const SphinxContainer = props => {
 
   const bobette = {  // live werewolf
     name: "Bobette",
-    role: "werewolf",
+    role: "villager",
     alive: true,
     immunity: false,
     night: true
@@ -155,10 +158,8 @@ const SphinxContainer = props => {
 
 const mapStateToProps = state => {
   return {
-    players: fakePlayers,
-    user: bobette,
-    day: true,
-    messages: fakeMessages
+    game: state.game,
+    user: bobette
   };
 };
 
@@ -173,5 +174,6 @@ const mapDispatchToProps = dispatch => {
   });
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SphinxContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatContainer);
 
+//<!--<PlayersList user={props.user} players={props.players} day={props.day}/>-->

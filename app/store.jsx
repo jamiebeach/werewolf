@@ -14,7 +14,7 @@ export default store
 // store.dispatch(whoami())
 // store.dispatch(fetchUsers())
 
-store.dispatch(sendMessageAction('jenny', 'testing', Date.now()))
+
 store.dispatch(updateGameActions())
 
 store.dispatch(tallyVotes())
