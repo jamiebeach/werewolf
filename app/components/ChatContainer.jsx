@@ -7,25 +7,27 @@ import ChatBox from './ChatBox';
 import PlayersList from './PlayersList';
 
 const ChatContainer = props => {
-  console.log("props.messages", props.messages)
-  console.log("props.test", props.test)
+  // console.log("props.messages", props.messages)
+  // console.log("props.test", props.test)
 
   return(
     <div className="home">
       <div className="chat">
         {
-          (props.day || props.user.night || !props.user.alive)
-          ? <ChatBox user={props.user} messages={props.game.messages} players={props.game.players} day={props.game.day}/>
+          (props.game.day || props.user.night || !props.user.alive)
+          ? <ChatBox user={props.user} messages={props.game.messages} players={props.game.users} day={props.game.day}/>
           : <NightImage/>
         }
       </div>
       <div className="playerslist">
-
+        <PlayersList user={props.user} players={props.game.users} day={props.game.day}/>
       </div>
     </div>
   )
 }
 
+// fake hard coded data
+{
   const day = false;
 
   const bobette = {  // live werewolf
@@ -155,6 +157,15 @@ const ChatContainer = props => {
     ["NotBob", "/peek Rob", "seer"],
     ["Robbie", "/save Bob", "doctor"],
   ]
+}
+
+const bobette = {  // live werewolf
+    name: "Bobette",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: true
+  };
 
 const mapStateToProps = state => {
   return {
@@ -176,4 +187,4 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatContainer);
 
-//<!--<PlayersList user={props.user} players={props.players} day={props.day}/>-->
+//<!---->

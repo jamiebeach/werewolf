@@ -3,6 +3,8 @@ import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import {sendMessageAction} from '../reducers/game';
+
 
 // eventually this has to connect to have access to user, etc
 class Chat extends Component {
@@ -14,11 +16,21 @@ class Chat extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    // add your message to the key/value table
-    const yourMessage = ["you", e.target.message.value];
 
-    this.props.addMessage(yourMessage);
-    e.target.message.value = '';
+    let msg = e.target.message.value;
+
+    if (msg[0] === '/'){
+
+
+    }
+
+
+
+
+
+    this.props.sendMessage(this.props.user.name, msg);
+
+    msg = '';
   }
 
 
@@ -46,4 +58,21 @@ class Chat extends Component {
   }
 }
 
-export default Chat;
+/* -----------------    CONTAINER     ------------------ */
+
+const mapState = state => {
+  return {
+
+  }
+};
+
+const mapDispatch = dispatch => {
+  return {
+    sendMessage: (user, msg) => {
+      console.log(user, msg)
+      dispatch(sendMessageAction(user, msg))
+    },
+  }
+};
+
+export default connect(mapState, mapDispatch)(Chat);

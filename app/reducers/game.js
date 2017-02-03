@@ -48,8 +48,7 @@ const reducer = (state = initialState, action) => {
     case RECIEVE_MESSAGE:
       let msg = {
         text: action.message,
-        user: action.user,
-        time: action.time
+        user: action.user
       }
       newState.messages = [...newState.messages, msg]
       newState.test = action.message
@@ -75,6 +74,9 @@ const reducer = (state = initialState, action) => {
       }
       newState.votes = [];
       newState.messages = [];
+      break;
+
+    default:
       break;
   }
 
@@ -121,7 +123,6 @@ export const killUser = user => ({
   type: KILLING, user
 })
 
-
 /* ------------       DISPATCHERS     ------------------ */
 
 export const fetchUsers = () => {
@@ -150,13 +151,19 @@ export const addUser = (username, role) => {
 
 
 export const sendMessageAction = (user, message) => {
+  console.log(user, message);
+
   return dispatch => {
+    console.log('this is inside the dispatcher ', user, message)
+
     firebase.database().ref('actions').push({
       type: RECIEVE_MESSAGE,
       user: user,
       message: message,
     })
-    .then(res => console.log('message sent to firebase'))
+    .then(res => {
+      console.log('message sent to firebase')
+    })
     .catch(err => console.error('Error sending message to firebase', err))
   }
 }

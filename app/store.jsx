@@ -15,7 +15,10 @@ export default store
 // store.dispatch(fetchUsers())
 
 
+
 store.dispatch(updateGameActions())
+
+// store.dispatch(sendMessageAction('emily', 'whats the error'))
 
 store.dispatch(tallyVotes())
 
