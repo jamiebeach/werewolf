@@ -155,7 +155,7 @@ export const sendMessageAction = (user, message) => {
       message: message,
     })
     .then(res => console.log('message sent to firebase'))
-    .catch(err => console.error(`Creating user: ${newUser} unsuccesful`, err))
+    .catch(err => console.error('Error sending message to firebase', err))
   }
 }
 
