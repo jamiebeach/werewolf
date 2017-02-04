@@ -1,8 +1,17 @@
-
+/* Chat/Paragraphs font: font-family: 'IM Fell English', serif;
+   Headers font: font-family: 'IM Fell English SC', serif; */
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'IM Fell English', serif;
 
 }
+
+/* ----- NAVBAR ----- */
+
+
+.icons {
+  width: '40px',
+  height: '40px'
+};
 
 /* ----- LANDING PAGE ----- */
 .splash {
@@ -29,15 +38,13 @@ body {
 
 /* ----- CHAT PAGE ----- */
 
-.home {
+.day, .night {
   width: 100%;
   height: 100%;
   text-align: center;
 }
 
-#riddle {
-  font-size: 2rem;
-}
+.day
 
 .chat {
   width: 70%;
