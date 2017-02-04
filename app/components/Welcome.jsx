@@ -18,10 +18,9 @@ export const Welcome = () => {
 				<h2>What side will you be on when night falls? </h2>
 			</div>
 			<div className='leftMargin rightMargin'>
-				<p>One minute you're a Villager, defending your theoretical home with every fiber of your being. 
-				The next, you're a Werewolf, framing your friends and accusing them of wanting to destroy your village, 
-				when really it's you who's been infiltrating it all along. Each game becomes an epic phenomenon, 
-				designed to test your personal judgement and moral character.</p>
+				<p>Your quiet little 16th century village has suddenly become infested with some very unfriendly werewolves...
+				can you and the other villagers find them before they devour everyone?</p>
+				<h3>Play with your friends! Minimum 5 Players.</h3>
 				<RaisedButton label="Start a Game" backgroundColor={'#F00'}/>
 			</div>
 		</div>

@@ -8,8 +8,9 @@ export const NewGame = () => {
         <div>
           <div className="formContain">
 		        <h1 className="formHeader">Start a New Game</h1>
-		        <h2>You are the Game Leader. Please fill out the fields below, you will then be redirected to your game page. 
-		        You can send the url to your friends and when everyone is ready you can start your game.</h2>
+		        <h2>You are the Game Leader.</h2>
+		        <h3>Please fill out the fields below, you will then be redirected to your game page. 
+		        You can send the url to your friends and when everyone is ready you can start your game.</h3>
 		        <form >
 	            <div>
 	              <TextField
