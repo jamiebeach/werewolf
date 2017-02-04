@@ -12,38 +12,26 @@ import IconButton from 'material-ui/IconButton';
 const Navbar = () => {
 
   return (
-    <AppBar
-      className='navbar'
-      title='Werewolf'
-      iconElementLeft={
-        // <img src='/home.png' />
+    <div className='navbar'>
+      <div className='navBtnLeft'>
         <IconButton
           onClick={() => browserHistory.push('/home')}
           className='icons'>
           <ActionHome
-            className='icons'
             color={'#FFFFFF'}
             hoverColor={'#FEDFD1'}
           />
-        </IconButton>}
-
-      iconElementRight={
-        <div className="navbar-btns">
-         <Button
-           label="Start A Game"
-           labelStyle={{color:'white'}}
-           containerElement={<Link to={'newgame'} />}
-         />
-         <Button
-           label="rules"
-           labelStyle={{color:'white'}}
-           containerElement={<Link to={'rules'} />}
-         />
-        </div>
-      }
-    />
+        </IconButton>
+      </div>
+      <div className="navBtnRight">
+       <Link className='icons' to={'newgame'}>Start A Game</Link>
+       <Link className='icons' to={'rules'} >Rules</Link>
+      </div>
+    </div>
   )
 }
+
+
 
 
 /* -----------------    CONTAINER     ------------------ */

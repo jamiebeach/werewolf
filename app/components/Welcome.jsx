@@ -21,7 +21,7 @@ export const Welcome = () => {
 				<p>Your quiet little 16th century village has suddenly become infested with some very unfriendly werewolves...
 				can you and the other villagers find them before they devour everyone?</p>
 				<h3>Play with your friends! Minimum 5 Players.</h3>
-				<RaisedButton label="Start a Game" backgroundColor={'#F00'}/>
+				<RaisedButton label="Start a Game" backgroundColor={'#1E052B'} labelStyle={{color: 'white'}}/>
 			</div>
 		</div>
 	)

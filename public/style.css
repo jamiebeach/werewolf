@@ -1,25 +1,55 @@
-/* Chat/Paragraphs font: font-family: 'IM Fell English', serif;
+/* Chat/Paragraphs font: font-family: 'IM Fell French Canon', serif;
    Headers font: font-family: 'IM Fell English SC', serif; */
+
 body {
-  font-family: 'IM Fell English', serif;
+  font-family: 'IM Fell French Canon', serif;
 
 }
 
 /* ----- NAVBAR ----- */
 
 
-.icons {
-  width: '40px',
-  height: '40px'
-};
+.navbar {
+  background-color: #1E052B;
+  opacity: .8;
+  position: fixed;
+  width: 100%;
+}
+
+.navBtnLeft{
+    float: left;
+    margin-left: 3%;
+}
+
+.navBtnRight .icons{
+  float: right;
+  padding-right: 5%;
+  margin: 1rem;
+  text-decoration: none;
+  color: #FFF;
+}
+
+/* Style the links inside the list items */
+/*ul.topnav li  {
+    display: inline-block;
+    color: #2E93FF;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}*/
+
+/* Change background color of links on hover */
+ul.topnav li a:hover {background-color: #FFF;}
+
 
 /* ----- LANDING PAGE ----- */
 .splash {
   height: 100vh;
   display: flex;
-
+  padding-top: 5%;
   background: #000;
-
   align-items: flex-start;
   flex-direction: column;
   justify-content: center;
