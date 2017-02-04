@@ -21,14 +21,14 @@ export const Welcome = () => {
        </div>*/}
 
 					<div style={ styles.txt }>
-						<h1 style={ styles.heading1 } onClick={fetchUsers}>Sphinx</h1>
+						<h1 style={ styles.heading1 } onClick={fetchUsers}>Werewolves</h1>
 					</div>
 
 					<div style={ styles.txt }>
-						<h2 style={ styles.heading2 }>try to crack her riddle...! <br/><br/>
+						<h2 style={ styles.heading2 }>your quiet little 16th century village has suddenly become infested with some very unfriendly werewolves... can you and the other villagers find them before they eliminate everyone? <br/><br/>
 							<Link to={'/login'} style={ styles.adopt }>start where you left off  </Link>
 							  or
-							<Link to={'/sphinx'} style={ styles.adopt }>  continue as a guest</Link>
+							<Link to={'/chat'} style={ styles.adopt }>  continue as a guest</Link>
 						</h2>
 					</div>
 

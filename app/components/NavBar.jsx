@@ -64,7 +64,7 @@ class Navbar extends Component {
 
     return (
       <AppBar
-        title='Sphinx'
+        title='Werewolves'
         iconElementLeft={
           // <img src='/home.png' />
           <IconButton
