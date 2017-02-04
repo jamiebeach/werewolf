@@ -27,7 +27,21 @@ mod.handleJoin({name: 'gladys', uid: 4});
 mod.handleJoin({name: 'ashi', uid: 5});
 mod.handleJoin({name: 'galen', uid: 6});
 mod.handleStart();
-console.log(mod);
+mod.handleLeaderStart();
+
+setTimeout(() => {
+  mod.handleVote({user: 'felicia', vote: 'jenny'})
+  mod.handleVote({user: 'garity', vote: 'jenny'})
+  mod.handleVote({user: 'gladys', vote: 'galen'})
+  mod.handleVote({user: 'garity', vote: 'galen'})
+  mod.handleVote({user: 'gladys', vote: 'galen'})
+  mod.handleVote({user: 'ashi', vote: 'jenny'})
+  mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
+  // mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
+
+}, 6000)
+
+
 
 
 // store.dispatch(tallyVotes())
