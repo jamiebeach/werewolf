@@ -9,7 +9,6 @@ import Welcome from './components/Welcome';
 import NewGame from './components/NewGame';
 import Rules from './components/Rules';
 import ChatContainer from './components/ChatContainer';
-import {getRiddle} from './reducers/riddle';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
@@ -24,7 +23,7 @@ render(
         <Route path="/" component={App}>
           <IndexRedirect to="/home" />
           <Route path="/home" component={Welcome} />
-          <Route path="/newGame" component={NewGame} />
+          <Route path="/newgame" component={NewGame} />
           <Route path="/rules" component={Rules} />
           <Route path="/chat" component={ChatContainer} />
         </Route>
