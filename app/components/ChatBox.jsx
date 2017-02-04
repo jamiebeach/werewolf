@@ -17,21 +17,18 @@ class ChatBox extends Component {
   }
 
   componentDidMount() {
-    this.scrollToBottom();
+    //this.scrollToBottom();
   }
 
   componentDidUpdate() {
-    this.scrollToBottom();
+    //this.scrollToBottom();
   }
 
   render() {
     const day = this.props.day;
     const user = this.props.user;
-    const messages = this.props.messages.filter(message => {
-      if (day) return (message[2] === "day");
-      else if (!user.alive) return (message[2] !== "day");
-      else return (message[2] === user.role);
-    })
+    const messages = this.props.messages;
+
     return (
 
       <div id="chat-container">
@@ -47,17 +44,17 @@ class ChatBox extends Component {
               <div
                 key={index}
                 id="all-statements"
-                style={{textAlign: (message[0] !== user.name) ? "left" : "right"}}
+                style={{textAlign: (message.user !== user.name) ? "left" : "right"}}
                 ref={(div) => {
                   if ((messages.length - 1) === index) this.lastMessage = div;
                 }}
               >
-                <Paper id="statement-bubble" zDepth={1} style={{display: "inline-block"}} className={`statement-by-${message[0]}`}>
+                <Paper id="statement-bubble" zDepth={1} style={{display: "inline-block"}} className={`statement-by-${message.user}`}>
                   <div id="player-name">
-                    {message[0].toUpperCase()}
+                    {message.user.toUpperCase()}
                   </div>
                   <div id="statement">
-                    {message[1]}
+                    {message.text}
                   </div>
                 </Paper>
               </div>

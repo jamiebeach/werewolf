@@ -52,17 +52,17 @@ const PlayersList = (props) => {
         cellHeight="auto"
         >
         <List>
-        {players.map((player, index) => {return (
+        {Object.keys(players).map((player, index) => {return (
           <ListItem
-            id="player"
+            id={players[player].uid}
             key={index}
-            primaryText={player.name}
+            primaryText={player}
             leftIcon={getIcon(player, user)}
-            leftCheckbox={(((player.name === user.name) || !player.alive) || !user.alive) ? null :<Checkbox />}
+            leftCheckbox={(((player === user.name) || !players[player].alive) || !user.alive) ? null :<Checkbox />}
             insetChildren={true}
             style={{
-              backgroundColor: pickColor(player, user, day),
-              textDecoration: dead(player)
+              backgroundColor: pickColor(players[player], user, day),
+              textDecoration: dead(players[player])
             }}
           />
         )})}

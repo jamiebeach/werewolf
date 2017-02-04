@@ -9,7 +9,7 @@ import Signup from './components/Signup';
 import Login from './components/Login';
 import Welcome from './components/Welcome';
 import Rules from './components/Rules';
-import SphinxContainer from './components/SphinxContainer';
+import ChatContainer from './components/ChatContainer';
 import {getRiddle} from './reducers/riddle';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -17,12 +17,6 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
-
-const onSphinxEnter = () => {
-  let today = new Date();
-  let todayNum = today.getDay();
-  store.dispatch(getRiddle(todayNum));
-}
 
 render(
   <MuiThemeProvider>
@@ -34,7 +28,7 @@ render(
           <Route path="/signup" component={Signup} />
           <Route path="/login" component={Login} />
           <Route path="/rules" component={Rules} />
-          <Route path="/sphinx" component={SphinxContainer} onEnter={onSphinxEnter}/>
+          <Route path="/chat" component={ChatContainer} />
         </Route>
       </Router>
     </Provider>

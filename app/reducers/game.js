@@ -1,37 +1,16 @@
 const game = 'game1';
 
 const initialState = {
-  users: {
-    garity : {
-      alive: true,
-      won: false,
-      uid: 1,
-      color: '#FFF',
-      immunity: false,
-    },
-    gladys : {
-      alive: true,
-      won: false,
-      uid: 2,
-      color: '#000',
-      immunity: false,
-    },
-    jenny : {
-      alive: true,
-      won: false,
-      uid: 3,
-      color: '#0EF',
-      immunity: false,
-    },
-  },
+  users: {},
+  votes: [],
+  day: true,
+  test:''
   villager: [],
   seer: [],
   priest: [],
   wolf: [],
-  votes: [{killUser: 'garity', user:'jenny'}, {killUser: 'garity', user:'gladys'}, {killUser: 'jenny', user:'garity'}],
-  day: true,
   self: {},
-  tally: {}
+  tally: {}  // probably taken over by moderator
 }
 
 //TODOS
@@ -98,6 +77,9 @@ const reducer = (state = initialState, action) => {
 
     case SET_SELF:
       newState.self = action.self;
+      break;
+
+    default:
       break;
   }
 
@@ -192,7 +174,9 @@ export const sendMessageAction = (user, message, role) => {
       message: message,
       role: role,
     })
-    .then(res => console.log('message sent to firebase'))
+    .then(res => {
+      // console.log('message sent to firebase')
+    })
     .catch(err => console.error('Error sending message to firebase', err))
   }
 }
