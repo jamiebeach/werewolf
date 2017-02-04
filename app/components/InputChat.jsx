@@ -45,7 +45,7 @@ class Chat extends Component {
 
     }
 
-    else {this.props.sendMessage(this.props.user.name, msg);}
+    else {this.props.sendMessage(this.props.user.name, msg, 'villager');}
 
     e.target.message.value = '';
   }
@@ -85,8 +85,8 @@ const mapState = state => {
 
 const mapDispatch = dispatch => {
   return {
-    sendMessage: (user, msg) => {
-      dispatch(sendMessageAction(user, msg));
+    sendMessage: (user, msg, role) => {
+      dispatch(sendMessageAction(user, msg, role));
     },
     sendVote: (user, victim) => {
       dispatch(sendVoteAction(user, victim));

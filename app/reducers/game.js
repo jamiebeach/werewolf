@@ -4,7 +4,7 @@ const initialState = {
   users: {},
   votes: [],
   day: true,
-  test:''
+  test:'',
   villager: [],
   seer: [],
   priest: [],
