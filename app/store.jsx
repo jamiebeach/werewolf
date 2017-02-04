@@ -31,7 +31,6 @@ mod.handleLeaderStart();
 
 setTimeout(() => {
   mod.handleVote({user: 'felicia', vote: 'jenny'})
-  mod.handleVote({user: 'garity', vote: 'jenny'})
   mod.handleVote({user: 'gladys', vote: 'galen'})
   mod.handleVote({user: 'garity', vote: 'galen'})
   mod.handleVote({user: 'gladys', vote: 'galen'})
@@ -40,6 +39,19 @@ setTimeout(() => {
   // mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
 
 }, 6000)
+
+// setTimeout(() => {
+//   mod.handleVote({user: 'felicia', vote: 'jenny'})
+//   mod.handleVote({user: 'garity', vote: 'jenny'})
+//   mod.handleVote({user: 'gladys', vote: 'galen'})
+//   mod.handleVote({user: 'garity', vote: 'galen'})
+//   mod.handleVote({user: 'gladys', vote: 'galen'})
+//   mod.handleVote({user: 'ashi', vote: 'jenny'})
+//   mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
+//   mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
+
+// }, 12000)
+
 
 
 

@@ -8,7 +8,7 @@ const colors = ['darkred', 'darkblue', 'darkgreen', 'grey', 'purple', 'orange'];
 
 const timeToRead = 5000;  //5000
 const timeForNight = 7000; //10000
-const timeForDay = 10; //this is currently 1m40s
+const timeForDay = 10000; //this is currently 1m40s
 
 
 export default class Moderator {
@@ -56,25 +56,6 @@ export default class Moderator {
 
           case START_GAME: // make this
             break;
-
-          // case SWITCH_TIME:
-          //   if (action.timeofday === 'daytime'){
-          //     newState.day = true;
-          //   } else if (action.timeofday === 'nighttime') {
-          //     newState.day = false;
-          //   }
-          //   newState.votes = [];
-          //   newState.villager = [];
-          //   newState.seer = [];
-          //   newState.priest = [];
-          //   newState.wolf = [];
-          //   break;
-
-          // case UPDATE_USER:
-          //   // do we need to object assign everything here?
-          //   if (action.name === newState.self.name) newState.self.role = action.role;
-          //   newState.users[action.name].role = action.role;
-          //   break;
 
           default:
             break;
@@ -184,18 +165,32 @@ export default class Moderator {
   }
 
   handleVote(playerAction) {
-    this.votes.push(playerAction);
-
-    let channel = this.day ? 'public' : 'werewolves';
-    let methodOfMurder = this.day ? 'lynch' : 'maul';
     let role = this.day ? 'villager' : 'wolf';
 
-    firebase.database().ref(`games/${this.gameName}/storeActions/${channel}`).push({
-      type: RECIEVE_MESSAGE,
-      user: 'moderator',
-      message: `${playerAction.user} votes to ${methodOfMurder} ${playerAction.vote}`,
-      role,
-    })
+    if (this.players[playerAction.vote].alive){
+      this.votes.push(playerAction);
+
+      let channel = this.day ? 'public' : 'werewolves';
+      let methodOfMurder = this.day ? 'lynch' : 'maul';
+
+
+      firebase.database().ref(`games/${this.gameName}/storeActions/${channel}`).push({
+        type: RECIEVE_MESSAGE,
+        user: 'moderator',
+        message: `${playerAction.user} votes to ${methodOfMurder} ${playerAction.vote}`,
+        role,
+      })
+    }
+
+    else {
+       firebase.database().ref(`games/${this.gameName}/storeActions/${this.players[playerAction.user].uid}`).push({
+        type: RECIEVE_MESSAGE,
+        user: 'moderator',
+        message: `${playerAction.vote} is already dead.`,
+        role,
+      })
+    }
+
   }
 
   tallyVotes() {
@@ -207,8 +202,6 @@ export default class Moderator {
     this.votes.forEach(vote => {
       tally[vote.user][vote.vote] = true;
     })
-
-    console.log('tally ' , tally);
 
     const voteCount = {};
     Object.keys(tally).forEach(voter => {
@@ -231,9 +224,6 @@ export default class Moderator {
         maxUser.push(key);
       }
     })
-
-    console.log('voteCount ', voteCount);
-    console.log('maxUser ', maxUser);
 
     // const numOfPlayers = Object.keys(this.players).length;
     // we deleted the majority rules, but you might want to do that
@@ -259,6 +249,14 @@ export default class Moderator {
       chosen.alive = false;
       //send this as an action to the public store
       firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
+        {
+          type: UPDATE_USER,
+          name: chosen.name,
+          alive: false,
+        })
+        .catch(err => console.error('Error: moderator sending death message to firebase', err));
+
+      firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
       {
         type: RECIEVE_MESSAGE,
         name: 'moderator',
@@ -270,6 +268,7 @@ export default class Moderator {
 
     //resetting the night props
     chosen.immunity = false;
+    this.chosen = null;
     this.didScry = false;
     this.didSave = false;
     this.votes = [];
@@ -356,7 +355,7 @@ export default class Moderator {
 
     //werewolves may have won at this point
     this.checkWin();
-    if (this.winner){
+    if (this.winner === 'werewolves'){
       firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
       {
         type: RECIEVE_MESSAGE,
@@ -369,7 +368,55 @@ export default class Moderator {
     else {
       setTimeout(() => {
         this.tallyVotes()
-        this.nightActions()
+        // when votes finish, kill someone.
+
+        let chosen = this.players[this.chosen];
+        chosen.alive = false;
+        //send this as an action to the public store
+        firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
+        {
+          type: UPDATE_USER,
+          name: chosen.name,
+          alive: false,
+        })
+        .catch(err => console.error('Error: moderator sending death message to firebase', err));
+
+        firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
+        {
+          type: RECIEVE_MESSAGE,
+          name: 'moderator',
+          message: `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`,
+          role: 'villager'
+        })
+        .catch(err => console.error('Error: moderator sending lynching message to firebase', err));
+
+        this.checkWin();
+        if (this.winner === 'werewolves'){
+          firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
+          {
+            type: RECIEVE_MESSAGE,
+            name: 'moderator',
+            message: `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`,
+            role: 'villager'
+          })
+          .catch(err => console.error('Error: moderator sending wolf win message to firebase', err));
+        }
+        else if (this.winner === 'villagers'){
+          firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
+          {
+            type: RECIEVE_MESSAGE,
+            name: 'moderator',
+            message: `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`,
+            role: 'villager'
+          })
+          .catch(err => console.error('Error: moderator sending village win message to firebase', err));
+        } else {
+          this.chosen = null;
+          this.votes = [];
+
+          this.nightActions();
+        }
+
       }, timeForDay)
     }
   }
@@ -386,14 +433,13 @@ export default class Moderator {
     }
   }
 
-  // roles have not been shuffled for tesing purposes
   handleStart() {
     const length = this.players.length;
     let numWerewolves = Math.floor(length / 3);
     let roles = ['seer', 'priest'];
     while (numWerewolves--) roles.push('werewolf');
     while (roles.length < length) roles.push('villager');
-    // roles = shuffle(roles);
+    roles = shuffle(roles);
 
     this.players.forEach((player, index) => {
       player.role = roles[index];
@@ -464,9 +510,6 @@ export default class Moderator {
         villagerCount++;
       }
     })
-
-    console.log('wolf count for the wincheck ', werewolfCount)
-    console.log('villager count for the win check', villagerCount)
 
     if (werewolfCount === 0) {
       this.winner = 'villagers';
