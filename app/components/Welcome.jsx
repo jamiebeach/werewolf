@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router'
 
 import fetchUsers from '../reducers/game';
-
-//import ChatBox from './ChatBox';
-// import NavBar from './Navbar';
+import RaisedButton from 'material-ui/RaisedButton';
 
 
 /* -----------------    COMPONENT     ------------------ */
@@ -13,23 +11,18 @@ import fetchUsers from '../reducers/game';
 export const Welcome = () => {
 	return (
 		<div className='splash'>
-			{/*<div className='chat'>
-          <ChatBox
-            messages={[]}
-            addMessage={() => {}}
-          />
-       </div>*/}
-
-					<div style={ styles.txt }>
-						<h1 style={ styles.heading1 } onClick={fetchUsers}>Sphinx</h1>
+					<div className='leftMargin' >
+						<h1 >Werewolf</h1>
 					</div>
-
-					<div style={ styles.txt }>
-						<h2 style={ styles.heading2 }>try to crack her riddle...! <br/><br/>
-							<Link to={'/login'} style={ styles.adopt }>start where you left off  </Link>
-							  or
-							<Link to={'/sphinx'} style={ styles.adopt }>  continue as a guest</Link>
-						</h2>
+					<div className='leftMargin'>
+						<h2 >What side will you be on when night falls? </h2>
+					</div>
+					<div className='leftMargin rightMargin'>
+						<p>One minute you're a Villager, defending your theoretical home with every fiber of your being. 
+						The next, you're a Werewolf, framing your friends and accusing them of wanting to destroy your village, 
+						when really it's you who's been infiltrating it all along. Each game becomes an epic phenomenon, 
+						designed to test your personal judgement and moral character.</p>
+						<RaisedButton onClick={}  label="Start a Game" backgroundColor={'#F00'}/>
 					</div>
 
 		</div>
@@ -43,23 +36,12 @@ export const Welcome = () => {
 const mapState = () => ({});
 const mapDispatch = () => ({});
 
+const handleClick = () => {
+	
+}
+
 export default connect(mapState, mapDispatch)(Welcome);
 
 
 /* -----------------    STYLES     ------------------ */
 
-const styles = {
-	txt: {
-		fontFamily: 'Roboto',
-		color: 'white',
-		marginLeft: '10%',
-	},
-	heading1: {
-		fontSize: '4em',
-		marginTop: '20%',
-	},
-
-	adopt: {
-		textDecoration: 'none',
-	},
-}
