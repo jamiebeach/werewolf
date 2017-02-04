@@ -28,8 +28,7 @@ class ChatBox extends Component {
     const day = this.props.day;
     const user = this.props.user;
     const messages = this.props.messages;
-console.log("messages:", messages)
-console.log("day:", day)
+
     return (
 
       <div id="chat-container">
