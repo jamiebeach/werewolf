@@ -56,17 +56,23 @@ body {
 }
 
 .landingTextBox {
-  margin-left: 12rem;
-  margin-right: 10rem;
-  background: rgba(0, 0, 0, .5);
+  margin-left: 12%;
+  margin-right: 10%;
+  background: rgba(0, 0, 0, .6);
 }
 
 .landingText {
-  padding-left: 2rem;
+  padding-left: 2%;
 }
 
+.landingText h1 {
+  font-size: 3rem;
+}
+
+
+
 .landingButton{
-  margin-left: 12rem;
+  margin-left: 12%;
   margin-top: 3rem;
 }
 

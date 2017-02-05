@@ -15,8 +15,8 @@ export const Welcome = () => {
 				<div className='landingText'>
 					<h1>Werewolf</h1>
 					<h2>What side will you be on when night falls? </h2>
-					<p>Your quiet little 16th century village has suddenly become infested with some very unfriendly werewolves...
-					can you and the other villagers find them before they devour everyone?</p>
+					<h3>Your quiet little 16th century village has suddenly become infested with some very unfriendly werewolves...
+					can you and the other villagers find them before they devour everyone?</h3>
 					<h3>Play with your friends! Minimum 5 Players.</h3>
 				</div>
 			</div>
