@@ -1,6 +1,6 @@
 /*
   actions
-  settings
+  settings -- use this to toggle options for testing
   moderator class
     constructor / official game state
     functions
@@ -33,6 +33,28 @@ const timeToRead = 5000;  // 5000
 const timeForNight = 7000; // 10000
 const timeForDay = 10000; // 100,000 -> this is 1m40s
 
+// shuffle: helper function, used for assigning roles
+// IF YOU COMMENT THIS OUT THEN THE ROLES ARE:
+// player 1 seer, player 2 priest,
+// the next werewolves, and remaining villagers
+
+const shuffle = (array) => {
+  // var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // // While there remain elements to shuffle...
+  // while (0 !== currentIndex) {
+
+  //   // Pick a remaining element...
+  //   randomIndex = Math.floor(Math.random() * currentIndex);
+  //   currentIndex -= 1;
+
+  //   // And swap it with the current element.
+  //   temporaryValue = array[currentIndex];
+  //   array[currentIndex] = array[randomIndex];
+  //   array[randomIndex] = temporaryValue;
+  // }
+  return array;
+}
 
 /* ----------------- THE MODERATOR ------------------ */
 
@@ -119,7 +141,6 @@ export default class Moderator {
 
         default:
           break;
-
       }
     })
   }
@@ -243,7 +264,7 @@ export default class Moderator {
       let methodOfMurder = this.day ? 'lynch' : 'maul';
 
       let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.vote}`
-      this.narrate(msg, role, null, `${role} voting`)
+      this.narrate(msg, role, channel, `${role} voting`)
     }
 
     else {
@@ -483,26 +504,4 @@ export default class Moderator {
       this.winner = 'werewolves';
     }
   }
-}
-
-/* ----------------- HELPER FUNCTIONS ------------------ */
-
-// randomize a list functon, used for assigning roles
-const shuffle = (array) => {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
 }
