@@ -165,6 +165,16 @@ export const fetchUsers = () => {
 //   }
 // }
 
+export const createNewGame = (userName, gameName) => {
+  return dispatch => {
+    const gameId = firebase.database().ref('games').push({
+      name: gameName
+    })
+    .then(() => addUser(userName, null))
+    .then(() => )
+  }
+}
+
 // send Message to firebase
 export const sendMessageAction = (user, message, role) => {
   return dispatch => {
