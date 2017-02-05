@@ -140,37 +140,40 @@ export const addTally = tally => ({
 
 /* ------------       DISPATCHERS     ------------------ */
 
-export const fetchUsers = () => {
-  return dispatch => {
-    firebase.database().ref('/users/').once('value')
-    .then(res => {
-      dispatch(getAllUsers(res.val()))
-     })
-    .catch(console.error)
-  }
-}
-
-// // when user joins a game they input a username. Users are stored by username in the db
-// export const addUser = (username, role) => {
+// export const fetchUsers = () => {
 //   return dispatch => {
-//     firebase.database().ref('users').push({
-//       type: ADD_USER,
-//       role,
-//       alive,
-//       won,
-//       uid,
-//       color,
-//     })
+//     firebase.database().ref('/users/').once('value')
+//     .then(res => {
+//       dispatch(getAllUsers(res.val()))
+//      })
 //     .catch(console.error)
 //   }
 // }
 
+// when user joins a game they input a username. Users are stored by username in the db
+export const addUser = (username, role) => {
+  return dispatch => {
+    firebase.database().ref(`games/${gameId}/playerActions`).push({
+      type: ADD_USER,
+      role,
+      alive,
+      won,
+      uid,
+      color,
+    })
+    .catch(console.error)
+  }
+}
+
 export const createNewGame = (userName, gameName) => {
   return dispatch => {
+    // Pushes a new game into firebase, the random key is returned and saved as gameId
     const gameId = firebase.database().ref('games').push({
       name: gameName
     })
+    // adds game leader to users obj on State
     .then(() => addUser(userName, null))
+    // TODO need to call new Moderator
     .then(() => )
   }
 }
