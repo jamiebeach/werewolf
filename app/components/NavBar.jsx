@@ -19,7 +19,6 @@ const Navbar = () => {
           onClick={() => browserHistory.push('/home')}
           >
           <ActionHome
-            
             color={'#FFFFFF'}
             hoverColor={'#6E0300'}
           />
