@@ -52,6 +52,8 @@ class Chat extends Component {
 
 
   render() {
+    const day = this.props.game.day;
+
     return (
       <div id="chat-input">
         <form onSubmit={this.handleSubmit}>
@@ -59,9 +61,9 @@ class Chat extends Component {
             style={{width: "80%", marginLeft: 20}}
             id="message"
             hintText={(this.props.user.alive) ? "Enter message here" : "You can't chat when you're dead"}
-            hintStyle={{color: "#AAA"}}
-            underlineFocusStyle={{borderColor: "#FFFFFF"}}
-            inputStyle={{color: "#FFF", fontWeight: 'normal' }}
+            hintStyle={{color: day ? '#000' : '#AAA' }}
+            underlineFocusStyle={{borderColor: day ? '#0D7A58' : '#6E0300 ' }}
+            inputStyle={{color: day ? '#000' : '#FFF' , fontWeight: 'normal' }}
             disabled={(!this.props.user.alive)}
           />
           <Button disabled={(!this.props.user.alive)}
