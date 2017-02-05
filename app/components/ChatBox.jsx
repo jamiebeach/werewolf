@@ -31,12 +31,9 @@ class ChatBox extends Component {
 
     return (
 
-      <div id="chat-container">
+      <div id="chat-window-container">
         <GridList
-          style={{
-            maxHeight: window.innerHeight*.6,
-            overflowY: 'auto'
-          }}
+          className="chat-window"
           cols={1}
           cellHeight="auto"
           >

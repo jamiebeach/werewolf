@@ -22,7 +22,7 @@ export const NewGame = () => {
 	                name="userName"
 	                hintText="Player Name"
 	                floatingLabelText="Player Name"
-	              /><br />
+  	              /><br />
 	              <RaisedButton type="submit" value="buildGame" label="Start New Game" backgroundColor="#FA8072" className="button" labelStyle={{color: 'white'}}/>
 	            </div>
 	         	</form>

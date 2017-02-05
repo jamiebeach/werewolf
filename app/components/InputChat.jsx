@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from './Button';
 
 import {sendMessageAction, sendVoteAction} from '../reducers/game';
 
@@ -45,7 +45,7 @@ class Chat extends Component {
 
     }
 
-    else {this.props.sendMessage(this.props.user.name, msg, 'villager');}
+    else { console.log(this.props.user, msg, 'villager'); this.props.sendMessage(this.props.user.name, msg, 'villager');}
 
     e.target.message.value = '';
   }
@@ -56,19 +56,19 @@ class Chat extends Component {
       <div id="chat-input">
         <form onSubmit={this.handleSubmit}>
           <TextField
+            style={{width: "80%", marginLeft: 20}}
             id="message"
             hintText={(this.props.user.alive) ? "Enter message here" : "You can't chat when you're dead"}
+            hintStyle={{color: "#AAA"}}
+            underlineFocusStyle={{borderColor: "#FFFFFF"}}
+            inputStyle={{color: "#FFF", fontWeight: 'normal' }}
             disabled={(!this.props.user.alive)}
-            style={{width: "75%"}}
           />
-          <RaisedButton
-            disabled={(!this.props.user.alive)}
-            id="entertext"
-            type="submit"
-            label="Enter"
-            primary={true}
-            style={{margin:"10px", float: "right"}}
-          />
+          <Button disabled={(!this.props.user.alive)}
+                  type="submit"
+                  className="enterText">
+                  Enter
+          </Button>
         </form>
       </div>
     )

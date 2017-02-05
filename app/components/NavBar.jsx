@@ -13,15 +13,17 @@ const Navbar = () => {
 
   return (
     <div className='navbar'>
-      <div className='navBtnLeft'>
+      <div >
         <IconButton
+          className='navBtnLeft'
           onClick={() => browserHistory.push('/home')}
-          className='icons'>
+          >
           <ActionHome
             color={'#FFFFFF'}
             hoverColor={'#FEDFD1'}
           />
         </IconButton>
+        <h3 className='navBtnLeft'>Werewolf</h3>
       </div>
       <div className="navBtnRight">
        <Link className='icons' to={'newgame'}>Start A Game</Link>

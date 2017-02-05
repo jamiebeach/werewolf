@@ -10,7 +10,7 @@ const ChatContainer = props => {
 
   return(
     <div className={props.game.day? 'day' : 'night'}>
-      <div className="chat">
+      <div className="chatContainer">
         {
           (props.game.day || props.user.night || !props.user.alive)
           ? <ChatBox user={props.user} messages={props.game.villager} players={props.game.users} day={props.game.day}/>

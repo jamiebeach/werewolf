@@ -11,16 +11,16 @@ import RaisedButton from 'material-ui/RaisedButton';
 export const Welcome = () => {
 	return (
 		<div className='splash'>
-			<div className='leftMargin' >
-				<h1>Werewolf</h1>
+			<div className='landingTextBox ' >
+				<div className='landingText'>
+					<h1>Werewolf</h1>
+					<h2>What side will you be on when night falls? </h2>
+					<p>Your quiet little 16th century village has suddenly become infested with some very unfriendly werewolves...
+					can you and the other villagers find them before they devour everyone?</p>
+					<h3>Play with your friends! Minimum 5 Players.</h3>
+				</div>
 			</div>
-			<div className='leftMargin'>
-				<h2>What side will you be on when night falls? </h2>
-			</div>
-			<div className='leftMargin rightMargin'>
-				<p>Your quiet little 16th century village has suddenly become infested with some very unfriendly werewolves...
-				can you and the other villagers find them before they devour everyone?</p>
-				<h3>Play with your friends! Minimum 5 Players.</h3>
+			<div className='landingButton'>
 				<RaisedButton label="Start a Game" backgroundColor={'#1E052B'} labelStyle={{color: 'white'}}/>
 			</div>
 		</div>
