@@ -7,12 +7,10 @@ import ChatBox from './ChatBox';
 import PlayersList from './PlayersList';
 
 const ChatContainer = props => {
-  // console.log("props.messages", props.messages)
-  // console.log("props.test", props.test)
 
   return(
-    <div className="home">
-      <div className="chat">
+    <div className={props.game.day? 'day' : 'night'}>
+      <div className="chatContainer">
         {
           (props.game.day || props.user.night || !props.user.alive)
           ? <ChatBox user={props.user} messages={props.game.villager} players={props.game.users} day={props.game.day}/>

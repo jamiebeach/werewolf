@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router'
 
 import fetchUsers from '../reducers/game';
-
-//import ChatBox from './ChatBox';
-// import NavBar from './Navbar';
+import RaisedButton from 'material-ui/RaisedButton';
 
 
 /* -----------------    COMPONENT     ------------------ */
@@ -13,28 +11,20 @@ import fetchUsers from '../reducers/game';
 export const Welcome = () => {
 	return (
 		<div className='splash'>
-			{/*<div className='chat'>
-          <ChatBox
-            messages={[]}
-            addMessage={() => {}}
-          />
-       </div>*/}
-
-					<div style={ styles.txt }>
-						<h1 style={ styles.heading1 } onClick={fetchUsers}>Werewolves</h1>
-					</div>
-
-					<div style={ styles.txt }>
-						<h2 style={ styles.heading2 }>your quiet little 16th century village has suddenly become infested with some very unfriendly werewolves... can you and the other villagers find them before they eliminate everyone? <br/><br/>
-							<Link to={'/login'} style={ styles.adopt }>start where you left off  </Link>
-							  or
-							<Link to={'/chat'} style={ styles.adopt }>  continue as a guest</Link>
-						</h2>
-					</div>
-
+			<div className='landingTextBox ' >
+				<div className='landingText'>
+					<h1>Werewolf</h1>
+					<h2>What side will you be on when night falls? </h2>
+					<h3>Your quiet little 16th century village has suddenly become infested with some very unfriendly werewolves...
+					can you and the other villagers find them before they devour everyone?</h3>
+					<h3>Play with your friends! Minimum 5 Players.</h3>
+				</div>
+			</div>
+			<div className='landingButton'>
+				<RaisedButton label="Start a Game" backgroundColor={'#1E052B'} labelStyle={{color: 'white'}}/>
+			</div>
 		</div>
 	)
-
 }
 
 
@@ -43,23 +33,12 @@ export const Welcome = () => {
 const mapState = () => ({});
 const mapDispatch = () => ({});
 
+// const handleClick = () => {
+
+// }
+
 export default connect(mapState, mapDispatch)(Welcome);
 
 
-/* -----------------    STYLES     ------------------ */
 
-const styles = {
-	txt: {
-		fontFamily: 'Roboto',
-		color: 'white',
-		marginLeft: '10%',
-	},
-	heading1: {
-		fontSize: '4em',
-		marginTop: '20%',
-	},
 
-	adopt: {
-		textDecoration: 'none',
-	},
-}
