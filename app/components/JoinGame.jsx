@@ -1,37 +1,27 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import {createNewGame} from '../reducers/game';
+import {addUser} from '../reducers/game';
 
-export const NewGame = props => {
+export const JoinGame = props => {
 
 	const handleSubmit = (evt) => {
 		evt.preventDefault();
 		const userName = evt.target.userName.value;
-		const gameName = evt.target.gameName.value;
-		console.log("inside handleSubmit ", gameName, userName);
-		props.createNewGame(userName, gameName);
+		console.log("inside joinGame handleSubmit ", userName);
+		props.addUser(userName);
 	}
 
 	return (
         <div>
           <div className="newGame">
           	<div className="formContain">
-		        <h1 className="formHeader">Start a New Game</h1>
-		        <h2>You are the Game Leader.</h2>
-		        <h3>Please fill out the fields below, you will then be redirected to your game page.
-		        You can send the url to your friends and when everyone is ready you can start your game.</h3>
+		        <h1 className="formHeader">Join A Game</h1>
+		        <h2>You have been invited to join a Werewolf game</h2>
+		        <h3>Please pick a Player Name. You will then be redirected to your game page to chat with your friends.</h3>
 		        <form onSubmit={handleSubmit} >
 	            <div>
-	              <TextField
-	                name="gameName"
-	                floatingLabelText="Name of Game"
-	                hintStyle={{color: "#FFF"}}
-		            underlineFocusStyle={{borderColor: "#FFFFFF"}}
-		            inputStyle={{color: "#FFF", fontWeight: 'normal' }}
-		            floatingLabelStyle={{color: '#FFF'}}
-	              /><br />
 	              <TextField
 	                name="userName"
 	                floatingLabelText="Player Name"
@@ -51,10 +41,10 @@ export const NewGame = props => {
 
 const mapDispatchToProps = dispatch => {
   return ({
-    createNewGame (userName, gameName) {
-      return dispatch(createNewGame(userName, gameName));
+    addUser (userName) {
+      return dispatch(addUser(userName));
     },
   });
 };
 
-export default connect(null, mapDispatchToProps)(NewGame);
+export default connect(null, mapDispatchToProps)(JoinGame);
