@@ -1,15 +1,16 @@
-const game = 'game1';
+// const game = 'game1';
 
 const initialState = {
   users: {},
   votes: [],
-  day: true,
+  day: false,
   test:'',
   villager: [],
   seer: [],
   priest: [],
   wolf: [],
   self: {},
+  gameId: null,
   tally: {}  // probably taken over by moderator
 }
 
@@ -102,6 +103,7 @@ const SET_SELF = 'SET_SELF';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
 const ADD_TALLY = 'ADD_TALLY';
+const CREATE_GAME = 'CREATE_GAME';
 
 
 /* ------------     ACTION CREATORS     ------------------ */
@@ -165,10 +167,21 @@ export const fetchUsers = () => {
 //   }
 // }
 
+// Create a New Game with Moderator
+
+export const createNewGame = (userName, gameName) => {
+  return dispatch => {
+    const gameId = firebase.database().ref('games').push({
+      name: gameName
+    })
+    .then(() => )
+  }
+}
+
 // send Message to firebase
 export const sendMessageAction = (user, message, role) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/actions`).push({
       type: RECIEVE_MESSAGE,
       user: user,
       message: message,
@@ -184,7 +197,7 @@ export const sendMessageAction = (user, message, role) => {
 // send votes to firebase
 export const sendVoteAction = (user, vote) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/actions`).push({
       type: RECIEVE_VOTE,
       user: user,
       vote: vote
@@ -196,7 +209,7 @@ export const sendVoteAction = (user, vote) => {
 // dispatched after a majority vote is reached
 export const sendSwitchTimeAction = (timeofday) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/actions`).push({
     type: SWITCH_TIME,
     timeofday,
     })
@@ -207,7 +220,7 @@ export const sendSwitchTimeAction = (timeofday) => {
 // dispatched after a majority vote is reached
 export const sendKillUserAction = (user) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/actions`).push({
     type: KILLING,
     user
     })
@@ -219,7 +232,7 @@ export const sendKillUserAction = (user) => {
 // might have to turn into a moderator message
 export const sendAddTallyAction = (tally) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/actions`).push({
     type: ADD_TALLY,
     tally,
     })
