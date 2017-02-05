@@ -19,8 +19,9 @@ const Navbar = () => {
           onClick={() => browserHistory.push('/home')}
           >
           <ActionHome
+            styles={{}}
             color={'#FFFFFF'}
-            hoverColor={'#FEDFD1'}
+            hoverColor={'#6E0300'}
           />
         </IconButton>
         <h3 className='navBtnLeft'>Werewolf</h3>
@@ -32,8 +33,6 @@ const Navbar = () => {
     </div>
   )
 }
-
-
 
 
 /* -----------------    CONTAINER     ------------------ */

@@ -10,13 +10,13 @@ export const NewGame = () => {
           	<div className="formContain">
 		        <h1 className="formHeader">Start a New Game</h1>
 		        <h2>You are the Game Leader.</h2>
-		        <h3>Please fill out the fields below, you will then be redirected to your game page. 
+		        <h3>Please fill out the fields below, you will then be redirected to your game page.
 		        You can send the url to your friends and when everyone is ready you can start your game.</h3>
 		        <form >
 	            <div>
 	              <TextField
 	                name="gameName"
-	                hintText="Name of Game"
+	                // hintText="Name of Game"
 	                floatingLabelText="Name of Game"
 	                hintStyle={{color: "#FFF"}}
 		            underlineFocusStyle={{borderColor: "#FFFFFF"}}
@@ -25,7 +25,7 @@ export const NewGame = () => {
 	              /><br />
 	              <TextField
 	                name="userName"
-	                hintText="Player Name"
+	                // hintText="Player Name"
 	                floatingLabelText="Player Name"
 	                hintStyle={{color: "#AAA"}}
 	                underlineFocusStyle={{borderColor: "#FFFFFF"}}

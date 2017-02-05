@@ -18,6 +18,10 @@ body {
 
 
 .navbar {
+/*
+  display: flex;
+  justify-content: space-between;
+*/
   background-color: #1E052B;
   opacity: .8;
   position: fixed;
@@ -26,13 +30,13 @@ body {
 }
 
 .navBtnLeft{
-    float: left;
-    margin-left: 3%;
+  float: left;
+  margin: 1rem;
 }
 
 .navBtnRight .icons{
   float: right;
-  padding-right: 5%;
+  /*padding-right: 3%;*/
   margin: 1rem;
   text-decoration: none;
   color: #FFF;
