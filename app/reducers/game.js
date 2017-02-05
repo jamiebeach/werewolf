@@ -3,7 +3,7 @@ const game = 'game1';
 const initialState = {
   users: {},
   votes: [],
-  day: true,
+  day: false,
   test:'',
   villager: [],
   seer: [],
