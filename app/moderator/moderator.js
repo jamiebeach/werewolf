@@ -144,10 +144,10 @@ export default class Moderator {
       }
     })
   }
-
+// helper function
   narrate(message, role, personal, error) {
     // moderator narration function, takes in message text
-    // and sends RECIEVE_ACTION object to firebase
+    // and sends RECIEVE_MESSAGE object to firebase
     // typeof: message = string,
     // role = role, in a string,
     // personal = specific uid or 'werewolves' (leave null to send to everyone)
@@ -163,9 +163,9 @@ export default class Moderator {
     })
     .catch(err => console.error(`Error: moderator sending ${error} message to firebase`, err))
   }
-
+// helper function
   moderate(action, ref, error) {
-    // moderate function -- for every action that is not simple RECIEVE_MSG
+    // moderate function -- more general form of narrate. for every other action.
     // typeof: action = object that has type and any other info,
     // ref = the address in storeActions, in a string,
     // error =  1-2 word summary of msg (leave null for generic error)
