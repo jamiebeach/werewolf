@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import rootReducer from './reducers'
 import createLogger from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
@@ -8,7 +8,11 @@ import {fetchUsers, updateGameActions} from './reducers/game'
 
 import Moderator from './moderator/moderator'
 
-const store = createStore(rootReducer, applyMiddleware(createLogger(), thunkMiddleware))
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const store = createStore(rootReducer, composeEnhancers(
+	applyMiddleware(createLogger(), thunkMiddleware)
+))
 
 export default store
 
@@ -29,16 +33,16 @@ mod.handleJoin({name: 'galen', uid: 6});
 mod.handleStart();
 mod.handleLeaderStart();
 
-setTimeout(() => {
-  mod.handleVote({user: 'felicia', vote: 'jenny'})
-  mod.handleVote({user: 'gladys', vote: 'galen'})
-  mod.handleVote({user: 'garity', vote: 'galen'})
-  mod.handleVote({user: 'gladys', vote: 'galen'})
-  mod.handleVote({user: 'ashi', vote: 'jenny'})
-  mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
-  // mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
+// setTimeout(() => {
+//   mod.handleVote({user: 'felicia', vote: 'jenny'})
+//   mod.handleVote({user: 'gladys', vote: 'galen'})
+//   mod.handleVote({user: 'garity', vote: 'galen'})
+//   mod.handleVote({user: 'gladys', vote: 'galen'})
+//   mod.handleVote({user: 'ashi', vote: 'jenny'})
+//   mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
+//   // mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
 
-}, 6000)
+// }, 6000)
 
 // setTimeout(() => {
 //   mod.handleVote({user: 'felicia', vote: 'jenny'})

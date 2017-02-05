@@ -1,124 +1,299 @@
+/* ------ FONTS FOR ENTIRE SITE ------- */
+/* Chat/Paragraphs font: font-family: 'IM Fell French Canon', serif;
+   Headers font: font-family: 'IM Fell English SC', serif; */
+
+/* ------ COLORS FOR ENTIRE SITE ------- */
+/*#360457 Eggplant
+  #D6C967 Moonlight
+  #0D7A58 Green
+  #6E0300 Blood Red */
 
 body {
-  font-family: 'Roboto', sans-serif;
-
+  font-family: 'IM Fell French Canon', serif;
+  box-sizing: border-box;
 }
+
+
+/* ----- NAVBAR ----- */
+
+
+.navbar {
+/*
+  display: flex;
+  justify-content: space-between;
+*/
+  background-color: #1E052B;
+  opacity: .8;
+  position: fixed;
+  width: 100%;
+  color: #FFF;
+}
+
+.navBtnLeft{
+  float: left;
+  margin: 1rem;
+}
+
+.navBtnRight .icons{
+  float: right;
+  /*padding-right: 3%;*/
+  margin: 1rem;
+  text-decoration: none;
+  color: #FFF;
+}
+
 
 /* ----- LANDING PAGE ----- */
 .splash {
   height: 100vh;
   display: flex;
-
-  background-image: url('/tabbycat.png');
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-
+  padding-top: 5%;
+  background: #000;
   align-items: flex-start;
   flex-direction: column;
   justify-content: center;
+  color: #FFF;
+  background-image: url('/images/landingPage.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.landingTextBox {
+  margin-left: 12%;
+  margin-right: 10%;
+  background: rgba(0, 0, 0, .6);
+}
+
+.landingText {
+  padding-left: 2%;
+}
+
+.landingText h1 {
+  font-size: 3rem;
 }
 
 
-/* ----- CHAT PAGE ----- */
 
-.home {
-  width: 100%;
-  height: 100%;
-  text-align: center;
+.landingButton{
+  margin-left: 12%;
+  margin-top: 3rem;
 }
 
-#riddle {
-  font-size: 2rem;
+/* ----- NEW GAME ----- */
+
+.newGame {
+  height: 100vh;
+  background-image: url('/images/fullMoon.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-top: 5%;
+
 }
 
-.chat {
+.formContain {
+  width: 75%;
+  margin: 0 auto;
+  background: rgba(0, 0, 0, .5);
+  color: #FFF;
+  padding: 5%;
+  margin-top: 5%;
+}
+
+.formHeader {
+  margin: 0;
+}
+
+.newGame .button {
+  margin: 2%;
+  float: right;
+}
+/* ----- CHAT CONTAINER ----- */
+
+.chatContainer {
   width: 70%;
-  margin-top: 3%;
+  margin-top: 10%;
   display: inline-block;
   text-align: left;
   box-sizing: border-box;
 }
 
-#chat-container {
-  margin-left: 15%;
-  margin-right: 15%;
-}
-
-#chat-input {
-  margin-top: 5%;
-}
-
-#statement-bubble {
-  border-radius: 10px !important;
-  margin: 5px;
-}
-
-.playerslist {
-  width: 20%;
-  margin-top: 3%;
-  margin-right: 5%;
-  float: right;
-}
-
-#player-name {
-  font-size: 18px;
-  margin: 5px;
-}
-
-#statement {
-  font-size: 15px;
-  margin: 5px;
-}
-
-#all-statements {
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-.chat img {
+.chatContainer img {
   margin-left: 15%;
   margin-right: 15%;
   width: 70%;
 }
 
-/* ----- FORM PAGES ----- */
-
-.formContain {
-  width: 50%;
-  margin-left: 25%;
-  padding-top : 2%;
+#chat-window-container {
+  margin-left: 10%;
+  margin-right: 25%;
+  height:80%;
 }
 
-.loginPaper {
+.night #chat-window-container {
+  background: rgba(0, 0, 0, .5);
+}
+
+.day #chat-window-container {
+  background: rgba(255, 255, 255, .5);
+}
+
+.chat-window {
+  height: 300px;
+  overflow-y: scroll;
+  padding-left: 0;
+}
+
+.day, .night {
+  width: 100%;
+  height: 100vh;
+  text-align: center;
+}
+
+.day {
+  background-image: url('/images/village.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.night {
+  background-image: url('/images/werewolf.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+/* ----- CHAT BOX ----- */
+
+#chat-input {
+  margin-top: 5%;
+}
+
+.btn {
+  background: #FFF;
+  border: 0;
+  padding: 5px 10px;
+}
+
+.enterText {
+  background: #6E0300;
+  color: #FFF;
+  margin: 10px;
+  float: right;
+  font-family: 'IM Fell English SC', serif;
+}
+
+#statement-bubble {
+  margin: 5px;
+  float:left;
+}
+
+.avatar {
+  height: 30px;
+  width: 30px;
+  border: 1px solid #000;
+  flex-shrink: 0;
+}
+.night .avatar {
+  border-color: #FFF;
+}
+
+.text-content {
+  flex-grow: 3;
+}
+
+.message-content {
+  font-family: 'IM Fell French Canon', serif;
+  font-size: 15px;
+  margin: 5px;
+  color: #000;
+}
+
+.night .message-content {
+  color: #FFF;
+}
+
+.message {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 17px;
+  list-style-type: none;
+  display: flex;
+}
+
+.player-name {
+  font-family: 'IM Fell English SC', serif;
+  font-size: 18px;
+  margin: 5px;
+  color: #000;
+}
+
+.night .player-name {
+  color: #FFF;
+}
+
+
+/* ----- PLAYERS LEGEND ----- */
+
+.playerslist {
+  opacity: .8;
+  width: 20%;
+  margin-top: 10%;
+  margin-right: 5%;
+  float: right;
+  font-family: 'IM Fell English SC', serif;
+}
+
+
+/* ------ RULES PAGE ------- */
+.rules {
+  height: 100%;
+  background-image: url('/images/fullMoon.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.rules-container {
+  width: 70%;
+  margin-left: 15%;
+  padding-top : 10%;
+}
+
+.rules-paper {
   text-align : center;
   padding-top : 5%;
+  margin-bottom: 5%;
+  background: rgba(0, 0, 0, .5);
+  color: #FFF;
 }
 
-.signUpPaper {
-  text-align : center;
-  padding-top : 5%;
+.rules-header {
+  color : #D6C967
 }
 
-.button {
-  margin: 20%;
+
+
+.row {
+  margin-right: 5%;
+  margin-left: 5%;
 }
 
-.formHeader {
-  color : #57D5FF
+.col-4 {
+  display:inline-block;
+  width: 30%;
+  vertical-align: top;
+  text-align: left;
 }
 
-/* ----- ADD IMAGE ----- */
-
-.alert {
-  padding: 0.75rem 1.25rem;
-  margin-bottom: 1rem;
+.col-8 {
+  display:inline-block;
+  width: 70%;
 }
 
-.alert-warning {
-  background-color: #fcf8e3;
-  color: #8a6d3b;
-}
 
 /*-----  MEDIA QUERIES ----- */
 
@@ -139,16 +314,6 @@ body {
     overflow: hidden;
   }
 
-  .cat {
-    width: 100%;
-  }
-  .question {
-    width: 100%;
-    padding-right: 5%;
-  }
-  #riddle {
-    font-size: 1rem;
-  }
 }
 
 /* Phones */
@@ -159,16 +324,7 @@ body {
     display: block;
     overflow: hidden;
   }
-  .cat {
-    width: 100%;
-  }
-  .question {
-    width: 100%;
-    padding-right: 5%;
-  }
-  #riddle {
-    font-size: 1rem;
-  }
+
 
   /* FORM PAGES */
   .formContain {
@@ -188,19 +344,7 @@ body {
     display: block;
     overflow: hidden;
   }
-  .cat {
-    width: 30%;
-    float: left;
-  }
-  .question {
-    display: block;
-    width: 65%;
-    padding-right: 5%;
-    float: left;
-  }
-  #riddle {
-    font-size: 1rem;
-  }
+
 
   /* FORM PAGES */
   .loginPaper {
@@ -218,44 +362,6 @@ body {
   }
 }
 
-/* RULES PAGE */
-
-.rules-container {
-  width: 70%;
-  margin-left: 15%;
-  padding-top : 2%;
-}
-
-.rules-paper {
-  text-align : center;
-  padding-top : 5%;
-  margin-bottom: 5%;
-}
-
-.rules-header {
-  color : #57D5FF
-}
-
-.grid {
-  color: gray;
-}
-
-.row {
-  margin-right: 5%;
-  margin-left: 5%;
-}
-
-.col-4 {
-  display:inline-block;
-  width: 30%;
-  vertical-align: top;
-  text-align: left;
-}
-
-.col-8 {
-  display:inline-block;
-  width: 70%;
-}
 
 
 

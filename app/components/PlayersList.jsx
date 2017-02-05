@@ -51,6 +51,7 @@ const PlayersList = (props) => {
         cols={1}
         cellHeight="auto"
         >
+
         <List>
         {Object.keys(players).map((player, index) => {return (
           <ListItem
@@ -58,7 +59,7 @@ const PlayersList = (props) => {
             key={index}
             primaryText={player}
             leftIcon={getIcon(player, user)}
-            leftCheckbox={(((player === user.name) || !players[player].alive) || !user.alive) ? null :<Checkbox />}
+            leftCheckbox={(((player === user.name) || !players[player].alive) || !user.alive) ? null :<Checkbox iconStyle={{fill: "#6E0300"}}/>}
             insetChildren={true}
             style={{
               backgroundColor: pickColor(players[player], user, day),

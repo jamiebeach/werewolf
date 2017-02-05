@@ -1,3 +1,11 @@
+/*
+  actions
+  settings
+  moderator class
+    constructor / official game state
+    functions
+  helper function
+*/
 
 /* -----------------    ACTIONS     ------------------ */
 
@@ -22,9 +30,9 @@ const colors =
 
 // milliseconds for various setTimeouts
 const timeToRead = 5000;  // 5000
-
 const timeForNight = 7000; // 10000
 const timeForDay = 10000; // 100,000 -> this is 1m40s
+
 
 /* ----------------- THE MODERATOR ------------------ */
 
@@ -32,15 +40,18 @@ const timeForDay = 10000; // 100,000 -> this is 1m40s
 // its props reflect the game state at every given point
 
 // players send actions to "PlayerActions" on firebase
-// the moderator listens to that key,
-// (as the only person listening to all player events)
+// the moderator listens to that key.
+// as the only person listening to all player events, mod
 // logically adjusts the props, and responds to "StoreActions"
 
 // players do NOT listen to "PlayerActions"
 // players only listen to assigned channels on "StoreActions"
+// they only change what mod has told them to change
+// which may be "personal" private state changes
+// OR public, simultaneous changes for everyone
 
 /* -------------- currently... --------------- */
-// a new instance of the moderator class is invoked
+// a new instance of the moderator class should be invoked
 // by the leader who initiates a game chat room
 
 // the leader then commands "/ready"
@@ -58,45 +69,52 @@ export default class Moderator {
   constructor(gameName, leaderName, uid) {
     this.gameName = gameName;
     this.leaderId = uid;
+
     this.players = [];
-    this.votes = [];
-    this.day = true;
+    this.didStart = false; // roles have been assigned and leader sends /ready
     this.seerId = '';
     this.priestId = '';
-    this.didStart = false;
-    this.didScry = false;
-    this.didSave = false;
-    this.chosen = '';
-    this.winner = '';
+
+    this.votes = [];
+    this.day = true;
+    this.didScry = false; // seer action once per night
+    this.didSave = false; // priest action once per night
+    this.chosen = ''; // chosen to die that day/night
+
+    this.winner = ''; // winner is string, villagers or werewolves
 
     // listen to player actions in firebase
     firebase.database().ref(`games/${this.gameName}/playerActions/`)
     .on('child_added', function(action){
       const playerAction = action.val();
+
       switch (playerAction.type) {
         case RECIEVE_MESSAGE:
-          // let msg = {
-          //   text: action.message,
-          //   user: action.user,
-          // }
-          //newState[action.role] = [...newState[action.role], msg]
+          if (playerAction.role === 'seer' && playerAction.target) {
+            this.handleScry(playerAction)
+          }
+          else if (playerAction.role === 'priest' && playerAction.target) {
+            this.handleSave(playerAction)
+          }
+          else {
+            this.moderate(playerAction, playerAction.role, 'msg')
+          }
           break;
 
         case RECIEVE_VOTE:
-          // let vote = {
-          //   killUser: action.vote,
-          //   user: action.user
-          // }
-          //newState.votes = [...newState.votes, vote];
+          this.handleVote(playerAction)
           break;
 
         case ADD_USER: // make this
+          this.handleJoin(playerAction)
           break;
 
         case LEADER_START: // make this
+          this.handleLeaderStart()
           break;
 
         case START_GAME: // make this
+          this.handleStart()
           break;
 
         default:
@@ -104,6 +122,35 @@ export default class Moderator {
 
       }
     })
+  }
+
+  narrate(message, role, personal, error) {
+    // moderator narration function, takes in message text
+    // and sends RECIEVE_ACTION object to firebase
+    // typeof: message = string,
+    // role = role, in a string,
+    // personal = specific uid or 'werewolves' (leave null to send to everyone)
+    // error = 1-2 word summary of msg (leave null for generic error)
+    let ref = personal ? personal : 'public';
+
+    firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
+    .push({
+      type: RECIEVE_MESSAGE,
+      name: 'moderator',
+      message: `${message}`,
+      role: `${role}`
+    })
+    .catch(err => console.error(`Error: moderator sending ${error} message to firebase`, err))
+  }
+
+  moderate(action, ref, error) {
+    // moderate function -- for every action that is not simple RECIEVE_MSG
+    // typeof: action = object that has type and any other info,
+    // ref = the address in storeActions, in a string,
+    // error =  1-2 word summary of msg (leave null for generic error)
+    firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
+    .push(action)
+    .catch(err => console.error(`Error: moderator sending ${error} action to firebase`, err))
   }
 
   handleJoin(playerAction) {
@@ -114,23 +161,20 @@ export default class Moderator {
         alive: true,
         uid: playerAction.uid,
         immunity: false,
-        color: color,
-        ready: false
+        color: color
+        // moderator has not determined roles
       }
     );
 
-    firebase.database().ref(`games/${this.gameName}/storeActions/public`).push({
+    let player = {
       type: ADD_USER,
       name: playerAction.name,
       alive: true,
-      color: color,
       uid: playerAction.uid,
-      role: 'villager'
-    })
-    .then(res => {
-      console.log('moderator adduser', res);
-    })
-    .catch(err => console.error('Error sending adduser to storeactions in firebase', err))
+      color: color,
+      role: 'villager' //everyone is "villager" at first
+    }
+    this.moderate(player, 'public', 'adduser')
   }
 
   handleScry(seerAction) {
@@ -138,23 +182,24 @@ export default class Moderator {
 
     if (seerAction.role === 'seer' && sender.role === 'seer' && !this.day) {
 
-      firebase.database().ref(`games/${this.gameName}/storeActions/${sender.uid}`).push({
-          type: RECIEVE_MESSAGE,
-          user: sender.name,
-          message: `/peek ${seerAction.target}`,
-          role: sender.role,
-        })
+      let scry = {
+        type: RECIEVE_MESSAGE,
+        user: sender.name,
+        message: `/peek ${seerAction.target}`,
+        role: sender.role,
+      }
+      this.moderate(scry, this.seerId, 'peeking')
 
       if (this.didScry) {
-        let msg = 'You have already exhausted your mystical powers for tonight. Go to bed and try again tomorrow.'
 
-        narrate(msg, sender.role, sender.uid, 'already scryed')
+        let msg = 'You have already exhausted your mystical powers for tonight. Go to bed and try again tomorrow.'
+        this.narrate(msg, sender.role, sender.uid, 'already scryed')
       } else {
+
         this.didScry = true;
         let werewolfStatus = this.players[seerAction.target].role === 'werewolf';
         let msg = werewolfStatus ? `${seerAction.target} definitely howls at the moon` : `${seerAction.target} wouldn't hurt a fly`
-
-        narrate(msg, sender.role, sender.uid, 'scry results')
+        this.narrate(msg, sender.role, sender.uid, 'scry results')
       }
     }
   }
@@ -164,17 +209,18 @@ export default class Moderator {
 
     if (priestAction.role === 'priest' && sender.role === 'priest' && !this.day) {
 
-      firebase.database().ref(`games/${this.gameName}/storeActions/${sender.uid}`).push({
-          type: RECIEVE_MESSAGE,
-          user: sender.name,
-          message: `/save ${priestAction.target}`,
-          role: sender.role,
-        })
+      let save = {
+        type: RECIEVE_MESSAGE,
+        user: sender.name,
+        message: `/save ${priestAction.target}`,
+        role: sender.role,
+      }
+      this.moderate(save, this.priestId, 'saving')
 
       if (this.didSave) {
         let msg = 'You have already exhausted your holy powers for tonight. Go to bed and try again tomorrow.'
 
-        narrate(msg, sender.role, sender.uid, 'already saved')
+        this.narrate(msg, sender.role, sender.uid, 'already saved')
 
       } else {
         this.didSave = true;
@@ -182,14 +228,9 @@ export default class Moderator {
 
         let msg = `A divine shield surrounds ${priestAction.target}, protecting them from the werewolves for tonight.`
 
-        narrate(msg, sender.role, sender.uid, 'saving')
+        this.narrate(msg, sender.role, sender.uid, 'saving')
       }
     }
-  }
-
-  handleMessage(playerAction) {
-
-    firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(playerAction)//...
   }
 
   handleVote(playerAction) {
@@ -202,14 +243,13 @@ export default class Moderator {
       let methodOfMurder = this.day ? 'lynch' : 'maul';
 
       let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.vote}`
-      narrate(msg, role, null, `${role} voting`)
+      this.narrate(msg, role, null, `${role} voting`)
     }
 
     else {
       let msg = `${playerAction.vote} is already dead.`
-      narrate(msg, role, this.players[playerAction.user].uid, role)
+      this.narrate(msg, role, this.players[playerAction.user].uid, role)
     }
-
   }
 
   tallyVotes() {
@@ -259,19 +299,16 @@ export default class Moderator {
     }
     else {
       chosen.alive = false;
-      //send this as an action to the public store
-      firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
-        {
+      let kill = {
           type: UPDATE_USER,
           name: chosen.name,
           alive: false,
-        })
-        .catch(err => console.error('Error: moderator sending death message to firebase', err));
-
+        }
+      this.moderate(kill, 'public', 'death')
       msg = `Everyone wakes up and discovers that ${this.chosen} was eaten by werewolves last night. Avenge their death!`
     }
 
-    narrate(msg, 'villager', null, 'morning')
+    this.narrate(msg, 'villager', null, 'morning')
     //resetting the night props
     chosen.immunity = false;
     this.chosen = null;
@@ -281,27 +318,25 @@ export default class Moderator {
   }
 
   nightActions() {
-    narrate(`Everyone in the village goes to sleep.`, 'villager')
+    this.narrate(`Everyone in the village goes to sleep.`, 'villager')
     // settimeout gives people a chance to read before night switch
       setTimeout(() => {
         this.day = false;
-        firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
-          {
-            type: 'SWITCH_TIME',
-            timeofday: 'nighttime'
-          }
-        )
-        .catch(err => console.error('Error: moderator sending night to firebase', err));
+        let timeswitch = {
+          type: 'SWITCH_TIME',
+          timeofday: 'nighttime'
+        }
+        this.moderate(timeswitch, 'public', 'night time')
 
         // send messages to special people
         let wmsg = `Werewolves, awaken.  Select a villager to kill, you must agree on a target`
-        narrate(wmsg, 'wolf', 'werewolves', 'awaken wolves')
+        this.narrate(wmsg, 'wolf', 'werewolves', 'awaken wolves')
 
         let smsg = `Seer, awaken.  Select a villager to scry on.  You can only do this once a night.`
-        narrate(smsg, 'seer', this.seerId, 'awaken seer')
+        this.narrate(smsg, 'seer', this.seerId, 'awaken seer')
 
         let pmsg = `Priest, awaken.  Select a villager to save.  You can only do this once a night.`
-        narrate(pmsg, 'priest', this.priestId, 'awaken priest')
+        this.narrate(pmsg, 'priest', this.priestId, 'awaken priest')
 
       }, timeToRead);
 
@@ -313,22 +348,19 @@ export default class Moderator {
 
   dayActions() {
     this.day = true;
-    firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
-      {
-        type: 'SWITCH_TIME',
-        timeofday: 'daytime'
-      }
-    )
-    .catch(err => console.error('Error: moderator sending day to firebase', err));
-
-    narrate(`The sun rises. A new day begins for the village.`, 'villager')
+    let timeswitch = {
+      type: 'SWITCH_TIME',
+      timeofday: 'daytime'
+    }
+    this.moderate(timeswitch, 'public', 'day time')
+    this.narrate(`The sun rises. A new day begins for the village.`, 'villager')
     this.resolveNightEvents();
 
     //werewolves may have won at this point
     this.checkWin();
     if (this.winner === 'werewolves'){
       let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
-      narrate(msg, 'villager', null, 'wolf win')
+      this.narrate(msg, 'villager', null, 'wolf win')
     }
     else {
       // settimeout for daytime discussions. votes tally as soon as day ends.
@@ -339,26 +371,25 @@ export default class Moderator {
         chosen.alive = false;
 
         let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
-        narrate(msg, 'villager', null, 'lynch')
+        this.narrate(msg, 'villager', null, 'lynch')
 
-        //send this as an action to the public store
-        firebase.database().ref(`games/${this.gameName}/storeActions/public`).push(
-        {
+        let kill = {
           type: UPDATE_USER,
           name: chosen.name,
           alive: false,
-        })
-        .catch(err => console.error('Error: moderator sending death message to firebase', err));
-
+        }
+        this.moderate(kill, 'public', 'death')
         this.checkWin();
+
         if (this.winner === 'werewolves'){
           msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
-          narrate(msg, 'villager', null, 'wolf win')
+          this.narrate(msg, 'villager', null, 'wolf win')
         }
         else if (this.winner === 'villagers'){
           msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
-          narrate(msg, 'villager', null, 'village win')
+          this.narrate(msg, 'villager', null, 'village win')
         } else {
+
           this.chosen = null;
           this.votes = [];
 
@@ -408,30 +439,28 @@ export default class Moderator {
     // send werewolf roles to all werewolves
     for (let i = 0; i < werewolves.length; i++) {
       for (let j = 0; j < werewolves.length; j++) {
-        firebase.database().ref(`games/${this.gameName}/storeActions/${werewolves[i].uid}`).push(wwToFirebase[j])
-        .catch(err => console.error('Error: moderator sending role to firebase', err))
+        this.moderate(wwToFirebase[i], werewolves[j].uid, 'sending wolf role')
       }
     }
 
     // send one role to everyone else
     others.forEach((player, index) => {
-      firebase.database().ref(`games/${this.gameName}/storeActions/${player.uid}`).push({
+      this.moderate({
         type: UPDATE_USER,
         name: player.name,
         role: player.role
-      })
-      .catch(err => console.error('Error: moderator sending role to firebase', err))
+      }, player.uid, 'sending role')
     })
 
     // send messages containing roles to everyone
     this.players.forEach((player, index) => {
       let msg = `You are a ${player.role}.  The leader will start the game when everyone is ready.`
-      narrate(msg, 'villager', player.uid, 'role assign')
+      this.narrate(msg, 'villager', player.uid, 'role assign')
     })
 
     // tell leader to use slash command to start
     let msg = `Type '/ready' to begin.`
-    narrate(msg, 'villager', this.leaderId, 'leader ready')
+    this.narrate(msg, 'villager', this.leaderId, 'leader ready')
   }
 
   checkWin(){
@@ -458,27 +487,8 @@ export default class Moderator {
 
 /* ----------------- HELPER FUNCTIONS ------------------ */
 
-// moderator narration function, takes in message text
-// and sends RECIEVE_ACTION object to firebase
-// typeof: message = string,
-// role = role, in a string,
-// personal = specific uid or 'werewolves' (leave null to send to everyone)
-// error = 1-2 word summary of msg (leave null for generic error)
-function narrate(message, role, personal, error){
-  let ref = personal ? personal : 'public';
-
-  firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
-  .push({
-    type: RECIEVE_MESSAGE,
-    name: 'moderator',
-    message: `${message}`,
-    role: `${role}`
-  })
-  .catch(err => console.error(`Error: moderator sending ${error} to firebase`, err))
-}
-
 // randomize a list functon, used for assigning roles
-function shuffle(array) {
+const shuffle = (array) => {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
   // While there remain elements to shuffle...
