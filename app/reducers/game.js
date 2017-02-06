@@ -1,11 +1,11 @@
 import { browserHistory } from 'react-router';
 
-let gameId = 'modmerge test';
+export let gameId;
 
 const initialState = {
   self: {},
   users: {},
-
+  gameId: '',
   day: true,
   votes: [],
 
@@ -38,9 +38,11 @@ const reducer = (state = initialState, action) => {
       break;
 
     case SET_SELF:
-      console.log("inside reducer ", action.self);
       newState.self = action.self;
       break;
+
+    case UPDATE_SELF:
+      newState.self.joined = true;
 
     case RECIEVE_USER:
       newState.users[action.uid] = {
@@ -103,8 +105,10 @@ const reducer = (state = initialState, action) => {
 /* -----------------    ACTIONS     ------------------ */
 
 const ADD_GAMEID = 'ADD_GAMEID';
+const SET_GAMEID = 'SET_GAMEID';
 
 const SET_SELF = 'SET_SELF';
+const UPDATE_SELF = 'UPDATE_SELF'
 const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
 const RECIEVE_USER = 'RECIEVE_USER';
@@ -130,6 +134,10 @@ const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 
 export const setSelf = self => ({
   type: SET_SELF, self
+})
+
+export const updateSelf = () => ({
+  type: UPDATE_SELF
 })
 
 export const getAllUsers = users => ({
@@ -182,30 +190,19 @@ export const createNewGame = (userName, gameName, uid) => {
 export const joinGame = (name, gameId) => {
   return dispatch => {
     const uid = firebase.auth().currentUser.uid;
-    console.log("uid", uid);
     const gameId = req.query.id;
-    console.log("gameId inside JOINGAME ", gameId);
-    const self = {
-      alive: true,
-      won: false,
-      uid: uid,
-      //TODO add color somehow
-      color: null,
-    }
-    // dispatch(setSelf(self));
     dispatch(addUser(name, uid, gameId));
-
-
+    dispatch(updateSelf());
   }
 }
 
-// when user joins a game they input a Player name. 
+// when user joins a game they input a Player name.
 export const addUser = (username, uid, gameId) => {
   return () => {
     firebase.database().ref(`games/${gameId}/playerActions`).push({
       type: ADD_USER,
       name: username,
-      uid: uid,
+      uid: uid
     })
     .catch(console.error)
   }
@@ -242,21 +239,25 @@ export const updateWolfActions = () => {
   }
 }
 
-// send messages as player actions
-export const sendMessageAction = (user, message, role) => {
-  return dispatch => {
-    firebase.database().ref(playerActions).push({
-      type: RECIEVE_MESSAGE,
-      user: user,
-      message: message,
-      role: role,
-    })
-    .then(res => {
-      // console.log('message sent to firebase')
-    })
-    .catch(err => console.error('Error sending message to firebase', err))
+// in util.js
+const gameAction =
+  actionCreator =>
+  (...args) => (dispatch, getState) => {
+    const {gameId} = getState().game
+    const playerActions = firebase.database().ref(`games/${gameId}/playerActions`)
+    const action = actionCreator(...args)
+    return playerActions.push(action)
   }
-}
+
+// send messages as player actions
+export const sendMessageAction = gameAction(
+  (user, message, role) => ({
+    type: RECIEVE_MESSAGE,
+    user: user,
+    message: message,
+    role: role,
+  })
+)
 
 // send votes as player actions
 export const sendVoteAction = (user, vote) => {

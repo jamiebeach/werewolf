@@ -5,7 +5,7 @@ import ChatBox from './ChatBox';
 import PlayersList from './PlayersList';
 
 const ChatContainer = props => {
-
+console.log("props.self.name", props.self.name)
   return(
     <div className={props.game.day? 'day' : 'night'}>
       <div className="chatContainer">
@@ -166,7 +166,7 @@ const bobette = {  // live werewolf
 const mapStateToProps = state => {
   return {
     game: state.game,
-    user: bobette
+    self: state.game.self
   };
 };
 

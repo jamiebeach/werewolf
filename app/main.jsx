@@ -9,7 +9,7 @@ import Welcome from './components/Welcome';
 import JoinGame from './components/JoinGame';
 import NewGame from './components/NewGame';
 import Rules from './components/Rules';
-import ChatContainer from './components/ChatContainer';
+import GameContainer from './components/GameContainer';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
@@ -25,10 +25,9 @@ render(
           <IndexRedirect to="/home" />
           <Route path="/home" component={Welcome} />
           <Route path="/newgame" component={NewGame} />
-          <Route path='/joingame' component={JoinGame} />
+          <Route path='/joingame/:id' component={JoinGame} />
           <Route path="/rules" component={Rules} />
-          <Route path="/chat" component={ChatContainer} />
-          <Route path="/chat/:id" component={ChatContainer} />
+          <Route path="/game/:id" component={GameContainer} />
         </Route>
       </Router>
     </Provider>

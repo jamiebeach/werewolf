@@ -39,16 +39,15 @@ export const anonLogin = () =>
   dispatch => {
     firebase.auth().signInAnonymously()
     .then(res => {
-      console.log("inside anonLogin");
-      const uid = res.val().uid;
+      const uid = res.uid;
       const self = {
+        joined: false,
         alive: true,
         won: false,
         uid: uid,
         //TODO add color somehow
         color: null,
       }
-      console.log("inside anonLogin", self);
       dispatch(setSelf(self));
     })
     .catch(() => console.log("login failed"));
