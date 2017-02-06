@@ -239,6 +239,7 @@ body {
 /* ----- PLAYERS LEGEND ----- */
 
 .playerslist {
+
   opacity: .8;
   width: 20%;
   margin-top: 10%;
@@ -248,8 +249,33 @@ body {
 }
 
 .listContainer {
-  margin: 15%;
+  margin-right: 5%;
 }
+
+.list {
+  list-style: none;
+  width: 100%;
+}
+
+.list li {
+  text-align: left;
+  height: 50px;
+  font-size: 120%;
+  margin-left: 5%;
+}
+
+.avatar {
+
+  width: 45px;
+  float: left;
+  margin-right: 4%;
+  margin-top: 1%;
+}
+
+.avatar img {
+  width: 100%;
+}
+
 
 
 /* ------ RULES PAGE ------- */
@@ -338,21 +364,40 @@ body {
 
   .chatHalf {
     width: 90%;
+    margin-top: 15%;
   }
 
   #chat-window-container {
     width: 100%;
     margin: auto;
-    margin-top: 5%;
+    
   }
 
   .chat-window {
     width: 100%;
   }
 
-  .playersList {
-    display: inline;
-    list-style-type: none;
+  .playerslist {
+    width: 100%
+    margin-top: 0;
+    float: none;
+
+  }
+
+  .listContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .list {
+    display: flex;
+  }
+
+  .list li {
+    width: 80px;
+    height: 90px;
   }
 
   /* NEW GAME PAGES */

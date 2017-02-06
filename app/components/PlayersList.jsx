@@ -1,18 +1,8 @@
 import React, {Component} from 'react';
-
-// import {GridList, GridTile} from 'material-ui/GridList';
-import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader';
-import Avatar from 'material-ui/Avatar';
+import ListItem from './ListItem';
 import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
-import Paper from 'material-ui/Paper';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import {List, ListItem} from 'material-ui/List';
-import ActionGrade from 'material-ui/svg-icons/action/grade';  // star
-import Healing from 'material-ui/svg-icons/image/healing';
-import Eye from 'material-ui/svg-icons/image/remove-red-eye';
-import Checkbox from 'material-ui/Checkbox';
+
+
 
 // expects players, user, and day from props
 
@@ -71,26 +61,24 @@ const PlayersList = (props) => {
 
   return (
     <div className='listContainer'>
-      <List>
+      <ul className='list'>
       {Object.keys(players).map((player, index) => {return (
         <ListItem
           id={players[player].uid}
           key={index}
           primaryText={player}
-          leftIcon={getIcon(player, user)}
-          leftCheckbox={(((player === user.name) || !players[player].alive) || !user.alive) ? null :<Checkbox iconStyle={{fill: "#6E0300"}}/>}
-          insetChildren={true}
-          style={{
-            backgroundColor: pickColor(players[player], user, day),
-            textDecoration: dead(players[player]),
-            fontFamily: 'IM Fell English SC, serif'
-          }}
+          color= {pickColor(players[player], user, day)}
+          dead=  {dead(players[player])}
         />
       )})}
-      </List>
-
+      </ul>
     </div>
   )
 }
 
 export default PlayersList;
+
+
+// leftIcon={getIcon(player, user)}
+// leftCheckbox={(((player === user.name) || !players[player].alive) || !user.alive) ? null :<Checkbox iconStyle={{fill: "#6E0300"}}/>}
+// insetChildren={true}
