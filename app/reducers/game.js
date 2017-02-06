@@ -1,6 +1,8 @@
-const game = 'game1';
+// const game = 'game1';
+import { browserHistory } from 'react-router';
 
 const initialState = {
+  gameId: null,
   users: {},
   votes: [],
   day: true,
@@ -26,6 +28,13 @@ const reducer = (state = initialState, action) => {
   const newState = Object.assign({}, state)
 
   switch(action.type) {
+
+    case ADD_GAMEID:
+    console.log("inside switch, ", action.gameId);
+      newState.gameId = action.gameId;
+
+    case ADD_USER:
+      newState.users = [...newState.users, action.user];
 
     case GET_USERS:
       newState.users = action.users;
@@ -88,13 +97,15 @@ const reducer = (state = initialState, action) => {
 
 /* -----------------    ACTIONS     ------------------ */
 
+const  ADD_GAMEID = 'ADD_GAMEID';
+
 const RECIEVE_MESSAGE = 'RECIEVE_MESSAGE';
 const RECIEVE_VOTE = 'RECIEVE_VOTE';
 const SWITCH_TIME = 'SWITCH_TIME';
 const GET_USERS = 'GET_USERS';
 
 
-// const ADD_USER = 'ADD_USER';
+const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
 const SET_SELF = 'SET_SELF';
 
@@ -150,25 +161,55 @@ export const fetchUsers = () => {
   }
 }
 
-// // when user joins a game they input a username. Users are stored by username in the db
-// export const addUser = (username, role) => {
-//   return dispatch => {
-//     firebase.database().ref('users').push({
-//       type: ADD_USER,
-//       role,
-//       alive,
-//       won,
-//       uid,
-//       color,
-//     })
-//     .catch(console.error)
-//   }
-// }
+// when user joins a game they input a username. Users are stored by username in the db
+export const addUser = (username) => {
+  return dispatch => {
+    firebase.database().ref(`games/${gameId}/playerActions`).push({
+      type: ADD_USER,
+      role,
+      alive,
+      won,
+      uid,
+      color,
+    })
+    .catch(console.error)
+  }
+}
+
+export const setGameId = (gameId) => {
+  return dispatch => {
+    console.log("inside setGameId ", gameId)
+     firebase.database().ref(`games/${gameId}/playerActions`).push({
+      type: ADD_GAMEID,
+      gameId
+     })
+     .catch(console.error);
+  }
+
+}
+
+export const createNewGame = (userName, gameName) => {
+  return dispatch => {
+    console.log("creating new game with ", userName, gameName);
+    // Pushes a new game into firebase, the random key is returned and saved as gameId
+    const gameId = firebase.database().ref('games').push({
+      name: gameName
+    });
+    // TODO adds game leader to users on State => not sure if this should be on state.game or state.moderator
+    // .then(() => addUser(userName, null))
+    // TODO need to call new Moderator
+    // TODO gameId not currently updating on state
+    gameId.then(() =>  {
+      dispatch(setGameId(gameId.key));
+      browserHistory.push(`/chat/${gameId.key}`)
+    });
+  }
+}
 
 // send Message to firebase
 export const sendMessageAction = (user, message, role) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/playerActions`).push({
       type: RECIEVE_MESSAGE,
       user: user,
       message: message,
@@ -184,7 +225,7 @@ export const sendMessageAction = (user, message, role) => {
 // send votes to firebase
 export const sendVoteAction = (user, vote) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/playerActions`).push({
       type: RECIEVE_VOTE,
       user: user,
       vote: vote
@@ -196,7 +237,7 @@ export const sendVoteAction = (user, vote) => {
 // dispatched after a majority vote is reached
 export const sendSwitchTimeAction = (timeofday) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/playerActions`).push({
     type: SWITCH_TIME,
     timeofday,
     })
@@ -207,7 +248,7 @@ export const sendSwitchTimeAction = (timeofday) => {
 // dispatched after a majority vote is reached
 export const sendKillUserAction = (user) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/playerActions`).push({
     type: KILLING,
     user
     })
@@ -219,7 +260,7 @@ export const sendKillUserAction = (user) => {
 // might have to turn into a moderator message
 export const sendAddTallyAction = (tally) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(`games/${gameId}/playerActions`).push({
     type: ADD_TALLY,
     tally,
     })
@@ -290,7 +331,7 @@ export const assignRoles = () => {
     roles = shuffle(roles);
 
     names.forEach((name, index) => {
-      firebase.database().ref(`${game}/actions`).push({
+      firebase.database().ref(`games/${gameId}/playerActions`).push({
         type: UPDATE_USER,
         name,
         role: roles[index]
@@ -314,8 +355,10 @@ export const sendPeekAction = (seerName, targetName) => {
 
 // Generic Action Listner, will recieve actions whenever firebase/actions updates
 export const updateGameActions = () => {
-  return dispatch => {
-    firebase.database().ref(`${game}/actions/`).on('child_added', function(action){
+  return (dispatch, getState) => {
+    const gameId = getState().game.gameId;
+    firebase.database().ref(`games/${gameId}/playerActions`).on('child_added', function(action){
+      console.log('recieved action from firebase ', action)
         dispatch(firebaseUpdate(action.val()))
     })
   }
