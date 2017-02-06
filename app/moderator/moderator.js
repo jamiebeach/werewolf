@@ -18,6 +18,8 @@ const UPDATE_USER = 'UPDATE_USER';
 const SCRYING = 'SCRYING';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
+const ADD_GAMEID = 'ADD_GAMEID';
+const RECIEVE_USER = 'RECIEVE_USER';
 
 /* ----------------- CONSTANTS: SETTINGS ------------------ */
 
@@ -124,6 +126,10 @@ export default class Moderator {
           this.handleStart()
           break;
 
+        case ADD_GAMEID:
+          this.handleGameId()
+          break;
+
         case LEADER_START: // make this
           this.handleLeaderStart()
           break;
@@ -187,6 +193,13 @@ export default class Moderator {
     .catch(err => console.error(`Error: moderator sending ${error} action to firebase`, err))
   }
 
+  handleGameId(gameId) {
+    firebase.database.ref(`games/${this.gameName}/storeActions/public`).push({
+      type: RECIEVE_GAMEID,
+      gameId
+    })
+  }
+
   handleJoin(playerAction) {
     const color = colors[this.players.length];
     this.players.push(
@@ -201,7 +214,7 @@ export default class Moderator {
     );
 
     let player = {
-      type: ADD_USER,
+      type: RECIEVE_USER,
       name: playerAction.name,
       alive: true,
       uid: playerAction.uid,

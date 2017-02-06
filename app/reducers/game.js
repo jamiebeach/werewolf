@@ -1,9 +1,8 @@
 import { browserHistory } from 'react-router';
 
-const game = 'modmerge test';
+let gameId = 'modmerge test';
 
 const initialState = {
-  gameId: null,
   self: {},
   users: {},
 
@@ -17,8 +16,8 @@ const initialState = {
   priest: [],
 }
 
-const playerActions = `games/${game}/playerActions/`;
-const storeActions = `games/${game}/storeActions/`;
+const playerActions = `games/${gameId}/playerActions/`;
+const storeActions = `games/${gameId}/storeActions/`;
 
 //TODOS
 // do we want to delay daytime voting?
@@ -33,16 +32,17 @@ const reducer = (state = initialState, action) => {
 
   switch (action.type) {
 
-    case ADD_GAMEID:
+    case RECIEVE_GAMEID:
     // console.log("inside switch, ", action.gameId);
-      newState.gameId = action.gameId;
+      gameId = action.gameId;
       break;
 
     case SET_SELF:
+      console.log("inside reducer ", action.self);
       newState.self = action.self;
       break;
 
-    case ADD_USER:
+    case RECIEVE_USER:
       newState.users[action.uid] = {
         name: action.name,
         alive: true,
@@ -107,6 +107,7 @@ const ADD_GAMEID = 'ADD_GAMEID';
 const SET_SELF = 'SET_SELF';
 const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
+const RECIEVE_USER = 'RECIEVE_USER';
 
 const RECIEVE_MESSAGE = 'RECIEVE_MESSAGE';
 const RECIEVE_VOTE = 'RECIEVE_VOTE';
@@ -115,6 +116,7 @@ const SWITCH_TIME = 'SWITCH_TIME';
 const SCRYING = 'SCRYING';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
+const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 
 /* ------------     ACTION CREATORS     ------------------ */
 // export const recieveMessage = message => ({
@@ -177,20 +179,48 @@ export const createNewGame = (userName, gameName, uid) => {
   }
 }
 
+export const joinGame = (name, gameId) => {
+  return dispatch => {
+    const uid = firebase.auth().currentUser.uid;
+    console.log("uid", uid);
+    const gameId = req.query.id;
+    console.log("gameId inside JOINGAME ", gameId);
+    const self = {
+      alive: true,
+      won: false,
+      uid: uid,
+      //TODO add color somehow
+      color: null,
+    }
+    // dispatch(setSelf(self));
+    dispatch(addUser(name, uid, gameId));
+
+
+  }
+}
+
+// when user joins a game they input a Player name. 
+export const addUser = (username, uid, gameId) => {
+  return () => {
+    firebase.database().ref(`games/${gameId}/playerActions`).push({
+      type: ADD_USER,
+      name: username,
+      uid: uid,
+    })
+    .catch(console.error)
+  }
+}
+
 /*---------
 The previous two functions create the new spaces in the database for the game
 the moderator is then made to listen for playeractions and dispence storeactions
 ----------*/
 
 
-// Generic Action Listener, will recieve actions whenever firebase/actions updates
+// Generic Action Listener, will RECEIVE actions whenever firebase/actions updates
 export const updateGameActions = () => {
   return (dispatch, getState) => {
-// <<<<<<< HEAD
-//     const gameId = getState().game.gameId;
-//     firebase.database().ref(`games/${gameId}/playerActions`).on('child_added', function(action){
-//       console.log('recieved action from firebase ', action)
-// =======
+
     firebase.database().ref(`${storeActions}/public`).on('child_added', function(action){
         dispatch(firebaseUpdate(action.val()))
     })
