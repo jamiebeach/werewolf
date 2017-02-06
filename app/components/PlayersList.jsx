@@ -22,7 +22,35 @@ import Checkbox from 'material-ui/Checkbox';
 const PlayersList = (props) => {
   const day = props.day;
   const user = props.user;
-  const players = props.players;
+  const players = {
+   bobette :{  // live werewolf
+    name: "Bobette",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: true
+  },
+   notbob :{  // live seer
+    name: "NotBob",
+    role: "seer",
+    alive: true,
+    immunity: false,
+    night: true
+  },
+   rob :{  // live villager
+    name: "Rob",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: false
+  },
+   roberta :{  // dead villager
+    name: "Roberta",
+    role: "villager",
+    alive: false,
+    immunity: false,
+    night: false
+  }}
 
   const pickColor = (player, user, day) => {
     if ((user.role === "werewolf") && (player.role === "werewolf") || (!user.alive && (player.role === "werewolf"))) return "thistle";
@@ -42,7 +70,7 @@ const PlayersList = (props) => {
   }
 
   return (
-    <div style={{marginLeft: "15%", marginRight: "15%"}}>
+    <div className='listContainer'>
       <GridList
         style={{
           maxHeight: window.innerHeight*.6,
