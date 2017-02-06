@@ -39,6 +39,7 @@ export const anonLogin = () =>
   dispatch => {
     firebase.auth().signInAnonymously()
     .then(res => {
+      console.log("inside anonLogin");
       const uid = res.val().uid;
       const self = {
         alive: true,
