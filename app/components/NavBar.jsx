@@ -23,7 +23,7 @@ const Navbar = () => {
             hoverColor={'#6E0300'}
           />
         </IconButton>
-        <h3 className='navBtnLeft'>Werewolf</h3>
+        <h3 className='navBtnLeft'>Nightfall</h3>
       </div>
       <div className="navBtnRight">
        <Link className='icons' to={'newgame'}>Start A Game</Link>
