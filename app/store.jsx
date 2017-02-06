@@ -24,7 +24,7 @@ React component views still depend on data being in these "wrong" spots.
 // fetches whoAmI, but you're always Bobette
 store.dispatch(whoami())
 // fetches fake users, fills out the playerList
-store.dispatch(fetchUsers())
+//store.dispatch(fetchUsers())
 // fetches fake messages, fills out ChatBox
 store.dispatch(updateGameActions())
 
@@ -38,10 +38,10 @@ Later on, these methods should/will be indirectly invoked by players
 sending all their redux actions to "PlayerActions" with the correct action.type
 ----------*/
 
-/*// GAME START, ROLE ASSIGN, GAME LOOP
+// GAME START, ROLE ASSIGN, GAME LOOP
 
 // create a new game with name, your name, and your uid
-const mod = new Moderator('modtesting', 'felicia', 1);
+const mod = new Moderator('testgame', 'felicia', 1);
 mod.handleJoin({name: 'felicia', uid: 1});
 
 // friends join the game
@@ -56,11 +56,11 @@ mod.handleJoin({name: 'galen', uid: 6});
 mod.handleStart();
 
 // leader said /ready. game loop begins.
-mod.handleLeaderStart();*/
+mod.handleLeaderStart();
 
 
 
-/*// THE FIRST NIGHT, WEREWOLVES, PRIEST, SEER
+// THE FIRST NIGHT, WEREWOLVES, PRIEST, SEER
 
 setTimeout(() => {
 
@@ -77,8 +77,8 @@ setTimeout(() => {
   // toggle priest action to see that jenny can either die or be saved
 
   mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
-  mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
-}, 6000)*/
+  //mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
+}, 6000)
 
 
 /*// THE FIRST DAY, VILLAGERS VOTE
