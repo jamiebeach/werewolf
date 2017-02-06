@@ -1,4 +1,4 @@
-const game = 'game1';
+const game = "testgame";
 
 const initialState = {
   users: {},
@@ -12,6 +12,9 @@ const initialState = {
   self: {},
   tally: {}  // probably taken over by moderator
 }
+
+const playerActions = `games/${game}/playerActions/`;
+const storeActions = `games/${game}/storeActions/`;
 
 //TODOS
 // do we want to delay daytime voting?
@@ -27,8 +30,13 @@ const reducer = (state = initialState, action) => {
 
   switch(action.type) {
 
-    case GET_USERS:
-      newState.users = action.users;
+    case ADD_USER:
+      newState.users[action.uid] = {
+        name: action.name,
+        alive: true,
+        color: action.color,
+        role: action.role
+      }
       break;
 
     case RECIEVE_MESSAGE:
@@ -52,8 +60,8 @@ const reducer = (state = initialState, action) => {
       break;
 
     case KILLING:
-      newState.tally = {};
-      newState.users[action.user].alive = false;
+      state.users[action.uid].alive = false;
+      newState.users = Object.assign({}, state.users)
       break;
 
     case SWITCH_TIME:
@@ -71,8 +79,11 @@ const reducer = (state = initialState, action) => {
 
     case UPDATE_USER:
       // do we need to object assign everything here?
-      if (action.name === newState.self.name) newState.self.role = action.role;
+      if (action.name === newState.self.name) {
+        newState.self.role = action.role;
+      }
       newState.users[action.name].role = action.role;
+
       break;
 
     case SET_SELF:
@@ -94,7 +105,7 @@ const SWITCH_TIME = 'SWITCH_TIME';
 const GET_USERS = 'GET_USERS';
 
 
-// const ADD_USER = 'ADD_USER';
+const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
 const SET_SELF = 'SET_SELF';
 
@@ -168,7 +179,7 @@ export const fetchUsers = () => {
 // send Message to firebase
 export const sendMessageAction = (user, message, role) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(playerActions).push({
       type: RECIEVE_MESSAGE,
       user: user,
       message: message,
@@ -184,7 +195,7 @@ export const sendMessageAction = (user, message, role) => {
 // send votes to firebase
 export const sendVoteAction = (user, vote) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(playerActions).push({
       type: RECIEVE_VOTE,
       user: user,
       vote: vote
@@ -196,7 +207,7 @@ export const sendVoteAction = (user, vote) => {
 // dispatched after a majority vote is reached
 export const sendSwitchTimeAction = (timeofday) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(playerActions).push({
     type: SWITCH_TIME,
     timeofday,
     })
@@ -207,7 +218,7 @@ export const sendSwitchTimeAction = (timeofday) => {
 // dispatched after a majority vote is reached
 export const sendKillUserAction = (user) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(playerActions).push({
     type: KILLING,
     user
     })
@@ -219,7 +230,7 @@ export const sendKillUserAction = (user) => {
 // might have to turn into a moderator message
 export const sendAddTallyAction = (tally) => {
   return dispatch => {
-    firebase.database().ref(`${game}/actions`).push({
+    firebase.database().ref(playerActions).push({
     type: ADD_TALLY,
     tally,
     })
@@ -277,29 +288,6 @@ function shuffle(array) {
   return array;
 }
 
-// assign roles at start, for moderator
-export const assignRoles = () => {
-  return (dispatch, getState) => {
-    const {users} = getState().game;
-    const names = Object.keys(users);
-    const length = names.length;
-    let werewolves = Math.floor(length / 3);
-    let roles = ['seer', 'priest'];
-    while (werewolves--) roles.push('werewolf');
-    while (roles.length < length) roles.push('villager');
-    roles = shuffle(roles);
-
-    names.forEach((name, index) => {
-      firebase.database().ref(`${game}/actions`).push({
-        type: UPDATE_USER,
-        name,
-        role: roles[index]
-      })
-      .catch(err => console.error('Error updating name from firebase', err))
-    })
-  }
-}
-
 // for seers, should we call it scry?
 export const sendPeekAction = (seerName, targetName) => {
   return (dispatch, getState) => {
@@ -314,10 +302,23 @@ export const sendPeekAction = (seerName, targetName) => {
 
 // Generic Action Listner, will recieve actions whenever firebase/actions updates
 export const updateGameActions = () => {
-  return dispatch => {
-    firebase.database().ref(`${game}/actions/`).on('child_added', function(action){
+  return (dispatch, getState) => {
+    firebase.database().ref(`${storeActions}/public`).on('child_added', function(action){
         dispatch(firebaseUpdate(action.val()))
     })
+    firebase.database().ref(`${storeActions}/${getState().game.self.uid}`).on('child_added', function(action){
+        dispatch(firebaseUpdate(action.val()))
+    })
+  }
+}
+//After roles are assigned, if the player is a werewolf, then listen for werewolf store actions.
+export const updateWolfActions = () => {
+  return (dispatch, getState) => {
+    if (getState().game.self.role === "werewolf") {
+      firebase.database().ref(`${storeActions}/werewolves`).on('child_added', function(action){
+        dispatch(firebaseUpdate(action.val()))
+      })
+    }
   }
 }
 

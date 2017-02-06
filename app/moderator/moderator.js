@@ -15,6 +15,7 @@ const START_GAME = 'START_GAME';
 const LEADER_START = 'LEADER_START';
 const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
+const KILLING = 'KILLING';
 
 /* ----------------- CONSTANTS: SETTINGS ------------------ */
 
@@ -321,9 +322,8 @@ export default class Moderator {
     else {
       chosen.alive = false;
       let kill = {
-          type: UPDATE_USER,
-          name: chosen.name,
-          alive: false,
+          type: KILLING,
+          uid: chosen.uid
         }
       this.moderate(kill, 'public', 'death')
       msg = `Everyone wakes up and discovers that ${this.chosen} was eaten by werewolves last night. Avenge their death!`
