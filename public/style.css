@@ -140,7 +140,7 @@ body {
 }
 
 .chat-window {
-  height: 50vh;
+  height: 300px;
   overflow-y: scroll;
   padding-left: 0;
 }

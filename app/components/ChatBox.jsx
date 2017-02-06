@@ -11,7 +11,7 @@ class ChatBox extends Component {
   }
 
   handleScroll() {
-    if ((this.chatScroll.scrollTop + Math.ceil(window.innerHeight * .5)) < this.bottomScroll) {
+    if ((this.chatScroll.scrollTop + this.chatScroll.clientHeight) < this.chatScroll.scrollHeight) {
       this.scrolledUp = true;
     }
     else {
@@ -21,15 +21,10 @@ class ChatBox extends Component {
 
   componentDidMount() {
     this.scrolledUp = false;
-    this.prevScrollTop = 0;
   }
 
   componentDidUpdate() {
-    if (!this.scrolledUp) {
-      this.chatScroll.scrollTop = this.chatScroll.scrollHeight;
-      this.bottomScroll = this.chatScroll.scrollHeight;
-    }
-    this.bottomScroll = this.chatScroll.scrollHeight;
+    if (!this.scrolledUp) this.chatScroll.scrollTop = this.chatScroll.scrollHeight;
   }
 
   render() {
