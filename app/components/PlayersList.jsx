@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {GridList, GridTile} from 'material-ui/GridList';
+// import {GridList, GridTile} from 'material-ui/GridList';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
@@ -71,32 +71,24 @@ const PlayersList = (props) => {
 
   return (
     <div className='listContainer'>
-      <GridList
-        style={{
-          maxHeight: window.innerHeight*.6,
-          overflowY: 'auto'
-        }}
-        cols={1}
-        cellHeight="auto"
-        >
+      <List>
+      {Object.keys(players).map((player, index) => {return (
+        <ListItem
+          id={players[player].uid}
+          key={index}
+          primaryText={player}
+          leftIcon={getIcon(player, user)}
+          leftCheckbox={(((player === user.name) || !players[player].alive) || !user.alive) ? null :<Checkbox iconStyle={{fill: "#6E0300"}}/>}
+          insetChildren={true}
+          style={{
+            backgroundColor: pickColor(players[player], user, day),
+            textDecoration: dead(players[player]),
+            fontFamily: 'IM Fell English SC, serif'
+          }}
+        />
+      )})}
+      </List>
 
-        <List>
-        {Object.keys(players).map((player, index) => {return (
-          <ListItem
-            id={players[player].uid}
-            key={index}
-            primaryText={player}
-            leftIcon={getIcon(player, user)}
-            leftCheckbox={(((player === user.name) || !players[player].alive) || !user.alive) ? null :<Checkbox iconStyle={{fill: "#6E0300"}}/>}
-            insetChildren={true}
-            style={{
-              backgroundColor: pickColor(players[player], user, day),
-              textDecoration: dead(players[player])
-            }}
-          />
-        )})}
-        </List>
-      </GridList>
     </div>
   )
 }
