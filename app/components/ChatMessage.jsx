@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 function ChatMessage(props) {
   let message = props.message;
@@ -6,6 +6,7 @@ function ChatMessage(props) {
   let user = props.user;
   return (<li className="message">
       <div className="avatar">
+        {`${user.avatar}`}
       </div>
       <div className="text-content">
         <div className="player-name">
