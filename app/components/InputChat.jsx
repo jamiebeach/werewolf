@@ -3,7 +3,16 @@ import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
 import Button from './Button';
 
-import {sendMessageAction, sendVoteAction} from '../reducers/game';
+import Send from 'material-ui/svg-icons/content/send';
+import IconButton from 'material-ui/IconButton';
+
+
+import {
+  sendMessageAction,
+  sendVoteAction,
+  sendScryAction,
+  sendSaveAction
+} from '../reducers/game';
 
 
 // eventually this has to connect to have access to user, etc
@@ -21,21 +30,23 @@ class Chat extends Component {
     if (msg[0] === '/'){
       //Commands are vote, save, seer:
       let cmd = msg.substring(1,5).toLowerCase();
-      let person = msg.substring(5).trim().toLowerCase();
+      let target = msg.substring(5).trim().toLowerCase();
 
       switch(cmd) {
 
         case 'vote':
-          this.props.sendVote(this.props.user.name, person);
+          this.props.sendVote(this.props.user.name, target);
           break;
 
         case 'save':
-          // this.props.saveAction(person);
+          if (this.props.game.self.role === 'priest' && !this.props.game.day) {
+            this.props.sendSave(this.props.game.self, target);
+          }
           break;
 
-        case 'peek':
-          if (this.props.game.self.role === 'seer' && !this.props.game.day && this.props.game.peeked === false) {
-            this.props.peekAction(person);
+        case 'scry':
+          if (this.props.game.self.role === 'seer' && !this.props.game.day) {
+            this.props.sendScry(this.props.game.self, target);
           }
           break;
 
@@ -58,19 +69,26 @@ class Chat extends Component {
       <div id="chat-input">
         <form onSubmit={this.handleSubmit}>
           <TextField
-            style={{width: "80%", marginLeft: 20}}
+            style={{flexGrow: 1, marginLeft: '10px'}}
             id="message"
-            hintText={(this.props.user.alive) ? "Enter message here" : "You can't chat when you're dead"}
-            hintStyle={{color: day ? '#000' : '#AAA' }}
+            floatingLabelText={(this.props.user.alive) ? "" : "You can't chat when you're dead"}
+            floatingLabelStyle={{color: day ? '#000' : '#AAA', fontFamily: 'IM Fell French Canon' }}
             underlineFocusStyle={{borderColor: day ? '#0D7A58' : '#6E0300 ' }}
-            inputStyle={{color: day ? '#000' : '#FFF' , fontWeight: 'normal' }}
+            inputStyle={{color: day ? '#000' : '#FFF', fontWeight: 'normal', fontFamily: 'IM Fell French Canon' }}
             disabled={(!this.props.user.alive)}
           />
-          <Button disabled={(!this.props.user.alive)}
+           <IconButton
+            type="submit"
+            className="enterText"
+            disabled={(!this.props.user.alive)}
+          >
+            <Send />
+          </IconButton>
+          {/*<Button disabled={(!this.props.user.alive)}
                   type="submit"
                   className="enterText">
                   Enter
-          </Button>
+          </Button>*/}
         </form>
       </div>
     )
@@ -90,8 +108,14 @@ const mapDispatch = dispatch => {
     sendMessage: (user, msg, role) => {
       dispatch(sendMessageAction(user, msg, role));
     },
-    sendVote: (user, victim) => {
-      dispatch(sendVoteAction(user, victim));
+    sendVote: (user, target) => {
+      dispatch(sendVoteAction(user, target));
+    },
+    sendScry: (user, target) => {
+      dispatch(sendScryAction(user, target));
+    },
+    sendSave: (user, target) => {
+      dispatch(sendSaveAction(user, target));
     }
   }
 };
