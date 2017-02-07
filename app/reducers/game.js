@@ -24,10 +24,10 @@ const initialState = {
 
 //TODOS
 
-// put gameId on state when game is created
+// startGame actions
 // listen to /werewolf after roles are assigned
-// finish CreateGame dispatch
-// joinGame dispatcher : does it need wraped in gameAction??
+
+
 
 
 /* ------------       REDUCER     ------------------ */
@@ -44,7 +44,7 @@ const reducer = (state = initialState, action) => {
     case UPDATE_SELF:
       return {
         ...state,
-        self: {...state.self, joined: true, name: action.name},
+        self: {...state.self, joined: true, ...action.updates},
       }
 
     case RECIEVE_USER:
@@ -98,6 +98,8 @@ const reducer = (state = initialState, action) => {
 
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
+const START_GAME = 'START_GAME';
+const LEADER_START = 'LEADER_START';
 
 const SET_SELF = 'SET_SELF';
 const UPDATE_SELF = 'UPDATE_SELF'
@@ -127,8 +129,8 @@ export const setSelf = self => ({
   type: SET_SELF, self
 })
 
-export const updateSelf = (name) => ({
-  type: UPDATE_SELF, name
+export const updateSelf = (updates) => ({
+  type: UPDATE_SELF, updates
 })
 
 export const getAllUsers = users => ({
@@ -194,7 +196,6 @@ const gameAction =
 Game SetUp Actions
 ----------*/
 
-// TODO how does gameId get set on everyone's store?
 // called in chat onEnter grabs gameId from url and places on local store
 export const setGameId = (gameId) => {
   return dispatch => {
@@ -202,22 +203,23 @@ export const setGameId = (gameId) => {
   }
 }
 
-// TODO make this work ;-)
 // dispatched when Game Leader puts in Player name and clicks "Start Game"
 // sets gameId on players state
 // dispatches addUser
 // instantiates new Moderator
 // redirects to game chatroom 
-export const createNewGame = (userName, gameName, uid) => {
+export const createNewGame = (name, gameName, uid) => {
   return (dispatch, getState) => {
     const uid = getState().game.self.uid;
+    const username = name.toLowerCase();
     const gameId = firebase.database().ref('games').push({
       name: gameName
     });
     gameId.then(() =>  {
       dispatch(setGameId(gameId.key));
-      dispatch(joinGame(userName, gameId.key));
-      mod = new Moderator(gameId.key, userName, uid)
+      dispatch(updateSelf({leader: true}));
+      dispatch(joinGame(username, gameId.key));
+      mod = new Moderator(gameId.key, username, uid)
       browserHistory.push(`/game/${gameId.key}`)
     });
   }
@@ -228,8 +230,9 @@ export const createNewGame = (userName, gameName, uid) => {
 export const joinGame = (name, gameId) => {
   return (dispatch, getState) => {
     const uid = getState().game.self.uid;
-    dispatch(addUser(name, uid, gameId));
-    dispatch(updateSelf(name));
+    const username = name.toLowerCase();
+    dispatch(addUser(username, uid, gameId));
+    dispatch(updateSelf({name: username}));
     dispatch(updateGameActions(gameId));
 
   }
@@ -241,6 +244,18 @@ export const addUser = gameAction(
       type: ADD_USER,
       name: username,
       uid: uid
+  })
+)
+
+export const startGame = gameAction(
+  () => ({
+    type: START_GAME,
+  })
+)
+
+export const leaderStart = gameAction(
+  () => ({
+    type: LEADER_START,
   })
 )
 

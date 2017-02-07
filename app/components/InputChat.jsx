@@ -24,24 +24,36 @@ export default class Chat extends Component {
 
     if (msg[0] === '/'){
       //Commands are vote, save, seer:
-      let cmd = msg.substring(1,5).toLowerCase();
-      let target = msg.substring(5).trim().toLowerCase();
-
+      const words = msg.split(' ');
+      let cmd = words[0].toLowerCase();
+      let target;
+      if (words.length > 1) target = words[1].toLowerCase();
+      console.log("inside inputchat ", cmd, target);
       switch(cmd) {
 
-        case 'vote':
+        case '/vote':
           this.props.sendVote(this.props.self.name, target);
           break;
 
-        case 'save':
+        case '/save':
           if (this.props.self.role === 'priest' && !this.props.day) {
             this.props.sendSave(this.props.self, target);
           }
           break;
 
-        case 'scry':
+        case '/scry':
           if (this.props.self.role === 'seer' && !this.props.day) {
             this.props.sendScry(this.props.self, target);
+          }
+          break;
+        case '/roles':
+          if (this.props.self.leader) {
+            this.props.startGame();
+          }
+          break;
+        case '/ready':
+          if (this.props.self.leader) {
+            this.props.leaderStart();
           }
           break;
 

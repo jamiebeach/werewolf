@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import NightImage from './NightImage';
 import ChatBox from './ChatBox';
 import PlayersList from './PlayersList';
-import {sendMessageAction, sendVoteAction, sendSaveAction, sendScryAction} from '../reducers/game'
+import {sendMessageAction, sendVoteAction, sendSaveAction, sendScryAction, startGame, leaderStart} from '../reducers/game'
 
 const ChatContainer = props => {
+
   return(
     <div className={props.game.day? 'day' : 'night'}>
       <div className="chatContainer">
@@ -20,6 +21,8 @@ const ChatContainer = props => {
             sendVote={props.sendVote}
             sendSave={props.sendSave}
             sendScry={props.sendScry}
+            startGame={props.startGame}
+            leaderStart={props.leaderStart}
             />
           : <NightImage/>
         }
@@ -54,6 +57,12 @@ const mapDispatchToProps = dispatch => {
     },
     sendSave (priestName, targetName) {
       return dispatch(sendSaveAction(priestName, targetName));
+    },
+    startGame () {
+      return dispatch(startGame());
+    },
+    leaderStart () {
+      return dispatch(leaderStart());
     }
 
   });

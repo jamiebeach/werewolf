@@ -99,6 +99,7 @@ export default class Moderator {
     this.leaderId = uid;
 
     this.players = [];
+    this.didAssign = false;
     this.didStart = false; // roles have been assigned and leader sends /ready
     this.seerId = '';
     this.priestId = '';
@@ -284,7 +285,7 @@ export default class Moderator {
   }
 
   handleVote(playerAction) {
-    let role = this.day ? 'villager' : 'wolf';
+    let role = this.day ? 'public' : 'wolf';
 
     if (this.players[playerAction.vote].alive){
       this.votes.push(playerAction);
@@ -357,7 +358,7 @@ export default class Moderator {
       msg = `Everyone wakes up and discovers that ${this.chosen} was eaten by werewolves last night. Avenge their death!`
     }
 
-    this.narrate(msg, 'villager', null, 'morning')
+    this.narrate(msg, 'public', null, 'morning')
     //resetting the night props
     chosen.immunity = false;
     this.chosen = null;
@@ -367,7 +368,7 @@ export default class Moderator {
   }
 
   nightActions() {
-    this.narrate(`Everyone in the village goes to sleep.`, 'villager')
+    this.narrate(`Everyone in the village goes to sleep.`, 'public')
     // settimeout gives people a chance to read before night switch
       setTimeout(() => {
         this.day = false;
@@ -402,14 +403,14 @@ export default class Moderator {
       timeofday: 'daytime'
     }
     this.moderate(timeswitch, 'public', 'day time')
-    this.narrate(`The sun rises. A new day begins for the village.`, 'villager')
+    this.narrate(`The sun rises. A new day begins for the village.`, 'public')
     this.resolveNightEvents();
 
     //werewolves may have won at this point
     this.checkWin();
     if (this.winner === 'werewolves'){
       let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
-      this.narrate(msg, 'villager', null, 'wolf win')
+      this.narrate(msg, 'public', null, 'wolf win')
     }
     else {
       // settimeout for daytime discussions. votes tally as soon as day ends.
@@ -420,7 +421,7 @@ export default class Moderator {
         chosen.alive = false;
 
         let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
-        this.narrate(msg, 'villager', null, 'lynch')
+        this.narrate(msg, 'public', null, 'lynch')
 
         let kill = {
           type: UPDATE_USER,
@@ -432,11 +433,11 @@ export default class Moderator {
 
         if (this.winner === 'werewolves'){
           msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
-          this.narrate(msg, 'villager', null, 'wolf win')
+          this.narrate(msg, 'public', null, 'wolf win')
         }
         else if (this.winner === 'villagers'){
           msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
-          this.narrate(msg, 'villager', null, 'village win')
+          this.narrate(msg, 'public', null, 'village win')
         } else {
 
           this.chosen = null;
@@ -448,6 +449,7 @@ export default class Moderator {
     }
   }
 
+  // Players have their roles. When players are ready Game Leader can type /ready and play begins
   handleLeaderStart() {
     if (!this.didStart) {
       // switch from array to object
@@ -461,12 +463,16 @@ export default class Moderator {
     }
   }
 
+  // Game Leader enters /roles
+  // this assigns player roles
   handleStart() {
+    console.log("inside handleStart");
+    if (this.didAssign) return;
     const length = this.players.length;
     let numWerewolves = Math.floor(length / 3);
     let roles = ['seer', 'priest'];
     while (numWerewolves--) roles.push('werewolf');
-    while (roles.length < length) roles.push('villager');
+    while (roles.length < length) roles.push('public');
     roles = shuffle(roles);
 
     this.players.forEach((player, index) => {
@@ -504,12 +510,15 @@ export default class Moderator {
     // send messages containing roles to everyone
     this.players.forEach((player, index) => {
       let msg = `You are a ${player.role}.  The leader will start the game when everyone is ready.`
-      this.narrate(msg, 'villager', player.uid, 'role assign')
+      this.narrate(msg, 'public', player.uid, 'role assign')
     })
 
     // tell leader to use slash command to start
     let msg = `Type '/ready' to begin.`
-    this.narrate(msg, 'villager', this.leaderId, 'leader ready')
+    this.narrate(msg, 'public', this.leaderId, 'leader ready')
+
+    // switch didAssign to true
+    this.didAssign = true;
   }
 
   checkWin(){
