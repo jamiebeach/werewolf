@@ -25,7 +25,7 @@ const dumbLogger = store => next => action => {
 const store = createStore(rootReducer, composeEnhancers(
 	applyMiddleware(
     createLogger(),
-    dumbLogger,
+    // dumbLogger,
     thunkMiddleware)
 ))
 
