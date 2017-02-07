@@ -24,6 +24,8 @@ const PlayersList = (props) => {
     else return null;
   }
 
+
+
   return (
     <div className='players-list'>
       {
@@ -31,8 +33,11 @@ const PlayersList = (props) => {
           return (
             <div className='players' key={index}>
 
-              <div className='avatar'>
-                <img src='http://vignette1.wikia.nocookie.net/thesimsmedieval/images/3/3f/Margery-face.jpg/revision/latest?cb=20110630213058' />
+              <div className='avatar' >
+                <img
+                  src={`images/avatar${players[player].avatar}.jpg`}
+                  style={ { border: `2.5px solid ${players[player].color}` } }
+                />
               </div>
 
               <div className='player-name'>
@@ -91,39 +96,139 @@ export default PlayersList;
 //             fontFamily: 'IM Fell English SC, serif'
 
 const players = {
-   bobette :{  // live werewolf
+  bobette :{  // live werewolf
     name: "Bobette",
     role: "villager",
     alive: true,
     immunity: false,
-    night: true
+    night: true,
+    avatar: 'm01',
+    color: 'chocolate',
   },
    notbob :{  // live seer
     name: "NotBob",
     role: "seer",
     alive: true,
     immunity: false,
-    night: true
+    night: true,
+    avatar: 'm11',
+    color: 'purple',
   },
    rob :{  // live villager
     name: "Rob",
     role: "villager",
     alive: true,
     immunity: false,
-    night: false
+    night: false,
+    avatar: 'm07',
+    color: 'yellow',
   },
    roberta :{  // dead villager
     name: "Roberta",
     role: "villager",
     alive: false,
     immunity: false,
-    night: false
+    night: false,
+    avatar: 'f10',
+    color: 'darkcyan',
   },
   jenny : {
     name: "Roberta",
     role: "villager",
     alive: false,
     immunity: false,
-    night: false
+    night: false,
+    avatar: 'f01',
+    color: 'darkslategrey'
+  },
+  a :{  // live werewolf
+    name: "Bobette",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: true,
+    avatar: 'm01',
+    color: 'chocolate',
+  },
+  b :{  // live seer
+    name: "NotBob",
+    role: "seer",
+    alive: true,
+    immunity: false,
+    night: true,
+    avatar: 'm11',
+    color: 'purple',
+  },
+  c :{  // live villager
+    name: "Rob",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: false,
+    avatar: 'm07',
+    color: 'yellow',
+  },
+  d :{  // dead villager
+    name: "Roberta",
+    role: "villager",
+    alive: false,
+    immunity: false,
+    night: false,
+    avatar: 'f10',
+    color: 'darkcyan',
+  },
+  e: {
+    name: "Roberta",
+    role: "villager",
+    alive: false,
+    immunity: false,
+    night: false,
+    avatar: 'f01',
+    color: 'darkslategrey'
+  },
+  angel :{  // live werewolf
+    name: "Bobette",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: true,
+    avatar: 'm01',
+    color: 'chocolate',
+  },
+  melanie :{  // live seer
+    name: "NotBob",
+    role: "seer",
+    alive: true,
+    immunity: false,
+    night: true,
+    avatar: 'm11',
+    color: 'purple',
+  },
+  isaac :{  // live villager
+    name: "Rob",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: false,
+    avatar: 'm07',
+    color: 'yellow',
+  },
+  james :{  // dead villager
+    name: "Roberta",
+    role: "villager",
+    alive: false,
+    immunity: false,
+    night: false,
+    avatar: 'f10',
+    color: 'darkcyan',
+  },
+  jeffery : {
+    name: "Roberta",
+    role: "villager",
+    alive: false,
+    immunity: false,
+    night: false,
+    avatar: 'f01',
+    color: 'darkslategrey'
   }
 }
