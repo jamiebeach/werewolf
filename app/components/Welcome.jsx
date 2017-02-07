@@ -22,8 +22,6 @@ export const Welcome = () => {
 			</div>
 			<div className='landingButton'>
 				<RaisedButton label="Start a Game" backgroundColor={'#1E052B'} labelStyle={{color: 'white'}} containerElement={<Link to="/newgame"/>}/>
-				<RaisedButton label="Chat (TESTING)" backgroundColor={'#0D7A58'} labelStyle={{color: 'white'}} containerElement={<Link to="/chat"/>}/>
-
 			</div>
 		</div>
 	)
