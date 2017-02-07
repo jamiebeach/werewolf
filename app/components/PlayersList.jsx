@@ -1,21 +1,11 @@
-import React, {Component} from 'react';
-
-import {GridList, GridTile} from 'material-ui/GridList';
-import Avatar from 'material-ui/Avatar';
-import {List, ListItem} from 'material-ui/List';
-import ActionGrade from 'material-ui/svg-icons/action/grade';  // star
-import Healing from 'material-ui/svg-icons/image/healing';
-import Eye from 'material-ui/svg-icons/image/remove-red-eye';
-import Checkbox from 'material-ui/Checkbox';
+import React from 'react';
 
 // expects players, user, and day from props
-
 // villager, werewolf, seer, doctor, ... cupid, lovers, hunter, mayor
 
 const PlayersList = (props) => {
   const day = props.day;
   const user = props.user;
-  const players = props.players;
 
   const pickColor = (player, user, day) => {
     if ((user.role === 'werewolf') && (player.role === 'werewolf') || (!user.alive && (player.role === 'werewolf'))) return 'thistle';
@@ -35,6 +25,32 @@ const PlayersList = (props) => {
   }
 
   return (
+    <div className='players-list'>
+      {
+        Object.keys(players).map((player, index) => {
+          return (
+            <div className='players' key={index}>
+
+              <div className='avatar'>
+                <img src='http://vignette1.wikia.nocookie.net/thesimsmedieval/images/3/3f/Margery-face.jpg/revision/latest?cb=20110630213058' />
+              </div>
+
+              <div className='player-name'>
+                {player}
+              </div>
+
+            </div>
+          )
+        })
+      }
+    </div>
+  )
+}
+
+export default PlayersList;
+
+
+/*<<<<<<< HEAD
     <div style={{marginLeft: '15%', marginRight: '15%'}}>
       <GridList
         style={{
@@ -67,8 +83,47 @@ const PlayersList = (props) => {
         )})}
         </List>
       </GridList>
-    </div>
-  )
-}
+=======*/
 
-export default PlayersList;
+// style={{
+//             backgroundColor: props.color,
+//             textDecoration:  props.dead,
+//             fontFamily: 'IM Fell English SC, serif'
+
+const players = {
+   bobette :{  // live werewolf
+    name: "Bobette",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: true
+  },
+   notbob :{  // live seer
+    name: "NotBob",
+    role: "seer",
+    alive: true,
+    immunity: false,
+    night: true
+  },
+   rob :{  // live villager
+    name: "Rob",
+    role: "villager",
+    alive: true,
+    immunity: false,
+    night: false
+  },
+   roberta :{  // dead villager
+    name: "Roberta",
+    role: "villager",
+    alive: false,
+    immunity: false,
+    night: false
+  },
+  jenny : {
+    name: "Roberta",
+    role: "villager",
+    alive: false,
+    immunity: false,
+    night: false
+  }
+}
