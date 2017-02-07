@@ -94,4 +94,12 @@ const players = {
     alive: false,
     immunity: false,
     night: false
-  }}
+  },
+  jenny : {
+    name: "Roberta",
+    role: "villager",
+    alive: false,
+    immunity: false,
+    night: false
+  }
+}
