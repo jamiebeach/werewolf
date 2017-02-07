@@ -294,50 +294,39 @@ body {
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
-
   padding-top: 5%;
-
   display: flex;
   justify-content: center;
-
 }
 
 .rules-container {
   width: 75%;
-  margin-top: 5%;
-  margin-bottom: 5%;
+  margin-top: 0%;
+  margin-bottom: 2%;
   padding: 5%;
-
-  text-align : center;
+  text-align : left;
   background: rgba(0, 0, 0, .5);
   color: #FFF;
 }
-
-/*.rules-paper {
-  text-align : center;
-  padding-top : 5%;
-  margin-bottom: 5%;
-  background: rgba(0, 0, 0, .5);
-  color: #FFF;
-}*/
 
 .rules-header {
-  color : #D6C967
+  color : #D6C967;
+  text-align: center;
 }
 
-.row {
+.rules-row {
   margin-right: 5%;
   margin-left: 5%;
 }
 
-.col-4 {
+.rules-col-4 {
   display:inline-block;
   width: 30%;
   vertical-align: top;
   text-align: left;
 }
 
-.col-8 {
+.rules-col-8 {
   display:inline-block;
   width: 70%;
 }
@@ -358,9 +347,13 @@ body {
     display: block;
     overflow: hidden;
   }
+  .rules-row {
+    margin-right: 0%;
+    margin-left: 0%;
+  }
 }
 
-/* Phones */
+/* Phones - Portrait */
 @media only screen and (max-width : 570px) and (orientation: portrait) {
 
   /* SPLASH PAGE */
@@ -431,8 +424,52 @@ body {
     margin-top: 15%;
   }
 
+  /* RULES PAGE */
+  .rules {
+    height: 100%;
+    background-image: url('/images/fullMoon.jpg');
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding-top: 5%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .rules-container {
+    width: 100%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    padding: 5%;
+    text-align : left;
+    background: rgba(0, 0, 0, .5);
+    color: #FFF;
+  }
+
+  .rules-header {
+    color : #D6C967;
+    text-align: center;
+  }
+
+  .rules-row {
+    margin-right: 0%;
+    margin-left: 0%;
+  }
+  .rules-col-4 {
+    z-index: 1;
+    width: 100%;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  .rules-col-8 {
+    z-index: 2;
+    width: 100%;
+  }
+
 }
 
+/* Phones - Landscape */
 @media only screen and (max-width : 700px) and (orientation: landscape) {
   /* SPLASH PAGE */
   .home{
@@ -466,6 +503,32 @@ body {
   .players-container {
     margin-top: 65px;
     height: 75%;
+  }
+
+    /* RULES PAGE */
+  .rules-container {
+    width: 100%;
+    margin-top: 0%;
+    margin-bottom: 0%;
+    padding: 5%;
+    text-align : left;
+    background: rgba(0, 0, 0, .5);
+    color: #FFF;
+  }
+
+  .rules-row {
+    margin-right: 0%;
+    margin-left: 0%;
+  }
+
+  .rules-col-4 {
+    width: 30%;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  .rules-col-8 {
+    width: 70%;
   }
 
 }
