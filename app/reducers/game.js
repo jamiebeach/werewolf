@@ -8,27 +8,21 @@ import Moderator from '../moderator/moderator';
 let mod;
 
 const initialState = {
-  self: {},
+  gameId: '',
+  player: {},
   // users: { [playerName: String]: User }
   users: {},
-  gameId: '',
+
   day: true,
   votes: [],
   public: [],
-  wolf: [],
-  seer: [],
-  priest: [],
+  personal: [],
 }
-
-
 
 //TODOS
 
 // startGame actions
 // listen to /werewolf after roles are assigned
-
-
-
 
 /* ------------       REDUCER     ------------------ */
 
@@ -38,13 +32,13 @@ const reducer = (state = initialState, action) => {
     case RECIEVE_GAMEID:
       return {...state, gameId: action.gameId}
 
-    case SET_SELF:
-      return {...state, self: action.self,}
+    case SET_PLAYER:
+      return {...state, player: action.player,}
 
-    case UPDATE_SELF:
+    case UPDATE_PLAYER:
       return {
         ...state,
-        self: {...state.self, joined: true, ...action.updates},
+        player: {...state.player, joined: true, ...action.updates},
       }
 
     case RECIEVE_USER:
@@ -72,10 +66,10 @@ const reducer = (state = initialState, action) => {
             ...action.updates,
           },
         },
-        self: action.name === state.self.name ? {
-          ...state.self,
+        player: action.name === state.player.name ? {
+          ...state.player,
           ...action.updates,
-        } : self,
+        } : player,
       }
 
     case RECIEVE_MESSAGE:
@@ -101,8 +95,8 @@ const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 const START_GAME = 'START_GAME';
 const LEADER_START = 'LEADER_START';
 
-const SET_SELF = 'SET_SELF';
-const UPDATE_SELF = 'UPDATE_SELF'
+const SET_PLAYER = 'SET_PLAYER';
+const UPDATE_PLAYER = 'UPDATE_PLAYER'
 const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
 const RECIEVE_USER = 'RECIEVE_USER';
@@ -125,12 +119,12 @@ const KILLING = 'KILLING';
 //   type: RECIEVE_VOTE, vote
 // })
 
-export const setSelf = self => ({
-  type: SET_SELF, self
+export const setPlayer = player => ({
+  type: SET_PLAYER, player
 })
 
-export const updateSelf = (updates) => ({
-  type: UPDATE_SELF, updates
+export const updatePlayer = (updates) => ({
+  type: UPDATE_PLAYER, updates
 })
 
 export const getAllUsers = users => ({
@@ -160,7 +154,7 @@ export const updateGameActions = () => {
         dispatch(firebaseUpdate(action.val()))
     })
 
-    firebase.database().ref(`${storeActions}/${getState().game.self.uid}`).on('child_added', function(action){
+    firebase.database().ref(`${storeActions}/${getState().game.player.uid}`).on('child_added', function(action){
         dispatch(firebaseUpdate(action.val()))
     })
   }
@@ -171,7 +165,7 @@ export const updateGameActions = () => {
 export const updateWolfActions = (gameId) => {
   return (dispatch, getState) => {
     const storeActions = `games/${gameId}/storeActions/`;
-    if (getState().game.self.role === "werewolf") {
+    if (getState().game.player.role === "werewolf") {
       firebase.database().ref(`${storeActions}/werewolves`).on('child_added', function(action){
         dispatch(firebaseUpdate(action.val()))
       })
@@ -207,17 +201,17 @@ export const setGameId = (gameId) => {
 // sets gameId on players state
 // dispatches addUser
 // instantiates new Moderator
-// redirects to game chatroom 
+// redirects to game chatroom
 export const createNewGame = (name, gameName, uid) => {
   return (dispatch, getState) => {
-    const uid = getState().game.self.uid;
+    const uid = getState().game.player.uid;
     const username = name.toLowerCase();
     const gameId = firebase.database().ref('games').push({
       name: gameName
     });
     gameId.then(() =>  {
       dispatch(setGameId(gameId.key));
-      dispatch(updateSelf({leader: true}));
+      dispatch(updatePlayer({leader: true}));
       dispatch(joinGame(username, gameId.key));
       mod = new Moderator(gameId.key, username, uid)
       browserHistory.push(`/game/${gameId.key}`)
@@ -225,16 +219,15 @@ export const createNewGame = (name, gameName, uid) => {
   }
 }
 
-// When player joins a created game we update state.game.self.joined to TRUE
+// When player joins a created game we update state.game.player.joined to TRUE
 // and we add the player to everyones Users object
 export const joinGame = (name, gameId) => {
   return (dispatch, getState) => {
-    const uid = getState().game.self.uid;
+    const uid = getState().game.player.uid;
     const username = name.toLowerCase();
     dispatch(addUser(username, uid, gameId));
-    dispatch(updateSelf({name: username}));
+    dispatch(updatePlayer({name: username}));
     dispatch(updateGameActions(gameId));
-
   }
 }
 
@@ -261,7 +254,7 @@ export const leaderStart = gameAction(
 
  /*---------
 Game Player Actions
-----------*/ 
+----------*/
 
 // send messages to playerActions
 export const sendMessageAction = gameAction(
@@ -275,13 +268,12 @@ export const sendMessageAction = gameAction(
 
 // send votes to playerActions
 export const sendVoteAction = gameAction (
-  (user, vote) => ({
+  (user, target) => ({
       type: RECIEVE_VOTE,
-      user: user,
-      vote: vote
+      user,
+      target
     })
 )
-
 
 // send scrys to playerActions
 export const sendScryAction = gameAction (

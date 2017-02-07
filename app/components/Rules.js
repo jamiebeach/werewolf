@@ -26,7 +26,7 @@ const Rules = () => {
               <h3> The Night</h3>
               <p> At night, the werewolves chat with one another and choose one villager to kill. Each werewolf will vote for their victim by typing "/vote VictimName". The werewolves must unanimously agree on a single victim. There will be a limit on how long they can deliberate.</p><br />
 
-              <p>Next, the Doctor selects someone they'd like to protect. The person chosen (which could be the Doctor himself) will survive if the werewolves had chosen to kill them. If a player gets selected by the werewolves, and then saved by the Doctor, the moderator will let the village know by announcing the news at the beginning of daytime.</p><br />
+              <p>Next, the Doctor selects someone they'd like to protect. The person chosen (which could be the Doctor himplayer) will survive if the werewolves had chosen to kill them. If a player gets selected by the werewolves, and then saved by the Doctor, the moderator will let the village know by announcing the news at the beginning of daytime.</p><br />
 
               <p>At the same time, the Seer can ask if a particular player is a werewolf, and the moderator will answer.</p><br/>
 
@@ -80,7 +80,7 @@ const Rules = () => {
                 <h2>The Doctor</h2>
               </div>
               <div className="col-8">
-                <p>The doctor is a villager who can choose one player to save each night. The doctor can choose to save him or herself. The player who is chosen cannot be killed that night. The doctor saves a player by typing "/save PlayerName". </p>
+                <p>The doctor is a villager who can choose one player to save each night. The doctor can choose to save him or herplayer. The player who is chosen cannot be killed that night. The doctor saves a player by typing "/save PlayerName". </p>
               </div>
             </div>
           </div>

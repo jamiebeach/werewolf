@@ -12,10 +12,10 @@ const ChatContainer = props => {
       <div className="chatContainer">
         {
           (props.game.day || props.user.night || !props.user.alive)
-          ? <ChatBox  
-            self={props.self} 
-            messages={props.game.public} 
-            players={props.game.users} 
+          ? <ChatBox
+            player={props.player}
+            messages={props.game.public}
+            players={props.game.users}
             day={props.game.day}
             sendMessage={props.sendMessage}
             sendVote={props.sendVote}
@@ -28,9 +28,9 @@ const ChatContainer = props => {
         }
       </div>
       <div className="playerslist">
-        <PlayersList 
-        self={props.self} 
-        players={props.game.users} 
+        <PlayersList
+        player={props.player}
+        players={props.game.users}
         day={props.game.day}/>
       </div>
     </div>
@@ -40,7 +40,7 @@ const ChatContainer = props => {
 const mapStateToProps = state => {
   return {
     game: state.game,
-    self: state.game.self
+    player: state.game.player
   };
 };
 
@@ -49,8 +49,8 @@ const mapDispatchToProps = dispatch => {
     sendMessage (user, message, role) {
       return dispatch(sendMessageAction(user, message, role));
     },
-    sendVote (user, vote) {
-      return dispatch(sendVoteAction(user, vote));
+    sendVote (user, target) {
+      return dispatch(sendVoteAction(user, target));
     },
     sendScry (seerName, targetName) {
       return dispatch(sendScryAction(seerName, targetName));

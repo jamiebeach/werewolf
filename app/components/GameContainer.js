@@ -6,14 +6,14 @@ import {connect} from 'react-redux';
 const GameContainer = props => {
   return (
     <div>
-      {props.self.joined ? <ChatContainer /> : <JoinGame />}
+      {props.player.joined ? <ChatContainer /> : <JoinGame />}
     </div>
   )
 }
 
 const mapStateToProps = state => {
   return {
-    self: state.game.self
+    player: state.game.player
   };
 };
 

@@ -38,7 +38,7 @@ const Navbar = () => {
 
 const mapState = state => {
   return {
-    user: state.game.self
+    user: state.game.player
   }
 };
 

@@ -17,7 +17,7 @@ const dumbLogger = store => next => action => {
   console.log(
     JSON.stringify({
       oldState, newState,
-      action: typeof action !== 'function'? action : action.toString(),
+      action: typeof action !== 'function' ? action : action.toString(),
     }, 0, 2))
   return rVal
 }

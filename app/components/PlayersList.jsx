@@ -4,7 +4,7 @@ import React from 'react';
 
 const PlayersList = (props) => {
   const day = props.day;
-  const self = props.self;
+  const player = props.player;
   const players = props.players;
 
   // const pickColor = (player, user, day) => {

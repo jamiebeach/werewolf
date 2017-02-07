@@ -287,7 +287,12 @@ export default class Moderator {
   handleVote(playerAction) {
     let role = this.day ? 'public' : 'wolf';
 
-    if (this.players[playerAction.vote].alive){
+    // console.log('inside mod ', this.players, this.players[playerAction.vote])
+    this.narrate(this.players[playerAction.target], 'public', 'public')
+    // this.narrate(playerAction.target, 'public', 'public')
+
+
+    if (this.players[playerAction.target].alive){
       this.votes.push(playerAction);
 
       let channel = this.day ? 'public' : 'werewolves';
@@ -299,7 +304,7 @@ export default class Moderator {
 
     else {
       let msg = `${playerAction.vote} is already dead.`
-      this.narrate(msg, role, this.players[playerAction.user].uid, role)
+      this.narrate(msg, role, this.players[playerAction.user].uid, 'role')
     }
   }
 
@@ -463,11 +468,12 @@ export default class Moderator {
     }
   }
 
-  // Game Leader enters /roles
-  // this assigns player roles
+  // Game Leader enters /roles - this assigns player roles
   handleStart() {
     console.log("inside handleStart");
     if (this.didAssign) return;
+    else if (this.players.length < 5) this.narrate('Minimum 5 players to start.')
+
     const length = this.players.length;
     let numWerewolves = Math.floor(length / 3);
     let roles = ['seer', 'priest'];
