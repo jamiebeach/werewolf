@@ -3,6 +3,10 @@ import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
 import Button from './Button';
 
+import Send from 'material-ui/svg-icons/content/send';
+import IconButton from 'material-ui/IconButton';
+
+
 import {
   sendMessageAction,
   sendVoteAction,
@@ -67,17 +71,24 @@ class Chat extends Component {
           <TextField
             style={{flexGrow: 1, marginLeft: '10px'}}
             id="message"
-            hintText={(this.props.user.alive) ? "Enter message here" : "You can't chat when you're dead"}
-            hintStyle={{color: day ? '#000' : '#AAA' }}
+            floatingLabelText={(this.props.user.alive) ? "" : "You can't chat when you're dead"}
+            floatingLabelStyle={{color: day ? '#000' : '#AAA', fontFamily: 'IM Fell French Canon' }}
             underlineFocusStyle={{borderColor: day ? '#0D7A58' : '#6E0300 ' }}
-            inputStyle={{color: day ? '#000' : '#FFF' , fontWeight: 'normal' }}
+            inputStyle={{color: day ? '#000' : '#FFF', fontWeight: 'normal', fontFamily: 'IM Fell French Canon' }}
             disabled={(!this.props.user.alive)}
           />
-          <Button disabled={(!this.props.user.alive)}
+           <IconButton
+            type="submit"
+            className="enterText"
+            disabled={(!this.props.user.alive)}
+          >
+            <Send />
+          </IconButton>
+          {/*<Button disabled={(!this.props.user.alive)}
                   type="submit"
                   className="enterText">
                   Enter
-          </Button>
+          </Button>*/}
         </form>
       </div>
     )

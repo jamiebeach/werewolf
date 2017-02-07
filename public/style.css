@@ -1,6 +1,10 @@
 /* ------ FONTS FOR ENTIRE SITE ------- */
-/* Chat/Paragraphs font: font-family: 'IM Fell French Canon', serif;
-   Headers font: font-family: 'IM Fell English SC', serif; */
+/*
+
+Chat/Paragraphs font: font-family: 'IM Fell French Canon', serif;
+Headers font: font-family: 'IM Fell English SC', serif;
+Buttons font: font-family: 'IM Fell Great Primer SC', serif;
+*/
 
 /* ------ COLORS FOR ENTIRE SITE ------- */
 /*#360457 Eggplant
@@ -58,7 +62,6 @@ body {
 }
 
 .landingTextBox {
-  margin-top: 5%;
   margin-left: 12%;
   margin-right: 10%;
   background: rgba(0, 0, 0, .6);
@@ -173,22 +176,10 @@ body {
 /* ----- CHAT BOX ----- */
 #chat-input form {
   margin: auto;
+
   display: flex;
   flex-direction: row;
-}
-
-.btn {
-  background: #FFF;
-  border: 0;
-  padding: 5px 10px;
-}
-
-.enterText {
-  background: #6E0300;
-  color: #FFF;
-  margin: 10px;
-  float: right;
-  font-family: 'IM Fell English SC', serif;
+  align-items: flex-end;
 }
 
 #statement-bubble {
@@ -325,11 +316,6 @@ body {
 
 .rules-header {
   color : #D6C967
-}
-
-.row {
-  margin-right: 5%;
-  margin-left: 5%;
 }
 
 .col-4 {
