@@ -20,8 +20,12 @@ export const Welcome = () => {
 				</div>
 			</div>
 			<div className='landingButton'>
-				<RaisedButton label="Start a Game" backgroundColor={'#1E052B'} labelStyle={{color: 'white'}} containerElement={<Link to="/newgame"/>}/>
-				<RaisedButton label="Chat (TESTING)" backgroundColor={'#0D7A58'} labelStyle={{color: 'white'}} containerElement={<Link to="/chat"/>}/>
+				<RaisedButton
+					label="Start playing"
+					backgroundColor={'#1E052B'}
+					labelStyle={ {color: 'white', fontFamily: 'IM Fell English SC'} }
+					containerElement={ <Link to="/newgame" /> }
+					/>
 			</div>
 		</div>
 	)

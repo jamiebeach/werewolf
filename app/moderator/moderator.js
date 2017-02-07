@@ -19,17 +19,36 @@ const SCRYING = 'SCRYING';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
 
-/* ----------------- CONSTANTS: SETTINGS ------------------ */
+/* ----------------- SETTINGS ------------------ */
 
-const colors =
+let colors =
 [
-  'darkred',
-  'darkblue',
-  'darkgreen',
-  'grey',
-  'purple',
-  'orange'
+  'chocolate','brown', 'darkred', 'crimson', 'firebrick', 'orangered',
+  'darkorange', 'orange', 'darkgoldenrod', 'goldenrod', 'gold',
+  'yellow', 'lawngreen', 'seagreen', 'darkgreen', 'darkolivegreen',
+  'darkcyan', 'darkturquoise', 'cadetblue', 'deepskyblue', 'darkblue',
+  'midnightblue', 'darkslateblue', 'blueviolet', 'indigo',  'rebeccapurple',
+  'purple', 'darkmagenta', 'plum', 'violet', 'lightcoral', 'darksalmon',
+  'darkslategrey',
 ];
+
+let avatars = [
+ 'f01', 'm01',
+ 'f02', 'm02',
+ 'f03', 'm03',
+ 'f04', 'm04',
+ 'f05', 'm05',
+ 'f06', 'm06',
+ 'f07', 'm07',
+ 'f08', 'm08',
+ 'f09', 'm09',
+ 'f010', 'm10',
+ 'f011', 'm11',
+ 'f012', 'm12',
+ 'f013', 'm13',
+ 'f014', 'm14',
+ 'f015', 'm15',
+]
 
 // milliseconds for various setTimeouts
 const timeToRead = 5000;  // 5,000
@@ -61,31 +80,26 @@ const shuffle = (array) => {
 
 /* ----------------- THE MODERATOR ------------------ */
 
-// the moderator class is the ultimate source of truth
-// its props reflect the game state at every given point
+/*
+the moderator class is the ultimate source of truth: its props reflect the game state at every given point
 
-// players send actions to "PlayerActions" on firebase
-// the moderator listens to that key.
-// as the only person listening to all player events, mod
-// logically adjusts the props, and responds to "StoreActions"
+players send actions to "PlayerActions" on firebase
+the moderator listens to that key and as the only person listening to all player events,
+mod logically adjusts the props, and responds to "StoreActions"
 
-// players do NOT listen to "PlayerActions"
-// players only listen to assigned channels on "StoreActions"
-// they only change what mod has told them to change
-// which may be "personal" private state changes
-// OR public, simultaneous changes for everyone
+players do NOT listen to "PlayerActions"! players only listen to assigned channels on "StoreActions"
+they only change what mod has told them to change, which may be "personal" private state changes OR public, simultaneous changes for everyone
+*/
 
 /* -------------- currently... --------------- */
-// a new instance of the moderator class should be invoked
-// by the leader who initiates a game chat room
 
-// the leader then commands "/ready"
-// triggering the moderator's assignment of roles
-// and the game loop
+/*
+a new instance of the moderator class should be invoked by the leader who initiates a game chat room
+the leader then commands "/ready", triggering the moderator's assignment of roles and the game loop
+*/
 
 /* -------------- eventually... --------------- */
-// the moderator is run on another server and
-// the leader is not the one invoking the methods
+// the moderator is run on another server and the leader is not the one invoking the methods
 
 
 export default class Moderator {
@@ -156,6 +170,14 @@ export default class Moderator {
           break;
       }
     })
+
+
+    // the order of join corresponds to the index of random color and avatar
+    // i.e. leader, the first join, gets 0th color and 0th avatar
+
+    colors = shuffle(colors); // the colors of the users for the game
+    avatars = shuffle(avatars); // the avatars for each user for the game
+
   }
 // helper function
   narrate(message, role, personal, error) {
@@ -188,24 +210,31 @@ export default class Moderator {
   }
 
   handleJoin(playerAction) {
-    const color = colors[this.players.length];
+    let i = this.players.length;
     this.players.push(
       {
-        name: playerAction.name,
-        alive: true,
         uid: playerAction.uid,
+        name: playerAction.name,
+
+        color: colors[i],
+        avatar: avatars[i],
+
+        alive: true,
         immunity: false,
-        color: color
         // moderator has not determined roles
       }
     );
 
     let player = {
       type: ADD_USER,
-      name: playerAction.name,
-      alive: true,
+
       uid: playerAction.uid,
-      color: color,
+      name: playerAction.name,
+
+      color: colors[i],
+      avatar: avatars[i],
+
+      alive: true,
       role: 'villager' //everyone is "villager" at first
     }
     this.moderate(player, 'public', 'adduser')

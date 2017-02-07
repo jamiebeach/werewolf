@@ -7,7 +7,6 @@ import PlayersList from './PlayersList';
 const ChatContainer = props => {
 
   return(
-
     <div className={props.game.day ? 'day container' : 'night container'}>
       <div className="chatHalf">
         {
@@ -23,6 +22,28 @@ const ChatContainer = props => {
 
   )
 }
+
+const mapStateToProps = state => {
+  return {
+    game: state.game,
+    user: bobette
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return ({
+    dispatchAddImage (image) {
+      return dispatch(addImage(image));
+    },
+    dispatchUpdateGuessed (tags) {
+      return dispatch(updateGuessed(tags));
+    }
+  });
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatContainer);
+
+//<!---->
 
 // fake hard coded data
 {
@@ -164,25 +185,3 @@ const bobette = {  // live werewolf
     immunity: false,
     night: true
   };
-
-const mapStateToProps = state => {
-  return {
-    game: state.game,
-    user: bobette
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return ({
-    dispatchAddImage (image) {
-      return dispatch(addImage(image));
-    },
-    dispatchUpdateGuessed (tags) {
-      return dispatch(updateGuessed(tags));
-    }
-  });
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ChatContainer);
-
-//<!---->
