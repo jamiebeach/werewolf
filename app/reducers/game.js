@@ -14,7 +14,7 @@ const initialState = {
   gameId: '',
   day: true,
   votes: [],
-  villager: [],
+  public: [],
   wolf: [],
   seer: [],
   priest: [],
@@ -166,9 +166,9 @@ export const updateGameActions = () => {
 
 // after roles are assigned, call this dispatcher!!!
 // Action Listener for werewolves
-export const updateWolfActions = () => {
+export const updateWolfActions = (gameId) => {
   return (dispatch, getState) => {
-    const storeActions = `games/${getState().game.gameId}/storeActions/`;
+    const storeActions = `games/${gameId}/storeActions/`;
     if (getState().game.self.role === "werewolf") {
       firebase.database().ref(`${storeActions}/werewolves`).on('child_added', function(action){
         dispatch(firebaseUpdate(action.val()))
@@ -230,6 +230,8 @@ export const joinGame = (name, gameId) => {
     const uid = getState().game.self.uid;
     dispatch(addUser(name, uid, gameId));
     dispatch(updateSelf(name));
+    dispatch(updateGameActions(gameId));
+
   }
 }
 

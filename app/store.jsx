@@ -41,7 +41,6 @@ store.dispatch(whoami())
 // fetches fake users, fills out the playerList
 //store.dispatch(fetchUsers())
 // fetches fake messages, fills out ChatBox
-store.dispatch(updateGameActions())
 
 
 /*---------
