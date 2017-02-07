@@ -23,7 +23,6 @@ const Navbar = () => {
         <h3 className='navBtnLeft'>Nightfall</h3>
       </div>
       <div className="navBtnRight">
-       <Link className='icons' to={'newgame'}>Start A Game</Link>
        <Link className='icons' to={'rules'} >Rules</Link>
       </div>
     </div>
