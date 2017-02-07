@@ -14,7 +14,7 @@ const ChatContainer = props => {
           (props.game.day || props.user.night || !props.user.alive)
           ? <ChatBox
             player={props.player}
-            messages={props.game.public}
+            messages={props.game.messages}
             players={props.game.users}
             day={props.game.day}
             sendMessage={props.sendMessage}

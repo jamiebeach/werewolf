@@ -177,7 +177,7 @@ export default class Moderator {
     firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
     .push({
       type: RECIEVE_MESSAGE,
-      name: 'moderator',
+      user: 'moderator',
       message: `${message}`,
       role: `${role}`
     })
@@ -189,6 +189,9 @@ export default class Moderator {
     // typeof: action = object that has type and any other info,
     // ref = the address in storeActions, in a string,
     // error =  1-2 word summary of msg (leave null for generic error)
+
+    console.log('ref', ref)
+
     firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
     .push(action)
     .catch(err => console.error(`Error: moderator sending ${error} action to firebase`, err))
@@ -472,7 +475,9 @@ export default class Moderator {
   handleStart() {
     console.log("inside handleStart");
     if (this.didAssign) return;
-    else if (this.players.length < 5) this.narrate('Minimum 5 players to start.')
+    else if (this.players.length < 5) {
+      this.narrate('Minimum 5 players to start.', 'public', 'public', '/roles')
+    }
 
     const length = this.players.length;
     let numWerewolves = Math.floor(length / 3);

@@ -15,8 +15,7 @@ const initialState = {
 
   day: true,
   votes: [],
-  public: [],
-  personal: [],
+  messages: [],
 }
 
 //TODOS
@@ -75,7 +74,7 @@ const reducer = (state = initialState, action) => {
     case RECIEVE_MESSAGE:
       return {
         ...state,
-        [action.role]: [...state[action.role], {text: action.message, user: action.user}],
+        messages: [...state.messages, {text: action.message, user: action.user}],
       }
 
     case SWITCH_TIME:
