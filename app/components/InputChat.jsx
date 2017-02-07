@@ -65,7 +65,7 @@ class Chat extends Component {
       <div id="chat-input">
         <form onSubmit={this.handleSubmit}>
           <TextField
-            style={{width: "80%", marginLeft: 20}}
+            style={{flexGrow: 1, marginLeft: '10px'}}
             id="message"
             hintText={(this.props.user.alive) ? "Enter message here" : "You can't chat when you're dead"}
             hintStyle={{color: day ? '#000' : '#AAA' }}

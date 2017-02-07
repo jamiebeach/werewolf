@@ -1,9 +1,6 @@
-import React, { Component} from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
-
-import AppBar from 'material-ui/AppBar';
-import Button from 'material-ui/FlatButton';
 import ActionHome from 'material-ui/svg-icons/action/home';
 import IconButton from 'material-ui/IconButton';
 
@@ -33,7 +30,6 @@ const Navbar = () => {
   )
 }
 
-
 /* -----------------    CONTAINER     ------------------ */
 
 const mapState = state => {
@@ -44,12 +40,6 @@ const mapState = state => {
 
 const mapDispatch = dispatch => {
   return {
-    login: (user, pw) => {
-      dispatch(login(user, pw))
-    },
-    logout: () => {
-      dispatch(logout())
-    }
   }
 };
 

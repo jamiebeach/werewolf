@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 
-import {GridList} from 'material-ui/GridList';
-import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
 import InputChat from './InputChat';
-import Paper from 'material-ui/Paper';
 import ChatMessage from './ChatMessage';
 //import FontIcon from 'material-ui/FontIcon';
 
@@ -14,7 +11,7 @@ class ChatBox extends Component {
   }
 
   scrollToBottom() {
-    this.lastMessage.scrollIntoView();
+    // this.lastMessage.scrollIntoView();
   }
 
   componentDidMount() {
@@ -31,7 +28,6 @@ class ChatBox extends Component {
     const messages = this.props.messages;
 
     return (
-
       <div id="chat-window-container">
         <ul className="chat-window">
           {messages.map((message, index) => {

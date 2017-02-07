@@ -38,7 +38,7 @@ Later on, these methods should/will be indirectly invoked by players
 sending all their redux actions to "PlayerActions" with the correct action.type
 ----------*/
 
-// GAME START, ROLE ASSIGN, GAME LOOP
+/*// GAME START, ROLE ASSIGN, GAME LOOP
 
 // create a new game with name, your name, and your uid
 const mod = new Moderator('testgame', 'felicia', 1);
@@ -56,11 +56,11 @@ mod.handleJoin({name: 'galen', uid: 6});
 mod.handleStart();
 
 // leader said /ready. game loop begins.
-mod.handleLeaderStart();
+mod.handleLeaderStart();*/
 
 
 
-// THE FIRST NIGHT, WEREWOLVES, PRIEST, SEER
+/*// THE FIRST NIGHT, WEREWOLVES, PRIEST, SEER
 
 setTimeout(() => {
 
@@ -79,7 +79,7 @@ setTimeout(() => {
   mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
   //mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
 }, 6000)
-
+*/
 
 /*// THE FIRST DAY, VILLAGERS VOTE
 
