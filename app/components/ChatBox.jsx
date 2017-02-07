@@ -1,28 +1,30 @@
 import React, { Component } from 'react';
 
-import {GridList} from 'material-ui/GridList';
-import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
 import InputChat from './InputChat';
-import Paper from 'material-ui/Paper';
 import ChatMessage from './ChatMessage';
-//import FontIcon from 'material-ui/FontIcon';
+
 
 class ChatBox extends Component {
   constructor() {
     super();
-    this.scrollToBottom = this.scrollToBottom.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
   }
 
-  scrollToBottom() {
-    this.lastMessage.scrollIntoView();
+  handleScroll() {
+    if ((this.chatScroll.scrollTop + this.chatScroll.clientHeight) < this.chatScroll.scrollHeight) {
+      this.scrolledUp = true;
+    }
+    else {
+      this.scrolledUp = false;
+    }
   }
 
   componentDidMount() {
-    //this.scrollToBottom();
+    this.scrolledUp = false;
   }
 
   componentDidUpdate() {
-    //this.scrollToBottom();
+    if (!this.scrolledUp) this.chatScroll.scrollTop = this.chatScroll.scrollHeight;
   }
 
   render() {
@@ -33,9 +35,19 @@ class ChatBox extends Component {
     return (
 
       <div id="chat-window-container">
-        <ul className="chat-window">
+        <ul
+          className="chat-window"
+          onScroll={this.handleScroll}
+          ref={
+            (div) => {
+              this.chatScroll = div;
+            }
+          }
+        >
           {messages.map((message, index) => {
-            return <ChatMessage message={message} user={user} index={index} key={index}/>
+            return (
+              <ChatMessage message={message} user={user} index={index} key={index}/>
+              )
           })}
         </ul>
         <InputChat addMessage={()=> {}} user={user}/>
