@@ -12,7 +12,6 @@ function ChatMessage(props) {
         <div className="player-name">
           {console.log(message)}
           {message.user.toUpperCase()}
-          }
         </div>
         <div className="message-content">
           {message.text}
