@@ -12,7 +12,7 @@ import Rules from './components/Rules';
 import GameContainer from './components/GameContainer';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import setGameId from './reducers/game';
+import {recieveGameId} from './reducers/game';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -20,7 +20,7 @@ injectTapEventPlugin();
 
 const onGameEnter = nextRouterState => {
   const gameId = nextRouterState.params.id;
-  store.dispatch(setGameId(gameId));
+  store.dispatch(recieveGameId(gameId));
 }
 
 render(

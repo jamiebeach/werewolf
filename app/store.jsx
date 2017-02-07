@@ -10,8 +10,23 @@ import Moderator from './moderator/moderator'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+const dumbLogger = store => next => action => {
+  const oldState = store.getState()
+  const rVal = next(action)
+  const newState = store.getState()
+  console.log(
+    JSON.stringify({
+      oldState, newState,
+      action: typeof action !== 'function'? action : action.toString(),
+    }, 0, 2))
+  return rVal
+}
+
 const store = createStore(rootReducer, composeEnhancers(
-	applyMiddleware(createLogger(), thunkMiddleware)
+	applyMiddleware(
+    createLogger(),
+    dumbLogger,
+    thunkMiddleware)
 ))
 
 export default store
@@ -41,44 +56,44 @@ sending all their redux actions to "PlayerActions" with the correct action.type
 // GAME START, ROLE ASSIGN, GAME LOOP
 
 // create a new game with name, your name, and your uid
-const mod = new Moderator('testgame', 'felicia', 1);
-mod.handleJoin({name: 'felicia', uid: 1});
+// const mod = new Moderator('testgame', 'felicia', 1);
+// mod.handleJoin({name: 'felicia', uid: 1});
 
-// friends join the game
-mod.handleJoin({name: 'jenny', uid: 2});
-mod.handleJoin({name: 'garity', uid: 3});
-mod.handleJoin({name: 'gladys', uid: 4});
-mod.handleJoin({name: 'ashi', uid: 5});
-mod.handleJoin({name: 'galen', uid: 6});
+// // friends join the game
+// mod.handleJoin({name: 'jenny', uid: 2});
+// mod.handleJoin({name: 'garity', uid: 3});
+// mod.handleJoin({name: 'gladys', uid: 4});
+// mod.handleJoin({name: 'ashi', uid: 5});
+// mod.handleJoin({name: 'galen', uid: 6});
 
-// ~something happens~ (needs to be some button or command)
-// roles assigned and wait for leader to say /ready after this
-mod.handleStart();
+// // ~something happens~ (needs to be some button or command)
+// // roles assigned and wait for leader to say /ready after this
+// mod.handleStart();
 
-// leader said /ready. game loop begins.
-mod.handleLeaderStart();
+// // leader said /ready. game loop begins.
+// mod.handleLeaderStart();
 
 
 
-// THE FIRST NIGHT, WEREWOLVES, PRIEST, SEER
+// // THE FIRST NIGHT, WEREWOLVES, PRIEST, SEER
 
-setTimeout(() => {
+// setTimeout(() => {
 
-  // werewolves vote on kill
-  mod.handleVote({user: 'gladys', vote: 'galen'})
-  mod.handleVote({user: 'garity', vote: 'galen'})
+//   // werewolves vote on kill
+//   mod.handleVote({user: 'gladys', vote: 'galen'})
+//   mod.handleVote({user: 'garity', vote: 'galen'})
 
-  // villagers also voting on kill.... just demonstration
-  mod.handleVote({user: 'ashi', vote: 'jenny'})
-  mod.handleVote({user: 'felicia', vote: 'jenny'})
-  mod.handleVote({user: 'galen', vote: 'jenny'})
+//   // villagers also voting on kill.... just demonstration
+//   mod.handleVote({user: 'ashi', vote: 'jenny'})
+//   mod.handleVote({user: 'felicia', vote: 'jenny'})
+//   mod.handleVote({user: 'galen', vote: 'jenny'})
 
-  // other night actions -- seer and priest
-  // toggle priest action to see that jenny can either die or be saved
+//   // other night actions -- seer and priest
+//   // toggle priest action to see that jenny can either die or be saved
 
-  mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
-  //mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
-}, 6000)
+//   mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
+//   //mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
+// }, 6000)
 
 
 /*// THE FIRST DAY, VILLAGERS VOTE

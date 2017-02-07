@@ -113,7 +113,7 @@ export default class Moderator {
 
     // listen to player actions in firebase
     firebase.database().ref(`games/${this.gameName}/playerActions/`)
-    .on('child_added', function(action){
+    .on('child_added', (action) => {
       const playerAction = action.val();
 
       switch (playerAction.type) {

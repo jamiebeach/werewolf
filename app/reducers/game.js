@@ -1,11 +1,15 @@
 import { browserHistory } from 'react-router';
+import Moderator from '../moderator/moderator';
 
 // export let gameId;
 // const playerActions = `games/${gameId}/playerActions/`;
 // const storeActions = `games/${gameId}/storeActions/`;
 
+let mod;
+
 const initialState = {
   self: {},
+  // users: { [playerName: String]: User }
   users: {},
   gameId: '',
   day: true,
@@ -28,85 +32,72 @@ const initialState = {
 
 /* ------------       REDUCER     ------------------ */
 
+
 const reducer = (state = initialState, action) => {
-
-  const newState = Object.assign({}, state)
-
   switch (action.type) {
-
     case RECIEVE_GAMEID:
-      newState.gameId = action.gameId;
-      break;
+      return {...state, gameId: action.gameId}
 
     case SET_SELF:
-      newState.self = action.self;
-      break;
+      return {...state, self: action.self,}
 
     case UPDATE_SELF:
-      newState.self.joined = true;
+      return {
+        ...state,
+        self: {...state.self, joined: true, name: action.name},
+      }
 
     case RECIEVE_USER:
-      newState.users[action.uid] = {
-        name: action.name,
-        alive: true,
-        color: action.color,
-        role: action.role
+      return {
+        ...state,
+        users: {
+          ...state.users,
+          [action.name]: {
+            name: action.name,
+            uid: action.uid,
+            alive: true,
+            color: action.color,
+            role: action.role
+          },
+        },
       }
-      break;
 
     case UPDATE_USER:
-      // do we need to object assign everything here?
-      if (action.name === newState.self.name) {
-        newState.self.role = action.role;
+      return {
+        ...state,
+        users: {
+          ...state.users,
+          [action.name]: {
+            ...state.users[action.name],
+            ...action.updates,
+          },
+        },
+        self: action.name === state.self.name ? {
+          ...state.self,
+          ...action.updates,
+        } : self,
       }
-      newState.users[action.name].role = action.role;
-      break;
 
     case RECIEVE_MESSAGE:
-      let msg = {
-        text: action.message,
-        user: action.user,
+      return {
+        ...state,
+        [action.role]: [...state[action.role], {text: action.message, user: action.user}],
       }
-      newState[action.role] = [...newState[action.role], msg]
-      break;
-
-    case RECIEVE_VOTE:
-      let vote = {
-        killUser: action.vote,
-        user: action.user
-      }
-      newState.votes = [...newState.votes, vote];
-      break;
-
-    case KILLING:
-      state.users[action.uid].alive = false;
-      newState.users = Object.assign({}, state.users)
-      break;
 
     case SWITCH_TIME:
-      if (action.timeofday === 'daytime'){
-        newState.day = true;
-      } else if (action.timeofday === 'nighttime') {
-        newState.day = false;
+      return {
+        ...state,
+        day: action.timeofday === 'daytime',
       }
-      newState.votes = [];
-      newState.villager = [];
-      newState.seer = [];
-      newState.priest = [];
-      newState.wolf = [];
-      break;
 
-    default:
-      break;
+    default: return state
   }
-
-  return newState;
 }
 
 /* -----------------    ACTIONS     ------------------ */
 
 const ADD_GAMEID = 'ADD_GAMEID';
-const SET_GAMEID = 'SET_GAMEID';
+const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 
 const SET_SELF = 'SET_SELF';
 const UPDATE_SELF = 'UPDATE_SELF'
@@ -121,7 +112,6 @@ const SWITCH_TIME = 'SWITCH_TIME';
 const SCRYING = 'SCRYING';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
-const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 
 /* ------------     ACTION CREATORS     ------------------ */
 // export const recieveMessage = message => ({
@@ -137,8 +127,8 @@ export const setSelf = self => ({
   type: SET_SELF, self
 })
 
-export const updateSelf = () => ({
-  type: UPDATE_SELF
+export const updateSelf = (name) => ({
+  type: UPDATE_SELF, name
 })
 
 export const getAllUsers = users => ({
@@ -149,7 +139,9 @@ export const firebaseUpdate = update => {
   return update;
 }
 
-
+export const recieveGameId = gameId => ({
+  type: RECIEVE_GAMEID, gameId
+})
 
 /*---------
 Listeners for /storeActions
@@ -160,6 +152,7 @@ the moderator listens for playeractions and dispences storeactions
 // Generic Action Listener, will RECEIVE actions whenever firebase/actions updates in /public /:uid
 export const updateGameActions = () => {
   return (dispatch, getState) => {
+    const storeActions = `games/${getState().game.gameId}/storeActions/`;
 
     firebase.database().ref(`${storeActions}/public`).on('child_added', function(action){
         dispatch(firebaseUpdate(action.val()))
@@ -175,6 +168,7 @@ export const updateGameActions = () => {
 // Action Listener for werewolves
 export const updateWolfActions = () => {
   return (dispatch, getState) => {
+    const storeActions = `games/${getState().game.gameId}/storeActions/`;
     if (getState().game.self.role === "werewolf") {
       firebase.database().ref(`${storeActions}/werewolves`).on('child_added', function(action){
         dispatch(firebaseUpdate(action.val()))
@@ -201,45 +195,41 @@ Game SetUp Actions
 ----------*/
 
 // TODO how does gameId get set on everyone's store?
+// called in chat onEnter grabs gameId from url and places on local store
 export const setGameId = (gameId) => {
   return dispatch => {
-    // console.log("inside setGameId ", gameId)
-    firebase.database().ref(`games/${gameId}/playerActions`).push({
-      type: ADD_GAMEID,
-      gameId
-    })
-    .catch(console.error);
+    dispatch(recieveGameId(gameId));
   }
 }
 
 // TODO make this work ;-)
+// dispatched when Game Leader puts in Player name and clicks "Start Game"
+// sets gameId on players state
+// dispatches addUser
+// instantiates new Moderator
+// redirects to game chatroom 
 export const createNewGame = (userName, gameName, uid) => {
-  return dispatch => {
-    // console.log("creating new game with ", userName, gameName);
-    // Pushes a new game into firebase, the random key is returned and saved as gameId
+  return (dispatch, getState) => {
+    const uid = getState().game.self.uid;
     const gameId = firebase.database().ref('games').push({
       name: gameName
     });
-    // TODO adds game leader to users on State => not sure if this should be on state.game or state.moderator
-    // .then(() => addUser(userName, null))
-    // TODO need to call new Moderator
-    // TODO gameId not currently updating on state
     gameId.then(() =>  {
       dispatch(setGameId(gameId.key));
-      // let mod = new Moderator(gameId, userName, uid)
-      browserHistory.push(`/chat/${gameId.key}`)
+      dispatch(joinGame(userName, gameId.key));
+      mod = new Moderator(gameId.key, userName, uid)
+      browserHistory.push(`/game/${gameId.key}`)
     });
   }
 }
 
-// TODO wrap in gameAction wrapper??
 // When player joins a created game we update state.game.self.joined to TRUE
 // and we add the player to everyones Users object
 export const joinGame = (name, gameId) => {
-  return dispatch => {
-    const uid = firebase.auth().currentUser.uid;
+  return (dispatch, getState) => {
+    const uid = getState().game.self.uid;
     dispatch(addUser(name, uid, gameId));
-    dispatch(updateSelf());
+    dispatch(updateSelf(name));
   }
 }
 

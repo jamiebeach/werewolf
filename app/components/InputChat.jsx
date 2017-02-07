@@ -11,8 +11,7 @@ import {
 } from '../reducers/game';
 
 
-// eventually this has to connect to have access to user, etc
-class Chat extends Component {
+export default class Chat extends Component {
   constructor() {
     super();
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -31,18 +30,18 @@ class Chat extends Component {
       switch(cmd) {
 
         case 'vote':
-          this.props.sendVote(this.props.user.name, target);
+          this.props.sendVote(this.props.self.name, target);
           break;
 
         case 'save':
-          if (this.props.game.self.role === 'priest' && !this.props.game.day) {
-            this.props.sendSave(this.props.game.self, target);
+          if (this.props.self.role === 'priest' && !this.props.day) {
+            this.props.sendSave(this.props.self, target);
           }
           break;
 
         case 'scry':
-          if (this.props.game.self.role === 'seer' && !this.props.game.day) {
-            this.props.sendScry(this.props.game.self, target);
+          if (this.props.self.role === 'seer' && !this.props.day) {
+            this.props.sendScry(this.props.self, target);
           }
           break;
 
@@ -52,14 +51,14 @@ class Chat extends Component {
 
     }
 
-    else { console.log(this.props.user, msg, 'villager'); this.props.sendMessage(this.props.user.name, msg, 'villager');}
+    else { console.log(this.props.self, msg, 'public'); this.props.sendMessage(this.props.self.name, msg, 'public');}
 
     e.target.message.value = '';
   }
 
 
   render() {
-    const day = this.props.game.day;
+    const day = this.props.day;
 
     return (
       <div id="chat-input">
@@ -67,13 +66,13 @@ class Chat extends Component {
           <TextField
             style={{width: "80%", marginLeft: 20}}
             id="message"
-            hintText={(this.props.user.alive) ? "Enter message here" : "You can't chat when you're dead"}
+            hintText={(this.props.self.alive) ? "Enter message here" : "You can't chat when you're dead"}
             hintStyle={{color: day ? '#000' : '#AAA' }}
             underlineFocusStyle={{borderColor: day ? '#0D7A58' : '#6E0300 ' }}
             inputStyle={{color: day ? '#000' : '#FFF' , fontWeight: 'normal' }}
-            disabled={(!this.props.user.alive)}
+            disabled={(!this.props.self.alive)}
           />
-          <Button disabled={(!this.props.user.alive)}
+          <Button disabled={(!this.props.self.alive)}
                   type="submit"
                   className="enterText">
                   Enter
@@ -84,29 +83,29 @@ class Chat extends Component {
   }
 }
 
-/* -----------------    CONTAINER     ------------------ */
+// /* -----------------    CONTAINER     ------------------ */
 
-const mapState = state => {
-  return {
-    game: state.game
-  }
-};
+// const mapState = state => {
+//   return {
+//     game: state.game
+//   }
+// };
 
-const mapDispatch = dispatch => {
-  return {
-    sendMessage: (user, msg, role) => {
-      dispatch(sendMessageAction(user, msg, role));
-    },
-    sendVote: (user, target) => {
-      dispatch(sendVoteAction(user, target));
-    },
-    sendScry: (user, target) => {
-      dispatch(sendScryAction(user, target));
-    },
-    sendSave: (user, target) => {
-      dispatch(sendSaveAction(user, target));
-    }
-  }
-};
+// const mapDispatch = dispatch => {
+//   return {
+//     sendMessage: (self, msg, role) => {
+//       dispatch(sendMessageAction(self, msg, role));
+//     },
+//     sendVote: (self, target) => {
+//       dispatch(sendVoteAction(self, target));
+//     },
+//     sendScry: (self, target) => {
+//       dispatch(sendScryAction(self, target));
+//     },
+//     sendSave: (self, target) => {
+//       dispatch(sendSaveAction(self, target));
+//     }
+//   }
+// };
 
-export default connect(mapState, mapDispatch)(Chat);
+// export default connect(mapState, mapDispatch)(Chat);

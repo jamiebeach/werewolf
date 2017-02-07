@@ -70,7 +70,18 @@ export const whoami = () =>
   dispatch =>
     firebase.auth().onAuthStateChanged(
       user => {
-        if (user) dispatch(authenticated({...user}));
+        if (user) {
+          const self = {
+            joined: false,
+            alive: true,
+            won: false,
+            uid: user.uid,
+            //TODO add color somehow
+            color: null,
+          }
+          dispatch(authenticated({uid: user.uid}));
+          dispatch(setSelf(self));
+        }
         else dispatch(anonLogin())
       },
       error => console.log(error))

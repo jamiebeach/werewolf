@@ -5,7 +5,7 @@ import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
 import InputChat from './InputChat';
 import Paper from 'material-ui/Paper';
 import ChatMessage from './ChatMessage';
-//import FontIcon from 'material-ui/FontIcon';
+
 
 class ChatBox extends Component {
   constructor() {
@@ -27,7 +27,7 @@ class ChatBox extends Component {
 
   render() {
     const day = this.props.day;
-    const user = this.props.user;
+    const self = this.props.self;
     const messages = this.props.messages;
 
     return (
@@ -35,10 +35,10 @@ class ChatBox extends Component {
       <div id="chat-window-container">
         <ul className="chat-window">
           {messages.map((message, index) => {
-            return <ChatMessage message={message} user={user} index={index} key={index}/>
+            return <ChatMessage message={message} self={self} index={index} key={index}/>
           })}
         </ul>
-        <InputChat addMessage={()=> {}} user={user}/>
+        <InputChat {...this.props}/>
       </div>
     )
   }
