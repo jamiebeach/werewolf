@@ -5,6 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import {joinGame, gameId} from '../reducers/game';
 
 export const JoinGame = props => {
+
 	const handleSubmit = (evt) => {
 		evt.preventDefault();
 		const userName = evt.target.userName.value;

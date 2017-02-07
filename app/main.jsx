@@ -31,8 +31,8 @@ render(
           <IndexRedirect to="/home" />
           <Route path="/home" component={Welcome} />
           <Route path="/newgame" component={NewGame} />
-          <Route path='/joingame/:id' component={JoinGame} />
           <Route path="/rules" component={Rules} />
+          <Route path="/joingame/:id" component={JoinGame} />
           <Route path="/game/:id" component={GameContainer} onEnter={onGameEnter} />
         </Route>
       </Router>

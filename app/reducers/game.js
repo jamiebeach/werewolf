@@ -9,12 +9,12 @@ let mod;
 
 const initialState = {
   gameId: '',
+  gameStart: false,
   player: {},
   // users: { [playerName: String]: User }
   users: {},
 
   day: true,
-  votes: [],
   messages: [],
 }
 
@@ -32,7 +32,7 @@ const reducer = (state = initialState, action) => {
       return {...state, gameId: action.gameId}
 
     case SET_PLAYER:
-      return {...state, player: action.player,}
+      return {...state, player: action.player}
 
     case UPDATE_PLAYER:
       return {
@@ -83,7 +83,8 @@ const reducer = (state = initialState, action) => {
         day: action.timeofday === 'daytime',
       }
 
-    default: return state
+    default:
+      return state
   }
 }
 
@@ -109,14 +110,6 @@ const SAVING = 'SAVING';
 const KILLING = 'KILLING';
 
 /* ------------     ACTION CREATORS     ------------------ */
-// export const recieveMessage = message => ({
-//   type: RECIEVE_MESSAGE,
-//   message
-// })
-
-// export const recieveVote = vote => ({
-//   type: RECIEVE_VOTE, vote
-// })
 
 export const setPlayer = player => ({
   type: SET_PLAYER, player
@@ -150,11 +143,14 @@ export const updateGameActions = () => {
     const storeActions = `games/${getState().game.gameId}/storeActions/`;
 
     firebase.database().ref(`${storeActions}/public`).on('child_added', function(action){
-        dispatch(firebaseUpdate(action.val()))
+      dispatch(firebaseUpdate(action.val()))
     })
 
     firebase.database().ref(`${storeActions}/${getState().game.player.uid}`).on('child_added', function(action){
-        dispatch(firebaseUpdate(action.val()))
+      if (action.val().type === 'UPDATE_USER' && action.val().role === 'werewolf'){
+        dispatch(updateWolfActions())
+      }
+      dispatch(firebaseUpdate(action.val()))
     })
   }
 }
@@ -233,9 +229,9 @@ export const joinGame = (name, gameId) => {
 // when user joins a game they input a Player name.
 export const addUser = gameAction(
   (username, uid, gameId) => ({
-      type: ADD_USER,
-      name: username,
-      uid: uid
+    type: ADD_USER,
+    name: username,
+    uid: uid
   })
 )
 
@@ -259,9 +255,9 @@ Game Player Actions
 export const sendMessageAction = gameAction(
   (user, message, role) => ({
     type: RECIEVE_MESSAGE,
-    user: user,
-    message: message,
-    role: role,
+    user,
+    message,
+    role,
   })
 )
 
@@ -296,116 +292,3 @@ export const sendSaveAction = gameAction (
 
 export default reducer;
 
-
-/* NOT SURE IF WE NEED THIS STUFF OR NOT ANYMORE
-
-// export const fetchUsers = () => {
-//   return dispatch => {
-//     firebase.database().ref('/users/').once('value')
-//     .then(res => {
-//       dispatch(getAllUsers(res.val()))
-//      })
-//     .catch(console.error)
-//   }
-// }
-
-// // when user joins a game they input a username. Users are stored by username in the db
-// export const addUser = (username) => {
-//   return dispatch => {
-//     firebase.database().ref(`games/${gameId}/playerActions`).push({
-//       type: ADD_USER,
-//       role,
-//       alive,
-//       won,
-//       uid,
-//       color,
-//     })
-//     .catch(console.error)
-//   }
-// }
-
-// // dispatched after a majority vote is reached
-// export const sendSwitchTimeAction = (timeofday) => {
-//   return dispatch => {
-//     firebase.database().ref(playerActions).push({
-//     type: SWITCH_TIME,
-//     timeofday,
-//     })
-//     .catch(err => console.error('Error getting the lastest timeofday from firebase', err))
-//   }
-// }
-
-// // dispatched after a majority vote is reached
-// export const sendKillUserAction = (user) => {
-//   return dispatch => {
-//     firebase.database().ref(playerActions).push({
-//     type: KILLING,
-//     user
-//     })
-//     .catch(err => console.error('Error getting the lastest killUser from firebase', err))
-//   }
-// }
-
-// // dispatched if a majority vote is not reached
-// // might have to turn into a moderator message
-// export const sendAddTallyAction = (tally) => {
-//   return dispatch => {
-//     firebase.database().ref(playerActions).push({
-//     type: ADD_TALLY,
-//     tally,
-//     })
-//     .catch(err => console.error('Error getting the lastest addTally from firebase', err))
-//   }
-// }
-
-// // tallys votes. Kills user if majority is reached, otherwise tally is added to store
-// export const tallyVotes = () => {
-//   return (dispatch, getState) => {
-//     const {votes, users, day} = getState().game;
-//     const tally = {};
-//     votes.forEach(vote => {
-//       const killUser = vote.killUser;
-//       if (!tally[killUser]) {
-//         tally[killUser] = 0;
-//       }
-//       tally[killUser] += 1;
-//     })
-
-//     let maxVotes = 0;
-//     let maxUser;
-//     Object.keys(tally).forEach(key => {
-//       if (tally[key] > maxVotes) {
-//         maxUser = key;
-//         maxVotes = tally[key];
-//       }
-//     })
-//     const numOfPlayers = Object.keys(users).length;
-//     if(maxVotes > numOfPlayers / 2) {
-//       dispatch(sendKillUserAction(maxUser));
-//       dispatch(sendSwitchTimeAction(day ? 'nighttime' : 'daytime'))
-//     }
-//     else dispatch(sendAddTallyAction(tally));
-//   }
-// }
-
-// // helper function for assigning roles, for moderator use
-// function shuffle(array) {
-//   var currentIndex = array.length, temporaryValue, randomIndex;
-
-//   // While there remain elements to shuffle...
-//   while (0 !== currentIndex) {
-
-//     // Pick a remaining element...
-//     randomIndex = Math.floor(Math.random() * currentIndex);
-//     currentIndex -= 1;
-
-//     // And swap it with the current element.
-//     temporaryValue = array[currentIndex];
-//     array[currentIndex] = array[randomIndex];
-//     array[randomIndex] = temporaryValue;
-//   }
-
-//   return array;
-// }
-
-*/
