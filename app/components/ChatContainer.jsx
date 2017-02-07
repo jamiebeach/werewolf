@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import NightImage from './NightImage';
 import ChatBox from './ChatBox';
 import PlayersList from './PlayersList';
+import {sendMessageAction, sendVoteAction, sendSaveAction, sendScryAction, startGame, leaderStart} from '../reducers/game'
 
 const ChatContainer = props => {
 
@@ -11,176 +12,62 @@ const ChatContainer = props => {
       <div className="chatContainer">
         {
           (props.game.day || props.user.night || !props.user.alive)
-          ? <ChatBox user={props.user} messages={props.game.villager} players={props.game.users} day={props.game.day}/>
+          ? <ChatBox  
+            self={props.self} 
+            messages={props.game.public} 
+            players={props.game.users} 
+            day={props.game.day}
+            sendMessage={props.sendMessage}
+            sendVote={props.sendVote}
+            sendSave={props.sendSave}
+            sendScry={props.sendScry}
+            startGame={props.startGame}
+            leaderStart={props.leaderStart}
+            />
           : <NightImage/>
         }
       </div>
       <div className="playerslist">
-        <PlayersList user={props.user} players={props.game.users} day={props.game.day}/>
+        <PlayersList 
+        self={props.self} 
+        players={props.game.users} 
+        day={props.game.day}/>
       </div>
     </div>
   )
 }
 
-// fake hard coded data
-{
-  const day = false;
-
-  const bobette = {  // live werewolf
-    name: "Bobette",
-    role: "villager",
-    alive: true,
-    immunity: false,
-    night: true
-  };
-  const notbob = {  // live seer
-    name: "NotBob",
-    role: "seer",
-    alive: true,
-    immunity: false,
-    night: true
-  };
-  const rob = {  // live villager
-    name: "Rob",
-    role: "villager",
-    alive: true,
-    immunity: false,
-    night: false
-  };
-  const roberta = {  // dead villager
-    name: "Roberta",
-    role: "villager",
-    alive: false,
-    immunity: false,
-    night: false
-  }
-  const bobby = {  // dead werewolf
-    name: "Bobby",
-    role: "werewolf",
-    alive: false,
-    immunity: false,
-    night: true
-  }
-  const robbie = {  //dead doctor
-    name: "Robbie",
-    role: "doctor",
-    alive: false,
-    immunity: false,
-    night: true
-  }
-
-    const fakePlayers = [
-    {
-      name: "Bob",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    bobette,
-    {
-      name: "Rob",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    roberta,
-    bobby,
-    robbie,
-    {
-      name: "Robespierre",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    notbob,
-    {
-      name: "Other",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "People",
-      role: "villager",
-      alive: false,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "To",
-      role: "werewolf",
-      alive: true,
-      immunity: false,
-      night: true
-    },
-    {
-      name: "Test",
-      role: "villager",
-      alive: false,
-      immunity: false,
-      night: false
-    },
-    {
-      name: "Scrolling",
-      role: "villager",
-      alive: true,
-      immunity: false,
-      night: false
-    },
-  ];
-
-  const fakeMessages = [
-    ["Rob", "blah blah blah blah", "day"],
-    ["NotBob", "blah blah", "day"],
-    ["Bobette", "blah blah blah", "day"],
-    ["Roberta", "blah blah blah blah blah blah", "day"],
-    ["Bobby", "blah blah blah blah blah blah blah blah", "day"],
-    ["Robert", "blah blah blah blah blah", "day"],
-    ["Bob", "blah blah blah blah blah blah blah", "day"],
-    ["Roberta", "blah blah blah blah", "day"],
-    ["Robbie", "blah blah blah blah blah blah", "day"],
-    ["Robert", "blah blah blah blah blah blah blah blah", "day"],
-    ["Rob", "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah", "day"],
-    ["To", "blah blah blah blah", "werewolf"],
-    ["Bobette", "blah blah blah blah blah blah", "werewolf"],
-    ["Bobby", "blah blah blah", "werewolf"],
-    ["To", "blah blah blah blah blah ", "werewolf"],
-    ["Bobette", "blah blah blah blah blah blah blah blah blah blah blah blah", "werewolf"],
-    ["NotBob", "/peek Rob", "seer"],
-    ["Robbie", "/save Bob", "doctor"],
-  ]
-}
-
-const bobette = {  // live werewolf
-    name: "Bobette",
-    role: "villager",
-    alive: true,
-    immunity: false,
-    night: true
-  };
-
 const mapStateToProps = state => {
   return {
     game: state.game,
-    user: bobette
+    self: state.game.self
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return ({
-    dispatchAddImage (image) {
-      return dispatch(addImage(image));
+    sendMessage (user, message, role) {
+      return dispatch(sendMessageAction(user, message, role));
     },
-    dispatchUpdateGuessed (tags) {
-      return dispatch(updateGuessed(tags));
+    sendVote (user, vote) {
+      return dispatch(sendVoteAction(user, vote));
+    },
+    sendScry (seerName, targetName) {
+      return dispatch(sendScryAction(seerName, targetName));
+    },
+    sendSave (priestName, targetName) {
+      return dispatch(sendSaveAction(priestName, targetName));
+    },
+    startGame () {
+      return dispatch(startGame());
+    },
+    leaderStart () {
+      return dispatch(leaderStart());
     }
+
   });
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatContainer);
 
-//<!---->
+

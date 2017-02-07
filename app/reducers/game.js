@@ -1,112 +1,111 @@
 import { browserHistory } from 'react-router';
+import Moderator from '../moderator/moderator';
 
-const game = 'modmerge test';
+// export let gameId;
+// const playerActions = `games/${gameId}/playerActions/`;
+// const storeActions = `games/${gameId}/storeActions/`;
+
+let mod;
 
 const initialState = {
-  gameId: null,
   self: {},
+  // users: { [playerName: String]: User }
   users: {},
-
+  gameId: '',
   day: true,
   votes: [],
-
-// message arrays
-  villager: [],
+  public: [],
   wolf: [],
   seer: [],
   priest: [],
 }
 
-const playerActions = `games/${game}/playerActions/`;
-const storeActions = `games/${game}/storeActions/`;
+
 
 //TODOS
-// do we want to delay daytime voting?
-// night ends when time is up or all night players have completed their actions
-// day ends when  majority vote has been reached or maybe also time is up
+
+// startGame actions
+// listen to /werewolf after roles are assigned
+
+
+
 
 /* ------------       REDUCER     ------------------ */
 
+
 const reducer = (state = initialState, action) => {
-
-  const newState = Object.assign({}, state)
-
   switch (action.type) {
-
-    case ADD_GAMEID:
-    // console.log("inside switch, ", action.gameId);
-      newState.gameId = action.gameId;
-      break;
+    case RECIEVE_GAMEID:
+      return {...state, gameId: action.gameId}
 
     case SET_SELF:
-      newState.self = action.self;
-      break;
+      return {...state, self: action.self,}
 
-    case ADD_USER:
-      newState.users[action.uid] = {
-        name: action.name,
-        alive: true,
-        color: action.color,
-        role: action.role
+    case UPDATE_SELF:
+      return {
+        ...state,
+        self: {...state.self, joined: true, ...action.updates},
       }
-      break;
+
+    case RECIEVE_USER:
+      return {
+        ...state,
+        users: {
+          ...state.users,
+          [action.name]: {
+            name: action.name,
+            uid: action.uid,
+            alive: true,
+            color: action.color,
+            role: action.role
+          },
+        },
+      }
 
     case UPDATE_USER:
-      // do we need to object assign everything here?
-      if (action.name === newState.self.name) {
-        newState.self.role = action.role;
+      return {
+        ...state,
+        users: {
+          ...state.users,
+          [action.name]: {
+            ...state.users[action.name],
+            ...action.updates,
+          },
+        },
+        self: action.name === state.self.name ? {
+          ...state.self,
+          ...action.updates,
+        } : self,
       }
-      newState.users[action.name].role = action.role;
-      break;
 
     case RECIEVE_MESSAGE:
-      let msg = {
-        text: action.message,
-        user: action.user,
+      return {
+        ...state,
+        [action.role]: [...state[action.role], {text: action.message, user: action.user}],
       }
-      newState[action.role] = [...newState[action.role], msg]
-      break;
-
-    case RECIEVE_VOTE:
-      let vote = {
-        killUser: action.vote,
-        user: action.user
-      }
-      newState.votes = [...newState.votes, vote];
-      break;
-
-    case KILLING:
-      state.users[action.uid].alive = false;
-      newState.users = Object.assign({}, state.users)
-      break;
 
     case SWITCH_TIME:
-      if (action.timeofday === 'daytime'){
-        newState.day = true;
-      } else if (action.timeofday === 'nighttime') {
-        newState.day = false;
+      return {
+        ...state,
+        day: action.timeofday === 'daytime',
       }
-      newState.votes = [];
-      newState.villager = [];
-      newState.seer = [];
-      newState.priest = [];
-      newState.wolf = [];
-      break;
 
-    default:
-      break;
+    default: return state
   }
-
-  return newState;
 }
 
 /* -----------------    ACTIONS     ------------------ */
 
 const ADD_GAMEID = 'ADD_GAMEID';
+const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
+const START_GAME = 'START_GAME';
+const LEADER_START = 'LEADER_START';
 
 const SET_SELF = 'SET_SELF';
+const UPDATE_SELF = 'UPDATE_SELF'
 const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
+const RECIEVE_USER = 'RECIEVE_USER';
 
 const RECIEVE_MESSAGE = 'RECIEVE_MESSAGE';
 const RECIEVE_VOTE = 'RECIEVE_VOTE';
@@ -130,6 +129,10 @@ export const setSelf = self => ({
   type: SET_SELF, self
 })
 
+export const updateSelf = (updates) => ({
+  type: UPDATE_SELF, updates
+})
+
 export const getAllUsers = users => ({
   type: GET_USERS, users
 })
@@ -138,59 +141,21 @@ export const firebaseUpdate = update => {
   return update;
 }
 
-/* ------------       DISPATCHERS     ------------------ */
+export const recieveGameId = gameId => ({
+  type: RECIEVE_GAMEID, gameId
+})
 
 /*---------
-The following two functions create the new spaces in the database for the game
-the moderator is then made to listen for playeractions and dispence storeactions
-
-We may want to move this logic later??????
-----------*/
-
-export const setGameId = (gameId) => {
-  return dispatch => {
-    // console.log("inside setGameId ", gameId)
-    firebase.database().ref(`games/${gameId}/playerActions`).push({
-      type: ADD_GAMEID,
-      gameId
-    })
-    .catch(console.error);
-  }
-}
-
-export const createNewGame = (userName, gameName, uid) => {
-  return dispatch => {
-    // console.log("creating new game with ", userName, gameName);
-    // Pushes a new game into firebase, the random key is returned and saved as gameId
-    const gameId = firebase.database().ref('games').push({
-      name: gameName
-    });
-    // TODO adds game leader to users on State => not sure if this should be on state.game or state.moderator
-    // .then(() => addUser(userName, null))
-    // TODO need to call new Moderator
-    // TODO gameId not currently updating on state
-    gameId.then(() =>  {
-      dispatch(setGameId(gameId.key));
-      // let mod = new Moderator(gameId, userName, uid)
-      browserHistory.push(`/chat/${gameId.key}`)
-    });
-  }
-}
-
-/*---------
-The previous two functions create the new spaces in the database for the game
-the moderator is then made to listen for playeractions and dispence storeactions
+Listeners for /storeActions
+the moderator listens for playeractions and dispences storeactions
 ----------*/
 
 
-// Generic Action Listener, will recieve actions whenever firebase/actions updates
+// Generic Action Listener, will RECEIVE actions whenever firebase/actions updates in /public /:uid
 export const updateGameActions = () => {
   return (dispatch, getState) => {
-// <<<<<<< HEAD
-//     const gameId = getState().game.gameId;
-//     firebase.database().ref(`games/${gameId}/playerActions`).on('child_added', function(action){
-//       console.log('recieved action from firebase ', action)
-// =======
+    const storeActions = `games/${getState().game.gameId}/storeActions/`;
+
     firebase.database().ref(`${storeActions}/public`).on('child_added', function(action){
         dispatch(firebaseUpdate(action.val()))
     })
@@ -202,8 +167,10 @@ export const updateGameActions = () => {
 }
 
 // after roles are assigned, call this dispatcher!!!
-export const updateWolfActions = () => {
+// Action Listener for werewolves
+export const updateWolfActions = (gameId) => {
   return (dispatch, getState) => {
+    const storeActions = `games/${gameId}/storeActions/`;
     if (getState().game.self.role === "werewolf") {
       firebase.database().ref(`${storeActions}/werewolves`).on('child_added', function(action){
         dispatch(firebaseUpdate(action.val()))
@@ -212,57 +179,127 @@ export const updateWolfActions = () => {
   }
 }
 
-// send messages as player actions
-export const sendMessageAction = (user, message, role) => {
+/* ------------       DISPATCHERS     ------------------ */
+
+// in util.js
+// Helper function to wrap actions and send them to firebase
+const gameAction =
+  actionCreator =>
+  (...args) => (dispatch, getState) => {
+    const {gameId} = getState().game
+    const playerActions = firebase.database().ref(`games/${gameId}/playerActions`)
+    const action = actionCreator(...args)
+    return playerActions.push(action)
+  }
+
+/*---------
+Game SetUp Actions
+----------*/
+
+// called in chat onEnter grabs gameId from url and places on local store
+export const setGameId = (gameId) => {
   return dispatch => {
-    firebase.database().ref(playerActions).push({
-      type: RECIEVE_MESSAGE,
-      user: user,
-      message: message,
-      role: role,
-    })
-    .then(res => {
-      // console.log('message sent to firebase')
-    })
-    .catch(err => console.error('Error sending message to firebase', err))
+    dispatch(recieveGameId(gameId));
   }
 }
 
-// send votes as player actions
-export const sendVoteAction = (user, vote) => {
-  return dispatch => {
-    firebase.database().ref(playerActions).push({
+// dispatched when Game Leader puts in Player name and clicks "Start Game"
+// sets gameId on players state
+// dispatches addUser
+// instantiates new Moderator
+// redirects to game chatroom 
+export const createNewGame = (name, gameName, uid) => {
+  return (dispatch, getState) => {
+    const uid = getState().game.self.uid;
+    const username = name.toLowerCase();
+    const gameId = firebase.database().ref('games').push({
+      name: gameName
+    });
+    gameId.then(() =>  {
+      dispatch(setGameId(gameId.key));
+      dispatch(updateSelf({leader: true}));
+      dispatch(joinGame(username, gameId.key));
+      mod = new Moderator(gameId.key, username, uid)
+      browserHistory.push(`/game/${gameId.key}`)
+    });
+  }
+}
+
+// When player joins a created game we update state.game.self.joined to TRUE
+// and we add the player to everyones Users object
+export const joinGame = (name, gameId) => {
+  return (dispatch, getState) => {
+    const uid = getState().game.self.uid;
+    const username = name.toLowerCase();
+    dispatch(addUser(username, uid, gameId));
+    dispatch(updateSelf({name: username}));
+    dispatch(updateGameActions(gameId));
+
+  }
+}
+
+// when user joins a game they input a Player name.
+export const addUser = gameAction(
+  (username, uid, gameId) => ({
+      type: ADD_USER,
+      name: username,
+      uid: uid
+  })
+)
+
+export const startGame = gameAction(
+  () => ({
+    type: START_GAME,
+  })
+)
+
+export const leaderStart = gameAction(
+  () => ({
+    type: LEADER_START,
+  })
+)
+
+ /*---------
+Game Player Actions
+----------*/ 
+
+// send messages to playerActions
+export const sendMessageAction = gameAction(
+  (user, message, role) => ({
+    type: RECIEVE_MESSAGE,
+    user: user,
+    message: message,
+    role: role,
+  })
+)
+
+// send votes to playerActions
+export const sendVoteAction = gameAction (
+  (user, vote) => ({
       type: RECIEVE_VOTE,
       user: user,
       vote: vote
     })
-    .catch(err => console.error('Error getting the lastest votes from firebase', err))
-  }
-}
+)
 
-// send scrys as player actions
-export const sendScryAction = (user, target) => {
-  return (dispatch, getState) => {
-    dispatch(sendMessageAction(user.name, `/peek ${target}`, 'seer'));
-    firebase.database().ref(playerActions).push({
+
+// send scrys to playerActions
+export const sendScryAction = gameAction (
+  (user, target) => ({
       type: SCRYING,
       user,
       target
     })
-  }
-}
+)
 
-// send saves as player actions
-export const sendSaveAction = (user, target) => {
-  return (dispatch, getState) => {
-    dispatch(sendMessageAction(user.name, `/save ${target}`, 'seer'));
-    firebase.database().ref(playerActions).push({
-      type: SAVING,
-      user,
-      target
-    })
-  }
-}
+// send saves to playerActions
+export const sendSaveAction = gameAction (
+  (user, target) => ({
+    type: SAVING,
+    user,
+    target
+  })
+)
 
 /* ------------------  default export     ------------------ */
 

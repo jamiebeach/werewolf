@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 function ChatMessage(props) {
   let message = props.message;
   let index = props.index;
-  let user = props.user;
+  let self = props.self;
   return (<li className="message">
       <div className="avatar">
       </div>
