@@ -1,15 +1,8 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
-import Button from './Button';
 
-import {
-  sendMessageAction,
-  sendVoteAction,
-  sendScryAction,
-  sendSaveAction
-} from '../reducers/game';
-
+import Send from 'material-ui/svg-icons/content/send';
+import IconButton from 'material-ui/IconButton';
 
 export default class Chat extends Component {
   constructor() {
@@ -76,48 +69,23 @@ export default class Chat extends Component {
       <div id="chat-input">
         <form onSubmit={this.handleSubmit}>
           <TextField
-            style={{width: "80%", marginLeft: 20}}
+            style={{flexGrow: 1, marginLeft: '10px'}}
             id="message"
-            hintText={(this.props.player.alive) ? "Enter message here" : "You can't chat when you're dead"}
-            hintStyle={{color: day ? '#000' : '#AAA' }}
+            floatingLabelText={(this.props.player.alive) ? "" : "You can't chat when you're dead"}
+            floatingLabelStyle={{color: day ? '#000' : '#AAA', fontFamily: 'IM Fell French Canon' }}
             underlineFocusStyle={{borderColor: day ? '#0D7A58' : '#6E0300 ' }}
-            inputStyle={{color: day ? '#000' : '#FFF' , fontWeight: 'normal' }}
+            inputStyle={{color: day ? '#000' : '#FFF', fontWeight: 'normal', fontFamily: 'IM Fell French Canon' }}
             disabled={(!this.props.player.alive)}
           />
-          <Button disabled={(!this.props.player.alive)}
-                  type="submit"
-                  className="enterText">
-                  Enter
-          </Button>
+           <IconButton
+            type="submit"
+            className="enterText"
+            disabled={(!this.props.player.alive)}
+          >
+            <Send />
+          </IconButton>
         </form>
       </div>
     )
   }
 }
-
-// /* -----------------    CONTAINER     ------------------ */
-
-// const mapState = state => {
-//   return {
-//     game: state.game
-//   }
-// };
-
-// const mapDispatch = dispatch => {
-//   return {
-//     sendMessage: (player, msg, role) => {
-//       dispatch(sendMessageAction(player, msg, role));
-//     },
-//     sendVote: (player, target) => {
-//       dispatch(sendVoteAction(player, target));
-//     },
-//     sendScry: (player, target) => {
-//       dispatch(sendScryAction(player, target));
-//     },
-//     sendSave: (player, target) => {
-//       dispatch(sendSaveAction(player, target));
-//     }
-//   }
-// };
-
-// export default connect(mapState, mapDispatch)(Chat);
