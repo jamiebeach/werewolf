@@ -152,15 +152,7 @@ export default class Moderator {
           break;
 
         case RECIEVE_MESSAGE:
-          if (playerAction.role === 'seer' && playerAction.target) {
-            this.handleScry(playerAction)
-          }
-          else if (playerAction.role === 'priest' && playerAction.target) {
-            this.handleSave(playerAction)
-          }
-          else {
-            this.moderate(playerAction, playerAction.role, 'msg')
-          }
+          this.moderate(playerAction, playerAction.role, 'msg')
           break;
 
         case RECIEVE_VOTE:
@@ -264,14 +256,13 @@ export default class Moderator {
 
     if (playerAction.user.id === this.seerId && !this.day) {
 
-      // this is already done in reducer. sendmessageaction is dispatched
-      // let scry = {
-      //   type: RECIEVE_MESSAGE,
-      //   user: sender.name,
-      //   message: `/peek ${playerAction.target}`,
-      //   role: sender.role,
-      // }
-      // this.moderate(scry, this.seerId, 'peeking')
+      let scry = {
+        type: RECIEVE_MESSAGE,
+        user: sender.name,
+        message: `/peek ${playerAction.target}`,
+        role: sender.role,
+      }
+      this.moderate(scry, this.seerId, 'peeking')
 
       if (this.didScry) {
 
@@ -293,14 +284,13 @@ export default class Moderator {
 
     if (playerAction.user.id === this.priestId && !this.day) {
 
-      // this is already done in reducer. sendmessageaction is dispatched
-      // let save = {
-      //   type: RECIEVE_MESSAGE,
-      //   user: sender.name,
-      //   message: `/save ${playerAction.target}`,
-      //   role: sender.role,
-      // }
-      // this.moderate(save, this.priestId, 'saving')
+      let save = {
+        type: RECIEVE_MESSAGE,
+        user: sender.name,
+        message: `/save ${playerAction.target}`,
+        role: sender.role,
+      }
+      this.moderate(save, this.priestId, 'saving')
 
       if (this.didSave) {
         let msg = 'You have already exhausted your holy powers for tonight. Go to bed and try again tomorrow.'

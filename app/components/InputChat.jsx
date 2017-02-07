@@ -56,7 +56,10 @@ export default class Chat extends Component {
 
     }
 
-    else { console.log(this.props.player, msg, 'public'); this.props.sendMessage(this.props.player.name, msg, 'public');}
+    else {
+      console.log(this.props.player, msg, 'public');
+      this.props.sendMessage(this.props.player.name, msg, 'public');
+    }
 
     e.target.message.value = '';
   }
