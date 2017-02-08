@@ -55,15 +55,9 @@ let avatars = [
 ]
 
 // milliseconds for various setTimeouts
-<<<<<<< HEAD
-const timeToRead = 60000;  // 1 min
-const timeForNight = 600000; // 10 min
-const timeForDay = 1200000; // 20 min
-=======
-const timeToRead = 1000;  // 5,000
-const timeForNight = 30000; // 10,000
-const timeForDay = 30000; // 100,000 -> this is 1m40s
->>>>>>> master
+const timeToRead = 10000;  // 10 sec
+const timeForNight = 30000; // 30 sec
+const timeForDay = 120000; // 2 min
 
 // shuffle: helper function, used for assigning roles
 // IF YOU COMMENT THIS OUT THEN THE ROLES ARE:
