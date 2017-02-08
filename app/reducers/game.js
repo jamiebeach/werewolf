@@ -40,6 +40,12 @@ const reducer = (state = initialState, action) => {
         player: {...state.player, joined: true, ...action.updates},
       }
 
+    case SET_MODERATOR:
+      return {
+        ...state,
+        moderator: state.player.uid === action.uid ? new Moderator(...action.config) : null,
+      }
+
     case RECIEVE_USER:
       return {
         ...state,
@@ -109,13 +115,15 @@ const SCRYING = 'SCRYING';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
 
+const SET_MODERATOR = 'SET_MODERATOR'
+
 /* ------------     ACTION CREATORS     ------------------ */
 
 export const setPlayer = player => ({
   type: SET_PLAYER, player
 })
 
-export const updatePlayer = (updates) => ({
+export const updatePlayer = updates => ({
   type: UPDATE_PLAYER, updates
 })
 
@@ -142,15 +150,18 @@ export const updateGameActions = () => {
   return (dispatch, getState) => {
     const storeActions = `games/${getState().game.gameId}/storeActions/`;
 
-    firebase.database().ref(`${storeActions}/public`).on('child_added', function(action){
-      dispatch(firebaseUpdate(action.val()))
+    firebase.database().ref(`${storeActions}/public`).on('child_added', function(action) {
+      // Without delaying until the next tick, we sometimes encounter "Reducer can't dispatch"
+      // errors from Redux. Suspicion: setting values in Firebase calls attached local listeners
+      // synchronously. Forcing the dispatch to occur on the next tick fixes it.
+      process.nextTick(() => dispatch(action.val()))
     })
 
     firebase.database().ref(`${storeActions}/${getState().game.player.uid}`).on('child_added', function(action){
       if (action.val().type === 'UPDATE_USER' && action.val().role === 'werewolf'){
         dispatch(updateWolfActions())
       }
-      dispatch(firebaseUpdate(action.val()))
+      process.nextTick(() => dispatch(action.val()))
     })
   }
 }
@@ -181,16 +192,29 @@ const gameAction =
     return playerActions.push(action)
   }
 
+
+const modAction =
+  actionCreator =>
+  (...args) => (dispatch, getState) => {
+    const {gameId} = getState().game
+    const storeActions = firebase.database().ref(`games/${gameId}/storeActions/public`)
+    const action = actionCreator(...args)
+    return storeActions.push(action)
+  }
+
+export const setModerator = modAction((uid, config) => ({
+  type: SET_MODERATOR,
+  uid, config,
+}))
+
+setModerator.type = 'setModerator thunk'
+
 /*---------
 Game SetUp Actions
 ----------*/
 
 // called in chat onEnter grabs gameId from url and places on local store
-export const setGameId = (gameId) => {
-  return dispatch => {
-    dispatch(recieveGameId(gameId));
-  }
-}
+// export const setGameId = recieveGameId
 
 // dispatched when Game Leader puts in Player name and clicks "Start Game"
 // sets gameId on players state
@@ -204,13 +228,12 @@ export const createNewGame = (name, gameName, uid) => {
     const gameId = firebase.database().ref('games').push({
       name: gameName
     });
-    gameId.then(() =>  {
-      dispatch(setGameId(gameId.key));
-      dispatch(updatePlayer({leader: true}));
-      dispatch(joinGame(username, gameId.key));
-      mod = new Moderator(gameId.key, username, uid)
-      browserHistory.push(`/game/${gameId.key}`)
-    });
+
+    dispatch(recieveGameId(gameId.key));
+    dispatch(joinGame(username, gameId.key));
+    dispatch(setModerator(uid, [gameId.key, username, uid]))
+    dispatch(updatePlayer({leader: true}));
+    browserHistory.push(`/game/${gameId.key}`)
   }
 }
 

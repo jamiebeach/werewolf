@@ -131,6 +131,9 @@ export default class Moderator {
     // listen to player actions in firebase
     firebase.database().ref(`games/${this.gameName}/playerActions/`)
     .on('child_added', (action) => {
+      if (action.val().moderated) return
+      action.ref.update({moderated: true})
+
       const playerAction = action.val();
 
       switch (playerAction.type) {
