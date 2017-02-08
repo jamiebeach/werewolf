@@ -428,6 +428,8 @@ export default class Moderator {
     }
     else {
       chosen.alive = false;
+      this.playerNames.splice(this.playerNames.indexOf(this.chosen), 1);
+      if (chosen.role === 'werewolf') this.wolfNames.splice(this.playerNames.indexOf(this.chosen), 1);
       let kill = {
           type: KILLING,
           uid: chosen.uid
@@ -502,6 +504,8 @@ export default class Moderator {
   lynchActions() {
     let chosen = this.players[this.chosen];
     if (this.chosen) chosen.alive = false;
+    this.playerNames.splice(this.playerNames.indexOf(this.chosen), 1);
+    if (chosen.role === 'werewolf') this.wolfNames.splice(this.playerNames.indexOf(this.chosen), 1);
 
     let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
     this.narrate(msg, 'public', null, 'lynch')
