@@ -146,11 +146,11 @@ export default class Moderator {
 
       switch (playerAction.type) {
 
-        case ADD_USER: // make this
+        case ADD_USER: 
           this.handleJoin(playerAction)
           break;
 
-        case START_GAME: // make this
+        case START_GAME: 
           this.handleStart()
           break;
 
@@ -158,7 +158,7 @@ export default class Moderator {
           this.handleGameId()
           break;
 
-        case LEADER_START: // make this
+        case LEADER_START: 
           this.handleLeaderStart()
           break;
 
@@ -200,7 +200,6 @@ export default class Moderator {
     // personal = specific uid or 'werewolves' (leave null to send to everyone)
     // error = 1-2 word summary of msg (leave null for generic error)
     let ref = personal ? personal : 'public';
-
     firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
     .push({
       type: RECIEVE_MESSAGE,
@@ -215,9 +214,7 @@ export default class Moderator {
     // moderate function -- more general form of narrate. for every other action.
     // typeof: action = object that has type and any other info,
     // ref = the address in storeActions, in a string,
-    // error =  1-2 word summary of msg (leave null for generic error)
-
-    console.log('ref', ref)
+    // error =  1-2 word summary of msg (leave null for generic error
     let channel = ref ? ref : 'public'
 
     firebase.database().ref(`games/${this.gameName}/storeActions/${channel}`)
@@ -320,21 +317,16 @@ export default class Moderator {
     }
   }
 
+  // playerAction === target username
   handleVote(playerAction) {
     let role = this.day ? 'public' : 'wolf';
-
-    // console.log('inside mod ', this.players, this.players[playerAction.vote])
-    this.narrate(this.players[playerAction.target], 'public', 'public')
-    // this.narrate(playerAction.target, 'public', 'public')
-
-
     if (this.players[playerAction.target].alive){
       this.votes.push(playerAction);
 
       let channel = this.day ? 'public' : 'werewolves';
       let methodOfMurder = this.day ? 'lynch' : 'maul';
 
-      let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.vote}`
+      let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.target}`
       this.narrate(msg, role, channel, `${role} voting`)
     }
 
@@ -506,7 +498,6 @@ export default class Moderator {
 
   // Game Leader enters /roles - this assigns player roles
   handleStart() {
-    console.log("inside handleStart");
     if (this.didAssign) return;
     else if (this.players.length < 5) {
       this.narrate('Minimum 5 players to start.', 'public', 'public', '/roles')
