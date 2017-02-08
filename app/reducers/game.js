@@ -268,15 +268,21 @@ export const joinGame = (name, gameId) => {
   return (dispatch, getState) => {
     const uid = getState().game.player.uid;
     const username = name.toLowerCase();
-    dispatch(addUser(username, uid, gameId));
+    dispatch(addUserWithUid(username, uid));
     dispatch(updatePlayer({name: username}));
     dispatch(updateGameActions(gameId));
   }
 }
 
 // when user joins a game they input a Player name.
-export const addUser = gameAction(
-  (username, uid, gameId) => ({
+export const addUser = username => (dispatch, getState) => {
+  const uid = getState().game.player.uid
+  console.log('going to dispatch addUserWithUid', uid);
+  dispatch(addUserWithUid(username, uid))
+}
+
+const addUserWithUid = gameAction(
+  (username, uid) => ({
     type: ADD_USER,
     name: username,
     uid: uid
