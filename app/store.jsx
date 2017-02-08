@@ -10,22 +10,21 @@ import Moderator from './moderator/moderator'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const dumbLogger = store => next => action => {
-  const oldState = store.getState()
-  const rVal = next(action)
-  const newState = store.getState()
-  console.log(
-    JSON.stringify({
-      oldState, newState,
-      action: typeof action !== 'function' ? action : action.toString(),
-    }, 0, 2))
-  return rVal
-}
+// const dumbLogger = store => next => action => {
+//   const oldState = store.getState()
+//   const rVal = next(action)
+//   const newState = store.getState()
+//   console.log(
+//     JSON.stringify({
+//       oldState, newState,
+//       action: typeof action !== 'function' ? action : action.toString(),
+//     }, 0, 2))
+//   return rVal
+// }
 
 const store = createStore(rootReducer, composeEnhancers(
 	applyMiddleware(
     createLogger(),
-    // dumbLogger,
     thunkMiddleware)
 ))
 
@@ -52,7 +51,7 @@ Later on, these methods should/will be indirectly invoked by players
 sending all their redux actions to "PlayerActions" with the correct action.type
 ----------*/
 
-// GAME START, ROLE ASSIGN, GAME LOOP
+/*// GAME START, ROLE ASSIGN, GAME LOOP
 
 // create a new game with name, your name, and your uid
 // const mod = new Moderator('testgame', 'felicia', 1);
@@ -69,12 +68,12 @@ sending all their redux actions to "PlayerActions" with the correct action.type
 // // roles assigned and wait for leader to say /ready after this
 // mod.handleStart();
 
-// // leader said /ready. game loop begins.
-// mod.handleLeaderStart();
+// leader said /ready. game loop begins.
+mod.handleLeaderStart();*/
 
 
 
-// // THE FIRST NIGHT, WEREWOLVES, PRIEST, SEER
+/*// THE FIRST NIGHT, WEREWOLVES, PRIEST, SEER
 
 // setTimeout(() => {
 
@@ -90,10 +89,10 @@ sending all their redux actions to "PlayerActions" with the correct action.type
 //   // other night actions -- seer and priest
 //   // toggle priest action to see that jenny can either die or be saved
 
-//   mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
-//   //mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
-// }, 6000)
-
+  mod.handleScry({user: 'felicia', role: 'seer', target: 'garity'})
+  //mod.handleSave({user: 'jenny', role: 'priest', target: 'jenny'})
+}, 6000)
+*/
 
 /*// THE FIRST DAY, VILLAGERS VOTE
 

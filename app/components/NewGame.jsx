@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -26,21 +26,21 @@ export const NewGame = props => {
 	            <div>
 	              <TextField
 	                name="gameName"
-	                floatingLabelText="Name of Game"
+	                floatingLabelText="Game Name"
 	                hintStyle={{color: "#FFF"}}
 		            underlineFocusStyle={{borderColor: "#FFFFFF"}}
-		            inputStyle={{color: "#FFF", fontWeight: 'normal' }}
-		            floatingLabelStyle={{color: '#FFF'}}
+		            inputStyle={{color: "#FFF", fontWeight: 'normal', fontFamily: 'IM Fell Great Primer SC'}}
+		            floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
 	              /><br />
 	              <TextField
 	                name="userName"
 	                floatingLabelText="Player Name"
 	                hintStyle={{color: "#AAA"}}
 	                underlineFocusStyle={{borderColor: "#FFFFFF"}}
-	                inputStyle={{color: "#FFF", fontWeight: 'normal' }}
-	                floatingLabelStyle={{color: '#FFF'}}
+	                inputStyle={{color: "#FFF", fontWeight: 'normal', fontFamily: 'IM Fell Great Primer SC'}}
+	                floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
   	              />
-	              <RaisedButton type="submit" value="buildGame" label="Start New Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white'}}/>
+	              <RaisedButton type="submit" value="buildGame" label="Create New Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
 	            </div>
 	         	</form>
 	         </div>
