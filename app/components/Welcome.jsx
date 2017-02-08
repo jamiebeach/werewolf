@@ -20,10 +20,16 @@ const Welcome = () => {
 			</div>
 			<div className='landingButton'>
 				<RaisedButton
-					label="Start playing"
+					label="Create new game"
 					backgroundColor={'#1E052B'}
 					labelStyle={ {color: 'white', fontFamily: 'IM Fell English SC'} }
 					containerElement={ <Link to="/newgame" /> }
+					/>
+				<RaisedButton
+					label="See open games"
+					backgroundColor={'#0D7A58'}
+					labelStyle={ {color: 'white', fontFamily: 'IM Fell English SC'} }
+					containerElement={ <Link to="/opengames" /> }
 					/>
 			</div>
 		</div>

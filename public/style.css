@@ -56,7 +56,7 @@ body {
   color: #FFF;
 
   display: flex;
-  align-items: flex-start;
+
   flex-direction: column;
   justify-content: center;
 }
@@ -139,11 +139,11 @@ body {
 }
 
 .night #chat-window-container {
-  background: rgba(0, 0, 0, .5);
+  background: rgba(0, 0, 0, .8);
 }
 
 .day #chat-window-container {
-  background: rgba(255, 255, 255, .5);
+  background: rgba(255, 255, 255, .8);
 }
 
 .chat-window {
@@ -266,11 +266,11 @@ body {
 }
 
 .dark {
-  background: rgba(0, 0, 0, .5);
+  background: rgba(0, 0, 0, .8);
 }
 
 .light {
-  background: rgba(255, 255, 255, .5);
+  background: rgba(255, 255, 255, .8);
 }
 
 .avatar {

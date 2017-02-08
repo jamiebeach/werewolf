@@ -8,6 +8,8 @@ import Moderator from '../moderator/moderator';
 let mod;
 
 const initialState = {
+  games: [],
+
   gameId: '',
   gameStart: false,
   player: {},
@@ -28,6 +30,13 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+
+    case FETCH_GAME:
+      return {
+        ...state,
+        games: [...state.games, {id: action.id, name: action.name}],
+      }
+
     case RECIEVE_GAMEID:
       return {...state, gameId: action.gameId}
 
@@ -105,6 +114,8 @@ const reducer = (state = initialState, action) => {
 
 /* -----------------    ACTIONS     ------------------ */
 
+const FETCH_GAME = 'FETCH_GAME';
+
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 const PROMPT_LEADER = 'PROMPT_LEADER';
@@ -153,6 +164,21 @@ export const firebaseUpdate = update => {
 export const recieveGameId = gameId => ({
   type: RECIEVE_GAMEID, gameId
 })
+
+/*---------
+Listener for all created games
+----------*/
+export const fetchAllGames = () => {
+  return dispatch => {
+    firebase.database().ref(`games`).on('child_added', function(action) {
+      dispatch({
+        type: FETCH_GAME,
+        id: action.key,
+        name: action.val().name,
+      })
+    })
+  }
+}
 
 /*---------
 Listeners for /storeActions
