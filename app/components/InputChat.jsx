@@ -85,7 +85,10 @@ export default class Chat extends Component {
             className="enterText"
             disabled={(!this.props.player.alive)}
           >
-            <Send />
+            <Send
+              color={day ? '#000' : '#FFF'}
+              hoverColor={day ? '#0D7A58' : '#6E0300'}
+            />
           </IconButton>
         </form>
       </div>
