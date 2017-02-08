@@ -504,11 +504,9 @@ export default class Moderator {
     }
   }
 
-<<<<<<< HEAD
+
   // assigns player roles; triggered when leader types '/roles'
-=======
   // Game Leader enters /roles - this assigns player roles
->>>>>>> master
   handleStart() {
     if (this.didAssign) return;
     else if (this.players.length < 5) {
