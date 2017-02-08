@@ -45,7 +45,7 @@ const PlayersList = (props) => {
               <div
                 className="player-name"
                 style = { { textDecoration: dead(players[person]) } } >
-                {player.name}
+                {players[person].name}
               </div>
             </div>
           )

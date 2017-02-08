@@ -107,6 +107,7 @@ const reducer = (state = initialState, action) => {
 
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
+const PROMPT_LEADER = 'PROMPT_LEADER';
 const START_GAME = 'START_GAME';
 const LEADER_START = 'LEADER_START';
 
@@ -254,12 +255,12 @@ export const createNewGame = (name, gameName, uid) => {
     const gameId = firebase.database().ref('games').push({
       name: gameName
     });
-
     dispatch(recieveGameId(gameId.key));
     dispatch(joinGame(username, gameId.key));
     dispatch(setModerator(uid, [gameId.key, username, uid]))
     dispatch(updatePlayer({leader: true}));
-    browserHistory.push(`/game/${gameId.key}`)
+    browserHistory.push(`/game/${gameId.key}`);
+    dispatch(promptLeader());
   }
 }
 
@@ -278,7 +279,6 @@ export const joinGame = (name, gameId) => {
 // when user joins a game they input a Player name.
 export const addUser = username => (dispatch, getState) => {
   const uid = getState().game.player.uid
-  console.log('going to dispatch addUserWithUid', uid);
   dispatch(addUserWithUid(username, uid))
 }
 
@@ -290,12 +290,21 @@ const addUserWithUid = gameAction(
   })
 )
 
-export const startGame = gameAction(
+//sends PROMPT-LEADER action to firebase; triggered when leader creates a new game
+export const promptLeader = gameAction(
   () => ({
-    type: START_GAME,
+    type: PROMPT_LEADER
   })
 )
 
+// sends START_GAME action to firebase; triggered when leader types '/roles'
+export const startGame = gameAction(
+  () => ({
+    type: START_GAME
+  })
+)
+
+// sends LEADER_START action to firebase; triggered when leader types '/ready'
 export const leaderStart = gameAction(
   () => ({
     type: LEADER_START,
