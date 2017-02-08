@@ -1,14 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import {joinGame, gameId} from '../reducers/game';
+import {addUser} from '../reducers/game';
 
 export const JoinGame = props => {
+
 	const handleSubmit = (evt) => {
 		evt.preventDefault();
 		const userName = evt.target.userName.value;
-		props.joinGame(userName, gameId);
+		console.log("inside joinGame handleSubmit ", userName);
+		props.addUser(userName);
 	}
 
 	return (
@@ -25,10 +27,10 @@ export const JoinGame = props => {
 	                floatingLabelText="Player Name"
 	                hintStyle={{color: "#AAA"}}
 	                underlineFocusStyle={{borderColor: "#FFFFFF"}}
-	                inputStyle={{color: "#FFF", fontWeight: 'normal' }}
-	                floatingLabelStyle={{color: '#FFF'}}
+	                inputStyle={{color: "#FFF", fontWeight: 'normal', fontFamily: 'IM Fell Great Primer SC'}}
+	                floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
   	              />
-	              <RaisedButton type="submit" value="buildGame" label="Join Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white'}}/>
+	              <RaisedButton type="submit" value="buildGame" label="Start New Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
 	            </div>
 	         	</form>
 	         </div>
@@ -37,14 +39,14 @@ export const JoinGame = props => {
     );
 }
 
-
 const mapDispatchToProps = dispatch => {
   return ({
-    joinGame (userName, gameId) {
-      return dispatch(joinGame(userName, gameId));
+    addUser (userName) {
+      return dispatch(addUser(userName));
     },
-
   });
 };
 
+
 export default connect(null, mapDispatchToProps)(JoinGame);
+
