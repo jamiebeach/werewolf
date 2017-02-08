@@ -345,15 +345,15 @@ export default class Moderator {
     let role = this.day ? 'public' : 'wolf';
 
     if (this.players[playerAction.target].alive){
-      this.votes.push(playerAction);
-
-      let channel = this.day ? 'public' : 'werewolves';
-      let methodOfMurder = this.day ? 'execute' : 'maul';
-
-      let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.target}`
-      this.narrate(msg, role, channel, `${role} voting`)
-
       if (!this.majority) {
+        this.votes.push(playerAction);
+
+        let channel = this.day ? 'public' : 'werewolves';
+        let methodOfMurder = this.day ? 'execute' : 'maul';
+
+        let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.target}`
+        this.narrate(msg, role, channel, `${role} voting`)
+
         this.tallyVotes(role, methodOfMurder);
         if (this.majority && (this.day || (this.didScry && this.didSave))) {
           setTimeout(() => {
