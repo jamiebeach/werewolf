@@ -56,8 +56,8 @@ let avatars = [
 
 // milliseconds for various setTimeouts
 const timeToRead = 2000;  // 5,000
-const timeForNight = 30000; // 10,000
-const timeForDay = 30000; // 100,000 -> this is 1m40s
+const timeForNight = 20000; // 10,000
+const timeForDay = 20000; // 100,000 -> this is 1m40s
 
 // shuffle: helper function, used for assigning roles
 // IF YOU COMMENT THIS OUT THEN THE ROLES ARE:
@@ -126,6 +126,8 @@ export default class Moderator {
     this.majority = true;
     this.day = true;
     this.dayNum = 0;
+    this.dayTimers = [];
+    this.nightTimers = [];
     this.didScry = false; // seer action once per night
     this.didSave = false; // priest action once per night
     this.chosen = ''; // chosen to die that day/night
@@ -213,7 +215,6 @@ export default class Moderator {
     // ref = the address in storeActions, in a string,
     // error =  1-2 word summary of msg (leave null for generic error)
 
-    console.log('ref', ref)
     let channel = ref ? ref : 'public'
 
     firebase.database().ref(`games/${this.gameName}/storeActions/${channel}`)
@@ -243,6 +244,7 @@ export default class Moderator {
         // moderator has not determined roles
       }
     );
+    this.playerNames.push(playerAction.name);
 
     let player = {
       type: RECIEVE_USER,
@@ -285,10 +287,8 @@ export default class Moderator {
 
         if (this.majority && this.didSave) {
           setTimeout(() => {
-            console.log('early switch scry', new Date)
-            clearTimeout(this[`night${this.dayNum}`])
-            if (this.day) this.lynchActions();
-            else this.dayActions();
+            clearTimeout(this.nightTimers[this.dayNum])
+            this.dayActions();
           }, 5000);
         }
       }
@@ -323,10 +323,8 @@ export default class Moderator {
 
         if (this.majority && this.didScry) {
           setTimeout(() => {
-            console.log('early switch save', new Date)
-            clearTimeout(this[`night${this.dayNum}`])
-            if (this.day) this.lynchActions();
-            else this.dayActions();
+            clearTimeout(this.nightTimers[this.dayNum])
+            this.dayActions();
           }, 5000);
         }
       }
@@ -336,27 +334,21 @@ export default class Moderator {
   handleVote(playerAction) {
     let role = this.day ? 'public' : 'wolf';
 
-    // console.log('inside mod ', this.players, this.players[playerAction.vote])
-    this.narrate(this.players[playerAction.target], 'public', 'public')
-    // this.narrate(playerAction.target, 'public', 'public')
-
-
     if (this.players[playerAction.target].alive){
       this.votes.push(playerAction);
 
       let channel = this.day ? 'public' : 'werewolves';
       let methodOfMurder = this.day ? 'lynch' : 'maul';
 
-      let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.vote}`
+      let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.target}`
       this.narrate(msg, role, channel, `${role} voting`)
 
       if (!this.majority) {
         this.tallyVotes(role, methodOfMurder);
         if (this.majority && (this.day || (this.didScry && this.didSave))) {
           setTimeout(() => {
-            console.log('early switch vote', new Date)
             const dayornight = (this.day) ? 'day' : 'night';
-            clearTimeout(this[`${dayornight}${this.dayNum}`])
+            clearTimeout(this[`${dayornight}Timers`][dayNum])
             if (this.day) this.lynchActions();
             else this.dayActions();
           }, 5000);
@@ -370,16 +362,15 @@ export default class Moderator {
     }
   }
 
-  tallyVotes() {
+  tallyVotes(role, methodOfMurder) {
     const voters = (methodOfMurder === 'maul') ? this.wolfNames : this.playerNames;
 
     const tally = {};
     voters.forEach(name => {
       tally[name] = {};
     })
-
     this.votes.forEach(vote => {
-      tally[vote.user][vote.vote] = true;
+      tally[vote.user][vote.target] = true;
     })
 
     const voteCount = {};
@@ -445,6 +436,7 @@ export default class Moderator {
   }
 
   nightActions() {
+    const dayNum = this.dayNum;
     this.narrate(`Everyone in the village goes to sleep.`, 'public')
     // settimeout gives people a chance to read before night switch
       setTimeout(() => {
@@ -467,13 +459,14 @@ export default class Moderator {
 
       }, timeToRead);
 
-      this[`night${dayNum}`] = setTimeout(() => {
+      this.nightTimers[dayNum] = setTimeout(() => {
         this.dayActions();
       }, timeForNight)
   }
 
   dayActions() {
     this.day = true;
+    const dayNum = ++this.dayNum;
     let timeswitch = {
       type: 'SWITCH_TIME',
       timeofday: 'daytime'
@@ -489,16 +482,16 @@ export default class Moderator {
       this.narrate(msg, 'public', null, 'wolf win')
     }
     else {
-      // settimeout for daytime discussions. votes tally as soon as day ends.
-      this[`day${dayNum}`] = setTimeout(() => {
-        if ((!this.majority || !this.didScry || !this.didSave) && this.day && (this.dayNum === dayNum)) this.lynchActions();
+      // settimeout for daytime discussions
+      this.dayTimers[dayNum] = setTimeout(() => {
+        this.lynchActions();
       }, timeForDay)
     }
   }
 
   lynchActions() {
     let chosen = this.players[this.chosen];
-    chosen.alive = false;
+    if (this.chosen) chosen.alive = false;
 
     let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
     this.narrate(msg, 'public', null, 'lynch')
@@ -544,7 +537,6 @@ export default class Moderator {
 
   // Game Leader enters /roles - this assigns player roles
   handleStart() {
-    console.log("inside handleStart");
     if (this.didAssign) return;
     else if (this.players.length < 5) {
       this.narrate('Minimum 5 players to start.', 'public', 'public', '/roles')
@@ -562,6 +554,7 @@ export default class Moderator {
       player.role = roles[index];
       if (player.role === 'seer') this.seerId = player.uid;
       if (player.role === 'priest') this.priestId = player.uid;
+      if (player.role === 'werewolf') this.wolfNames.push(player.name);
     });
 
     const werewolves = this.players.filter(player => (player.role === 'werewolf'));
