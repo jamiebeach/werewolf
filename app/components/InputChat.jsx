@@ -21,7 +21,6 @@ export default class Chat extends Component {
       let cmd = words[0].toLowerCase();
       let target;
       if (words.length > 1) target = words[1].toLowerCase();
-      console.log("inside inputchat ", cmd, target);
       switch(cmd) {
 
         case '/vote':
