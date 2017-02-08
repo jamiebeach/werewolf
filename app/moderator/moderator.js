@@ -128,6 +128,14 @@ export default class Moderator {
 
     this.winner = ''; // winner is string, villagers or werewolves
 
+    // Listen to player existential crises in Firebase
+    const roster = firebase.database().ref(`games/${this.gameName}/roster`)
+    
+    roster.on('child_added', person =>
+      this.narrate(`Welcome, ${person.val()}.`, 'public'))
+    roster.on('child_removed', person =>
+      this.narrate(`${person.val()} fell down a well.`))
+
     // listen to player actions in firebase
     firebase.database().ref(`games/${this.gameName}/playerActions/`)
     .on('child_added', (action) => {
@@ -184,7 +192,7 @@ export default class Moderator {
 
   }
 // helper function
-  narrate(message, role, personal, error) {
+  narrate(message, role='public', personal=false, error=null) {
     // moderator narration function, takes in message text
     // and sends RECIEVE_MESSAGE object to firebase
     // typeof: message = string,
@@ -242,6 +250,7 @@ export default class Moderator {
 
     let player = {
       type: RECIEVE_USER,
+
       uid: playerAction.uid,
       name: playerAction.name,
 
