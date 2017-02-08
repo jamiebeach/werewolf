@@ -65,20 +65,20 @@ const timeForDay = 30000; // 100,000 -> this is 1m40s
 // the next werewolves, and remaining villagers
 
 const shuffle = (array) => {
-  // var currentIndex = array.length, temporaryValue, randomIndex;
+  var currentIndex = array.length, temporaryValue, randomIndex;
 
-  // // While there remain elements to shuffle...
-  // while (0 !== currentIndex) {
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
 
-  //   // Pick a remaining element...
-  //   randomIndex = Math.floor(Math.random() * currentIndex);
-  //   currentIndex -= 1;
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
 
-  //   // And swap it with the current element.
-  //   temporaryValue = array[currentIndex];
-  //   array[currentIndex] = array[randomIndex];
-  //   array[randomIndex] = temporaryValue;
-  // }
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
   return array;
 }
 
@@ -110,9 +110,16 @@ export default class Moderator {
   // created when a leader creates a game
 
   constructor(gameName, leaderName, uid) {
+
     this.gameName = gameName;
     this.gameId = '';
     this.leaderId = uid;
+
+    // the order of join corresponds to the index of random color and avatar
+    // i.e. leader, the first join, gets 0th color and 0th avatar
+
+    this.colors = shuffle(colors);
+    this.avatars = shuffle(avatars);
 
     this.players = [];
     this.didAssign = false;
@@ -130,7 +137,7 @@ export default class Moderator {
 
     // Listen to player existential crises in Firebase
     const roster = firebase.database().ref(`games/${this.gameName}/roster`)
-    
+
     roster.on('child_added', person =>
       this.narrate(`Welcome, ${person.val()}.`, 'public'))
     roster.on('child_removed', person =>
@@ -183,13 +190,6 @@ export default class Moderator {
       }
     })
 
-
-    // the order of join corresponds to the index of random color and avatar
-    // i.e. leader, the first join, gets 0th color and 0th avatar
-
-    colors = shuffle(colors); // the colors of the users for the game
-    avatars = shuffle(avatars); // the avatars for each user for the game
-
   }
 // helper function
   narrate(message, role='public', personal=false, error=null) {
@@ -239,8 +239,8 @@ export default class Moderator {
         uid: playerAction.uid,
         name: playerAction.name,
 
-        color: colors[i],
-        avatar: avatars[i],
+        color: this.colors[i],
+        avatar: this.avatars[i],
 
         alive: true,
         immunity: false,
@@ -254,8 +254,8 @@ export default class Moderator {
       uid: playerAction.uid,
       name: playerAction.name,
 
-      color: colors[i],
-      avatar: avatars[i],
+      color: this.colors[i],
+      avatar: this.avatars[i],
 
       alive: true,
       role: 'villager' //everyone is "villager" at first

@@ -21,7 +21,7 @@ function ChatMessage(props) {
       <div className="text-content">
         <div
           className="player-name"
-          style={ message.user !== 'moderator' ? { color: `${players[message.user].color}` } : { color: 'black'} }
+          style={ message.user !== 'moderator' ? { color: `${players[message.user].color}` } : {} }
         >
           {message.user.toUpperCase()}
         </div>
