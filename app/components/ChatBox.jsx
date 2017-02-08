@@ -29,11 +29,10 @@ class ChatBox extends Component {
 
   render() {
     const day = this.props.day;
-    const self = this.props.self;
+    const player = this.props.player;
     const messages = this.props.messages;
 
     return (
-
       <div id="chat-window-container">
         <ul
           className="chat-window"
@@ -45,7 +44,7 @@ class ChatBox extends Component {
           }
         >
           {messages.map((message, index) => {
-            return <ChatMessage message={message} self={self} index={index} key={index}/>
+            return <ChatMessage message={message} player={player} index={index} key={index}/>
           })}
         </ul>
         <InputChat {...this.props}/>

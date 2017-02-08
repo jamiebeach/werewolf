@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {browserHistory} from 'react-router';
-import {setSelf} from './game';
+import {setPlayer} from './game';
 
 const game = 'game1';
 
@@ -40,15 +40,14 @@ export const anonLogin = () =>
     firebase.auth().signInAnonymously()
     .then(res => {
       const uid = res.uid;
-      const self = {
-        joined: false,
+      const player = {
         alive: true,
         won: false,
         uid: uid,
         //TODO add color somehow
         color: null,
       }
-      dispatch(setSelf(self));
+      dispatch(setPlayer(player));
     })
     .catch(() => console.log("login failed"));
 
@@ -71,8 +70,7 @@ export const whoami = () =>
     firebase.auth().onAuthStateChanged(
       user => {
         if (user) {
-          const self = {
-            joined: false,
+          const player = {
             alive: true,
             won: false,
             uid: user.uid,
@@ -80,7 +78,7 @@ export const whoami = () =>
             color: null,
           }
           dispatch(authenticated({uid: user.uid}));
-          dispatch(setSelf(self));
+          dispatch(setPlayer(player));
         }
         else dispatch(anonLogin())
       },
@@ -93,16 +91,16 @@ export const whoami = () =>
 //     firebase.database().ref(`${game}/users/${name}`).once('value')
 //     .then(res => {
 //       if(res.val() === null) {
-//         const self = {
+//         const player = {
 //           alive: true,
 //           won: false,
 //           uid: uid,
 //           //TODO add color somehow
 //           color: null,
 //         }
-//         firebase.database().ref(`${game}/users/${name}`).set(self);
-//         self.name = name;
-//         dispatch(setSelf(self));
+//         firebase.database().ref(`${game}/users/${name}`).set(player);
+//         player.name = name;
+//         dispatch(setPlayer(player));
 //         dispatch(changeName(name));
 //       }
 //       else console.log("name is already in use")

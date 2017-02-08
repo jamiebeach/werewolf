@@ -1,21 +1,25 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 function ChatMessage(props) {
   let message = props.message;
   let index = props.index;
-  let self = props.self;
-  return (<li className="message">
+  let player = props.player;
+  return (
+    <li className="message">
       <div className="avatar">
+        {/*<img
+          src={`images/avatar${player.avatar}.jpg`}
+          style={ { border: `3px solid ${players[player].color}` } } />*/}
       </div>
       <div className="text-content">
         <div className="player-name">
-          {message.user && message.user.toUpperCase()}
+          {message.user.toUpperCase()}
         </div>
         <div className="message-content">
           {message.text}
         </div>
       </div>
-  </li>);
+    </li>);
 }
 
 export default ChatMessage
