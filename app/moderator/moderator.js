@@ -56,9 +56,11 @@ let avatars = [
 ]
 
 // milliseconds for various setTimeouts
-const timeToRead = 10000;  // 10 sec
+
+const timeToRead = 4000;  // 4 sec
 const timeForNight = 30000; // 30 sec
 const timeForDay = 120000; // 2 min
+
 
 // shuffle: helper function, used for assigning roles
 // IF YOU COMMENT THIS OUT THEN THE ROLES ARE:
@@ -116,13 +118,19 @@ export default class Moderator {
     this.leaderId = uid;
 
     this.players = [];
+    this.playerNames = [];
+    this.wolfNames = [];
     this.didAssign = false;
     this.didStart = false; // roles have been assigned and leader sends /ready
     this.seerId = '';
     this.priestId = '';
 
     this.votes = [];
+    this.majority = true;
     this.day = true;
+    this.dayNum = 0;
+    this.dayTimers = [];
+    this.nightTimers = [];
     this.didScry = false; // seer action once per night
     this.didSave = false; // priest action once per night
     this.chosen = ''; // chosen to die that day/night
@@ -150,6 +158,7 @@ export default class Moderator {
         case ADD_USER:
           this.handleJoin(playerAction)
           break;
+
 
         case PROMPT_LEADER:
           this.handlePromptLeader()
@@ -219,7 +228,7 @@ export default class Moderator {
     // moderate function -- more general form of narrate. for every other action.
     // typeof: action = object that has type and any other info,
     // ref = the address in storeActions, in a string,
-    // error =  1-2 word summary of msg (leave null for generic error
+
     let channel = ref ? ref : 'public'
 
     firebase.database().ref(`games/${this.gameName}/storeActions/${channel}`)
@@ -254,6 +263,7 @@ export default class Moderator {
         // moderator has not determined roles
       }
     );
+    this.playerNames.push(playerAction.name);
 
     let player = {
       type: RECIEVE_USER,
@@ -294,6 +304,13 @@ export default class Moderator {
         let werewolfStatus = this.players[playerAction.target].role === 'werewolf';
         let msg = werewolfStatus ? `${playerAction.target} definitely howls at the moon` : `${playerAction.target} wouldn't hurt a fly`
         this.narrate(msg, sender.role, sender.uid, 'scry results')
+
+        if (this.majority && this.didSave) {
+          setTimeout(() => {
+            clearTimeout(this.nightTimers[this.dayNum])
+            this.dayActions();
+          }, 5000);
+        }
       }
     }
   }
@@ -323,6 +340,13 @@ export default class Moderator {
         let msg = `A divine shield surrounds ${playerAction.target}, protecting them from the werewolves for tonight.`
 
         this.narrate(msg, sender.role, sender.uid, 'saving')
+
+        if (this.majority && this.didScry) {
+          setTimeout(() => {
+            clearTimeout(this.nightTimers[this.dayNum])
+            this.dayActions();
+          }, 5000);
+        }
       }
     }
   }
@@ -330,14 +354,27 @@ export default class Moderator {
   // playerAction === target username
   handleVote(playerAction) {
     let role = this.day ? 'public' : 'wolf';
+
     if (this.players[playerAction.target].alive){
-      this.votes.push(playerAction);
+      if (!this.majority) {
+        this.votes.push(playerAction);
 
-      let channel = this.day ? 'public' : 'werewolves';
-      let methodOfMurder = this.day ? 'execute' : 'maul';
+        let channel = this.day ? 'public' : 'werewolves';
+        let methodOfMurder = this.day ? 'execute' : 'maul';
 
-      let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.target}`
-      this.narrate(msg, role, channel, `${role} voting`)
+        let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.target}`
+        this.narrate(msg, role, channel, `${role} voting`)
+
+        this.tallyVotes(role, methodOfMurder);
+        if (this.majority && (this.day || (this.didScry && this.didSave))) {
+          setTimeout(() => {
+            const dayornight = (this.day) ? 'day' : 'night';
+            clearTimeout(this[`${dayornight}Timers`][this.dayNum])
+            if (this.day) this.lynchActions();
+            else this.dayActions();
+          }, 5000);
+        }
+      }
     }
 
     else {
@@ -346,14 +383,15 @@ export default class Moderator {
     }
   }
 
-  tallyVotes() {
+  tallyVotes(role, methodOfMurder) {
+    const voters = (methodOfMurder === 'maul') ? this.wolfNames : this.playerNames;
+
     const tally = {};
-    Object.keys(this.players).forEach(name => {
+    voters.forEach(name => {
       tally[name] = {};
     })
-
     this.votes.forEach(vote => {
-      tally[vote.user][vote.vote] = true;
+      tally[vote.user][vote.target] = true;
     })
 
     const voteCount = {};
@@ -368,18 +406,25 @@ export default class Moderator {
 
     let maxVotes = 0;
     let maxUser = [];
-    Object.keys(voteCount).forEach(key => {
-      if (voteCount[key] > maxVotes) {
-        maxUser = [key];
-        maxVotes = voteCount[key];
+    const keys = Object.keys(voteCount);
+    for (let i = 0; i < keys.length; i++) {
+      if (voteCount[keys[i]] > maxVotes) {
+        // if majority is reached, immediately return
+        if (voteCount[keys[i]] > (voters.length / 2)) {
+          this.chosen = keys[i];
+          this.majority = true;
+          let msg = `A majority vote has been reached to ${methodOfMurder} ${keys[i]}.  Any votes given after this will not affect the decision.`
+          this.narrate(msg, role, null, role);
+          return;
+        }
+        maxUser = [keys[i]];
+        maxVotes = voteCount[keys[i]];
       }
-      else if (voteCount[key] === maxVotes) {
-        maxUser.push(key);
+      else if (voteCount[keys[i]] === maxVotes) {
+        maxUser.push(keys[i]);
       }
-    })
+    }
 
-    // const numOfPlayers = Object.keys(this.players).length;
-    // we deleted the majority rules, but you might want to do that
     this.chosen = maxUser[Math.floor(Math.random()*maxUser.length)];
   }
 
@@ -394,6 +439,8 @@ export default class Moderator {
     }
     else {
       chosen.alive = false;
+      this.playerNames.splice(this.playerNames.indexOf(this.chosen), 1);
+      if (chosen.role === 'werewolf') this.wolfNames.splice(this.playerNames.indexOf(this.chosen), 1);
       let kill = {
           type: KILLING,
           uid: chosen.uid
@@ -407,10 +454,12 @@ export default class Moderator {
     this.chosen = null;
     this.didScry = false;
     this.didSave = false;
+    this.majority = false;
     this.votes = [];
   }
 
   nightActions() {
+    const dayNum = this.dayNum;
     this.narrate(`Everyone in the village goes to sleep.`, 'public')
     // settimeout gives people a chance to read before night switch
       setTimeout(() => {
@@ -433,14 +482,14 @@ export default class Moderator {
 
       }, timeToRead);
 
-      setTimeout(() => {
-        this.tallyVotes()
-        this.dayActions()
+      this.nightTimers[dayNum] = setTimeout(() => {
+        this.dayActions();
       }, timeForNight)
   }
 
   dayActions() {
     this.day = true;
+    const dayNum = ++this.dayNum;
     let timeswitch = {
       type: 'SWITCH_TIME',
       timeofday: 'daytime'
@@ -456,39 +505,44 @@ export default class Moderator {
       this.narrate(msg, 'public', null, 'wolf win')
     }
     else {
-      // settimeout for daytime discussions. votes tally as soon as day ends.
-      setTimeout(() => {
-        this.tallyVotes()
-        // when votes finish, kill someone.
-        let chosen = this.players[this.chosen];
-        chosen.alive = false;
-
-        let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
-        this.narrate(msg, 'public', null, 'execute')
-
-        let kill = {
-          type: UPDATE_USER,
-          name: chosen.name,
-          alive: false,
-        }
-        this.moderate(kill, 'public', 'death')
-        this.checkWin();
-
-        if (this.winner === 'werewolves'){
-          msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
-          this.narrate(msg, 'public', null, 'wolf win')
-        }
-        else if (this.winner === 'villagers'){
-          msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
-          this.narrate(msg, 'public', null, 'village win')
-        } else {
-
-          this.chosen = null;
-          this.votes = [];
-
-          this.nightActions();
-        }
+      // settimeout for daytime discussions
+      this.dayTimers[dayNum] = setTimeout(() => {
+        this.lynchActions();
       }, timeForDay)
+    }
+  }
+
+  lynchActions() {
+    let chosen = this.players[this.chosen];
+    if (this.chosen) chosen.alive = false;
+    this.playerNames.splice(this.playerNames.indexOf(this.chosen), 1);
+    if (chosen.role === 'werewolf') this.wolfNames.splice(this.playerNames.indexOf(this.chosen), 1);
+
+    let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
+    this.narrate(msg, 'public', null, 'lynch')
+
+    let kill = {
+      type: UPDATE_USER,
+      name: chosen.name,
+      alive: false,
+    }
+    this.moderate(kill, 'public', 'death')
+    this.checkWin();
+
+    if (this.winner === 'werewolves'){
+      msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
+      this.narrate(msg, 'public', null, 'wolf win')
+    }
+    else if (this.winner === 'villagers'){
+      msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
+      this.narrate(msg, 'public', null, 'village win')
+    } else {
+
+      this.chosen = null;
+      this.votes = [];
+      this.majority = false;
+
+      this.nightActions();
     }
   }
 
@@ -527,6 +581,7 @@ export default class Moderator {
       player.role = roles[index];
       if (player.role === 'seer') this.seerId = player.uid;
       if (player.role === 'priest') this.priestId = player.uid;
+      if (player.role === 'werewolf') this.wolfNames.push(player.name);
     });
 
     const werewolves = this.players.filter(player => (player.role === 'werewolf'));
