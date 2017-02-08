@@ -10,7 +10,6 @@ export const NewGame = props => {
 		evt.preventDefault();
 		const userName = evt.target.userName.value;
 		const gameName = evt.target.gameName.value;
-		console.log("inside handleSubmit ", gameName, userName);
 		props.createNewGame(userName, gameName);
 	}
 
@@ -53,7 +52,7 @@ const mapDispatchToProps = dispatch => {
   return ({
     createNewGame (userName, gameName) {
       return dispatch(createNewGame(userName, gameName));
-    },
+    }
   });
 };
 

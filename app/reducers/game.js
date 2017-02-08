@@ -163,7 +163,7 @@ const later = process.nextTick
 export const updateGameActions = () => {
   return (dispatch, getState) => {
     const {gameId, player: {uid, name}} = getState().game
-    
+
     const roster = firebase.database().ref(`games/${gameId}/roster`)
     const me = roster.child(uid)
     me.set(name)
@@ -253,7 +253,6 @@ export const createNewGame = (name, gameName, uid) => {
     const gameId = firebase.database().ref('games').push({
       name: gameName
     });
-
     dispatch(recieveGameId(gameId.key));
     dispatch(joinGame(username, gameId.key));
     dispatch(setModerator(uid, [gameId.key, username, uid]))
@@ -289,12 +288,14 @@ const addUserWithUid = gameAction(
   })
 )
 
+// sends START_GAME action to firebase; triggered when leader types '/roles'
 export const startGame = gameAction(
   () => ({
-    type: START_GAME,
+    type: START_GAME
   })
 )
 
+// sends LEADER_START action to firebase; triggered when leader types '/ready'
 export const leaderStart = gameAction(
   () => ({
     type: LEADER_START,
