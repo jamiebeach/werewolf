@@ -1,22 +1,10 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
-import Button from './Button';
 
 import Send from 'material-ui/svg-icons/content/send';
 import IconButton from 'material-ui/IconButton';
 
-
-import {
-  sendMessageAction,
-  sendVoteAction,
-  sendScryAction,
-  sendSaveAction
-} from '../reducers/game';
-
-
-// eventually this has to connect to have access to user, etc
-class Chat extends Component {
+export default class Chat extends Component {
   constructor() {
     super();
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -29,24 +17,36 @@ class Chat extends Component {
 
     if (msg[0] === '/'){
       //Commands are vote, save, seer:
-      let cmd = msg.substring(1,5).toLowerCase();
-      let target = msg.substring(5).trim().toLowerCase();
-
+      const words = msg.split(' ');
+      let cmd = words[0].toLowerCase();
+      let target;
+      if (words.length > 1) target = words[1].toLowerCase();
+      console.log("inside inputchat ", cmd, target);
       switch(cmd) {
 
-        case 'vote':
-          this.props.sendVote(this.props.user.name, target);
+        case '/vote':
+          this.props.sendVote(this.props.player.name, target);
           break;
 
-        case 'save':
-          if (this.props.game.self.role === 'priest' && !this.props.game.day) {
-            this.props.sendSave(this.props.game.self, target);
+        case '/save':
+          if (this.props.player.role === 'priest' && !this.props.day) {
+            this.props.sendSave(this.props.player, target);
           }
           break;
 
-        case 'scry':
-          if (this.props.game.self.role === 'seer' && !this.props.game.day) {
-            this.props.sendScry(this.props.game.self, target);
+        case '/scry':
+          if (this.props.player.role === 'seer' && !this.props.day) {
+            this.props.sendScry(this.props.player, target);
+          }
+          break;
+        case '/roles':
+          if (this.props.player.leader) {
+            this.props.startGame();
+          }
+          break;
+        case '/ready':
+          if (this.props.player.leader) {
+            this.props.leaderStart();
           }
           break;
 
@@ -56,14 +56,17 @@ class Chat extends Component {
 
     }
 
-    else { console.log(this.props.user, msg, 'villager'); this.props.sendMessage(this.props.user.name, msg, 'villager');}
+    else {
+      console.log(this.props.player, msg, 'public');
+      this.props.sendMessage(this.props.player.name, msg, 'public');
+    }
 
     e.target.message.value = '';
   }
 
 
   render() {
-    const day = this.props.game.day;
+    const day = this.props.day;
 
     return (
       <div id="chat-input">
@@ -71,53 +74,21 @@ class Chat extends Component {
           <TextField
             style={{flexGrow: 1, marginLeft: '10px'}}
             id="message"
-            floatingLabelText={(this.props.user.alive) ? "" : "You can't chat when you're dead"}
+            floatingLabelText={(this.props.player.alive) ? "" : "You can't chat when you're dead"}
             floatingLabelStyle={{color: day ? '#000' : '#AAA', fontFamily: 'IM Fell French Canon' }}
             underlineFocusStyle={{borderColor: day ? '#0D7A58' : '#6E0300 ' }}
             inputStyle={{color: day ? '#000' : '#FFF', fontWeight: 'normal', fontFamily: 'IM Fell French Canon' }}
-            disabled={(!this.props.user.alive)}
+            disabled={(!this.props.player.alive)}
           />
            <IconButton
             type="submit"
             className="enterText"
-            disabled={(!this.props.user.alive)}
+            disabled={(!this.props.player.alive)}
           >
             <Send />
           </IconButton>
-          {/*<Button disabled={(!this.props.user.alive)}
-                  type="submit"
-                  className="enterText">
-                  Enter
-          </Button>*/}
         </form>
       </div>
     )
   }
 }
-
-/* -----------------    CONTAINER     ------------------ */
-
-const mapState = state => {
-  return {
-    game: state.game
-  }
-};
-
-const mapDispatch = dispatch => {
-  return {
-    sendMessage: (user, msg, role) => {
-      dispatch(sendMessageAction(user, msg, role));
-    },
-    sendVote: (user, target) => {
-      dispatch(sendVoteAction(user, target));
-    },
-    sendScry: (user, target) => {
-      dispatch(sendScryAction(user, target));
-    },
-    sendSave: (user, target) => {
-      dispatch(sendSaveAction(user, target));
-    }
-  }
-};
-
-export default connect(mapState, mapDispatch)(Chat);

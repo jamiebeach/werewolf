@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {browserHistory} from 'react-router';
-import {setSelf} from './game';
+import {setPlayer} from './game';
 
 const game = 'game1';
 
@@ -32,13 +32,26 @@ export const authenticated = user => ({
 
 /* ------------       DISPATCHERS     ------------------ */
 
-// for anonymous login
+// for anonymous login happens when user first lands on page
 // firebase.auth().signInAnonymously()
 
 export const anonLogin = () =>
-  dispatch =>
+  dispatch => {
     firebase.auth().signInAnonymously()
-      .catch(() => console.log("login failed"));
+    .then(res => {
+      const uid = res.uid;
+      const player = {
+        alive: true,
+        won: false,
+        uid: uid,
+        //TODO add color somehow
+        color: null,
+      }
+      dispatch(setPlayer(player));
+    })
+    .catch(() => console.log("login failed"));
+
+  }
 
 // export const login = (email, password) =>
 //   dispatch =>
@@ -56,48 +69,58 @@ export const whoami = () =>
   dispatch =>
     firebase.auth().onAuthStateChanged(
       user => {
-        if (user) dispatch(authenticated({...user}));
+        if (user) {
+          const player = {
+            alive: true,
+            won: false,
+            uid: user.uid,
+            //TODO add color somehow
+            color: null,
+          }
+          dispatch(authenticated({uid: user.uid}));
+          dispatch(setPlayer(player));
+        }
         else dispatch(anonLogin())
       },
       error => console.log(error))
 
-export const checkValidName = name => {
-  return (dispatch, getState) => {
-    const uid = getState().auth.uid
-    console.log("uid = ", uid);
-    firebase.database().ref(`${game}/users/${name}`).once('value')
-    .then(res => {
-      if(res.val() === null) {
-        const self = {
-          alive: true,
-          won: false,
-          uid: uid,
-          //TODO add color somehow
-          color: null,
-        }
-        firebase.database().ref(`${game}/users/${name}`).set(self);
-        self.name = name;
-        dispatch(setSelf(self));
-        dispatch(changeName(name));
-      }
-      else console.log("name is already in use")
-     })
-     .catch(console.error);
-  }
-}
+// export const checkValidName = name => {
+//   return (dispatch, getState) => {
+//     const uid = getState().auth.uid
+//     console.log("uid = ", uid);
+//     firebase.database().ref(`${game}/users/${name}`).once('value')
+//     .then(res => {
+//       if(res.val() === null) {
+//         const player = {
+//           alive: true,
+//           won: false,
+//           uid: uid,
+//           //TODO add color somehow
+//           color: null,
+//         }
+//         firebase.database().ref(`${game}/users/${name}`).set(player);
+//         player.name = name;
+//         dispatch(setPlayer(player));
+//         dispatch(changeName(name));
+//       }
+//       else console.log("name is already in use")
+//      })
+//      .catch(console.error);
+//   }
+// }
 
-// this will overwrite any user's info, not just anon ones, need to fix later
-export const changeName = (name) => {
-  return dispatch => {
-    const user = firebase.auth().currentUser;
-    user.updateProfile({displayName: name})
-    .then(() => {
-      dispatch(authenticated({...user}));
-    })
+// // this will overwrite any user's info, not just anon ones, need to fix later
+// export const changeName = (name) => {
+//   return dispatch => {
+//     const user = firebase.auth().currentUser;
+//     user.updateProfile({displayName: name})
+//     .then(() => {
+//       dispatch(authenticated({...user}));
+//     })
 
-    .catch((error) => console.log(error))
-  }
-}
+//     .catch((error) => console.log(error))
+//   }
+// }
 
 
 

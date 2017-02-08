@@ -9,13 +9,19 @@ import Welcome from './components/Welcome';
 import JoinGame from './components/JoinGame';
 import NewGame from './components/NewGame';
 import Rules from './components/Rules';
-import ChatContainer from './components/ChatContainer';
+import GameContainer from './components/GameContainer';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import {recieveGameId} from './reducers/game';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
+
+const onGameEnter = nextRouterState => {
+  const gameId = nextRouterState.params.id;
+  store.dispatch(recieveGameId(gameId));
+}
 
 render(
   <MuiThemeProvider>
@@ -25,10 +31,9 @@ render(
           <IndexRedirect to="/home" />
           <Route path="/home" component={Welcome} />
           <Route path="/newgame" component={NewGame} />
-          <Route path='/joingame' component={JoinGame} />
           <Route path="/rules" component={Rules} />
-          <Route path="/chat" component={ChatContainer} />
-          <Route path="/chat/:id" component={ChatContainer} />
+          <Route path="/joingame/:id" component={JoinGame} />
+          <Route path="/game/:id" component={GameContainer} onEnter={onGameEnter} />
         </Route>
       </Router>
     </Provider>

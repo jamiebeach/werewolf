@@ -2,15 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import {addUser} from '../reducers/game';
+import {joinGame, gameId} from '../reducers/game';
 
 export const JoinGame = props => {
 
 	const handleSubmit = (evt) => {
 		evt.preventDefault();
 		const userName = evt.target.userName.value;
-		console.log("inside joinGame handleSubmit ", userName);
-		props.addUser(userName);
+		props.joinGame(userName, gameId);
 	}
 
 	return (
@@ -30,7 +29,7 @@ export const JoinGame = props => {
 	                inputStyle={{color: "#FFF", fontWeight: 'normal', fontFamily: 'IM Fell Great Primer SC'}}
 	                floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
   	              />
-	              <RaisedButton type="submit" value="buildGame" label="Start New Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
+	              <RaisedButton type="submit" value="buildGame" label="Join Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
 	            </div>
 	         	</form>
 	         </div>
@@ -39,11 +38,13 @@ export const JoinGame = props => {
     );
 }
 
+
 const mapDispatchToProps = dispatch => {
   return ({
-    addUser (userName) {
-      return dispatch(addUser(userName));
+    joinGame (userName, gameId) {
+      return dispatch(joinGame(userName, gameId));
     },
+
   });
 };
 

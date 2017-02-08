@@ -18,8 +18,12 @@ const UPDATE_USER = 'UPDATE_USER';
 const SCRYING = 'SCRYING';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
+const ADD_GAMEID = 'ADD_GAMEID';
+const RECIEVE_USER = 'RECIEVE_USER';
 
 /* ----------------- SETTINGS ------------------ */
+
+// line 481 needs to be commented back in if you want to stop less than5 player games
 
 let colors =
 [
@@ -51,9 +55,9 @@ let avatars = [
 ]
 
 // milliseconds for various setTimeouts
-const timeToRead = 5000;  // 5,000
-const timeForNight = 7000; // 10,000
-const timeForDay = 10000; // 100,000 -> this is 1m40s
+const timeToRead = 1000;  // 5,000
+const timeForNight = 30000; // 10,000
+const timeForDay = 30000; // 100,000 -> this is 1m40s
 
 // shuffle: helper function, used for assigning roles
 // IF YOU COMMENT THIS OUT THEN THE ROLES ARE:
@@ -111,6 +115,7 @@ export default class Moderator {
     this.leaderId = uid;
 
     this.players = [];
+    this.didAssign = false;
     this.didStart = false; // roles have been assigned and leader sends /ready
     this.seerId = '';
     this.priestId = '';
@@ -125,7 +130,7 @@ export default class Moderator {
 
     // listen to player actions in firebase
     firebase.database().ref(`games/${this.gameName}/playerActions/`)
-    .on('child_added', function(action){
+    .on('child_added', (action) => {
       const playerAction = action.val();
 
       switch (playerAction.type) {
@@ -138,20 +143,16 @@ export default class Moderator {
           this.handleStart()
           break;
 
+        case ADD_GAMEID:
+          this.handleGameId()
+          break;
+
         case LEADER_START: // make this
           this.handleLeaderStart()
           break;
 
         case RECIEVE_MESSAGE:
-          if (playerAction.role === 'seer' && playerAction.target) {
-            this.handleScry(playerAction)
-          }
-          else if (playerAction.role === 'priest' && playerAction.target) {
-            this.handleSave(playerAction)
-          }
-          else {
-            this.moderate(playerAction, playerAction.role, 'msg')
-          }
+          this.moderate(playerAction, playerAction.role, 'msg')
           break;
 
         case RECIEVE_VOTE:
@@ -192,7 +193,7 @@ export default class Moderator {
     firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
     .push({
       type: RECIEVE_MESSAGE,
-      name: 'moderator',
+      user: 'moderator',
       message: `${message}`,
       role: `${role}`
     })
@@ -204,9 +205,20 @@ export default class Moderator {
     // typeof: action = object that has type and any other info,
     // ref = the address in storeActions, in a string,
     // error =  1-2 word summary of msg (leave null for generic error)
-    firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
+
+    console.log('ref', ref)
+    let channel = ref ? ref : 'public'
+
+    firebase.database().ref(`games/${this.gameName}/storeActions/${channel}`)
     .push(action)
     .catch(err => console.error(`Error: moderator sending ${error} action to firebase`, err))
+  }
+
+  handleGameId(gameId) {
+    firebase.database.ref(`games/${this.gameName}/storeActions/public`).push({
+      type: RECIEVE_GAMEID,
+      gameId
+    })
   }
 
   handleJoin(playerAction) {
@@ -226,8 +238,7 @@ export default class Moderator {
     );
 
     let player = {
-      type: ADD_USER,
-
+      type: RECIEVE_USER,
       uid: playerAction.uid,
       name: playerAction.name,
 
@@ -245,14 +256,13 @@ export default class Moderator {
 
     if (playerAction.user.id === this.seerId && !this.day) {
 
-      // this is already done in reducer. sendmessageaction is dispatched
-      // let scry = {
-      //   type: RECIEVE_MESSAGE,
-      //   user: sender.name,
-      //   message: `/peek ${playerAction.target}`,
-      //   role: sender.role,
-      // }
-      // this.moderate(scry, this.seerId, 'peeking')
+      let scry = {
+        type: RECIEVE_MESSAGE,
+        user: sender.name,
+        message: `/peek ${playerAction.target}`,
+        role: sender.role,
+      }
+      this.moderate(scry, this.seerId, 'peeking')
 
       if (this.didScry) {
 
@@ -274,14 +284,13 @@ export default class Moderator {
 
     if (playerAction.user.id === this.priestId && !this.day) {
 
-      // this is already done in reducer. sendmessageaction is dispatched
-      // let save = {
-      //   type: RECIEVE_MESSAGE,
-      //   user: sender.name,
-      //   message: `/save ${playerAction.target}`,
-      //   role: sender.role,
-      // }
-      // this.moderate(save, this.priestId, 'saving')
+      let save = {
+        type: RECIEVE_MESSAGE,
+        user: sender.name,
+        message: `/save ${playerAction.target}`,
+        role: sender.role,
+      }
+      this.moderate(save, this.priestId, 'saving')
 
       if (this.didSave) {
         let msg = 'You have already exhausted your holy powers for tonight. Go to bed and try again tomorrow.'
@@ -300,9 +309,14 @@ export default class Moderator {
   }
 
   handleVote(playerAction) {
-    let role = this.day ? 'villager' : 'wolf';
+    let role = this.day ? 'public' : 'wolf';
 
-    if (this.players[playerAction.vote].alive){
+    // console.log('inside mod ', this.players, this.players[playerAction.vote])
+    this.narrate(this.players[playerAction.target], 'public', 'public')
+    // this.narrate(playerAction.target, 'public', 'public')
+
+
+    if (this.players[playerAction.target].alive){
       this.votes.push(playerAction);
 
       let channel = this.day ? 'public' : 'werewolves';
@@ -314,7 +328,7 @@ export default class Moderator {
 
     else {
       let msg = `${playerAction.vote} is already dead.`
-      this.narrate(msg, role, this.players[playerAction.user].uid, role)
+      this.narrate(msg, role, this.players[playerAction.user].uid, 'role')
     }
   }
 
@@ -360,8 +374,9 @@ export default class Moderator {
     let chosen = this.players[this.chosen];
     let msg;
 
-    if (chosen.immunity){
+    if (!chosen || chosen.immunity){
       msg = `Everyone wakes up and all is well within the village. But werewolves are still lurking in the darkness...`
+      if (chosen) chosen.immunity = false;
     }
     else {
       chosen.alive = false;
@@ -373,9 +388,8 @@ export default class Moderator {
       msg = `Everyone wakes up and discovers that ${this.chosen} was eaten by werewolves last night. Avenge their death!`
     }
 
-    this.narrate(msg, 'villager', null, 'morning')
+    this.narrate(msg, 'public', null, 'morning')
     //resetting the night props
-    chosen.immunity = false;
     this.chosen = null;
     this.didScry = false;
     this.didSave = false;
@@ -383,7 +397,7 @@ export default class Moderator {
   }
 
   nightActions() {
-    this.narrate(`Everyone in the village goes to sleep.`, 'villager')
+    this.narrate(`Everyone in the village goes to sleep.`, 'public')
     // settimeout gives people a chance to read before night switch
       setTimeout(() => {
         this.day = false;
@@ -418,14 +432,14 @@ export default class Moderator {
       timeofday: 'daytime'
     }
     this.moderate(timeswitch, 'public', 'day time')
-    this.narrate(`The sun rises. A new day begins for the village.`, 'villager')
+    this.narrate(`The sun rises. A new day begins for the village.`, 'public')
     this.resolveNightEvents();
 
     //werewolves may have won at this point
     this.checkWin();
     if (this.winner === 'werewolves'){
       let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
-      this.narrate(msg, 'villager', null, 'wolf win')
+      this.narrate(msg, 'public', null, 'wolf win')
     }
     else {
       // settimeout for daytime discussions. votes tally as soon as day ends.
@@ -436,7 +450,7 @@ export default class Moderator {
         chosen.alive = false;
 
         let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
-        this.narrate(msg, 'villager', null, 'lynch')
+        this.narrate(msg, 'public', null, 'lynch')
 
         let kill = {
           type: UPDATE_USER,
@@ -448,11 +462,11 @@ export default class Moderator {
 
         if (this.winner === 'werewolves'){
           msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
-          this.narrate(msg, 'villager', null, 'wolf win')
+          this.narrate(msg, 'public', null, 'wolf win')
         }
         else if (this.winner === 'villagers'){
           msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
-          this.narrate(msg, 'villager', null, 'village win')
+          this.narrate(msg, 'public', null, 'village win')
         } else {
 
           this.chosen = null;
@@ -464,6 +478,7 @@ export default class Moderator {
     }
   }
 
+  // Players have their roles. When players are ready Game Leader can type /ready and play begins
   handleLeaderStart() {
     if (!this.didStart) {
       // switch from array to object
@@ -477,12 +492,20 @@ export default class Moderator {
     }
   }
 
+  // Game Leader enters /roles - this assigns player roles
   handleStart() {
+    console.log("inside handleStart");
+    if (this.didAssign) return;
+    else if (this.players.length < 5) {
+      this.narrate('Minimum 5 players to start.', 'public', 'public', '/roles')
+      // return;
+    }
+
     const length = this.players.length;
     let numWerewolves = Math.floor(length / 3);
     let roles = ['seer', 'priest'];
     while (numWerewolves--) roles.push('werewolf');
-    while (roles.length < length) roles.push('villager');
+    while (roles.length < length) roles.push('public');
     roles = shuffle(roles);
 
     this.players.forEach((player, index) => {
@@ -496,7 +519,7 @@ export default class Moderator {
       {
         type: UPDATE_USER,
         name: player.name,
-        role: player.role
+        role: player.role,
       }
     ));
     const others = this.players.filter(player => (player.role !== 'werewolf'));
@@ -520,12 +543,15 @@ export default class Moderator {
     // send messages containing roles to everyone
     this.players.forEach((player, index) => {
       let msg = `You are a ${player.role}.  The leader will start the game when everyone is ready.`
-      this.narrate(msg, 'villager', player.uid, 'role assign')
+      this.narrate(msg, 'public', player.uid, 'role assign')
     })
 
     // tell leader to use slash command to start
     let msg = `Type '/ready' to begin.`
-    this.narrate(msg, 'villager', this.leaderId, 'leader ready')
+    this.narrate(msg, 'public', this.leaderId, 'leader ready')
+
+    // switch didAssign to true
+    this.didAssign = true;
   }
 
   checkWin(){

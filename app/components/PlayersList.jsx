@@ -1,11 +1,12 @@
 import React from 'react';
-
 // expects players, user, and day from props
 // villager, werewolf, seer, doctor, ... cupid, lovers, hunter, mayor
 
 const PlayersList = (props) => {
   const day = props.day;
-  const user = props.user;
+
+  const player = props.player;
+  const players = props.players;
 
   const pickColor = (player, user, day) => {
     if ((user.role === 'werewolf') && (player.role === 'werewolf') || (!user.alive && (player.role === 'werewolf'))) return 'thistle';
@@ -23,8 +24,6 @@ const PlayersList = (props) => {
     else if (((!user.alive) || (user.role === 'seer')) && (player.role === 'seer')) return <Eye/>;
     else return null;
   }
-
-
 
   return (
     <div className='players-list'>
@@ -49,7 +48,6 @@ const PlayersList = (props) => {
                 style = { { textDecoration: dead(players[player]) } } >
                 {player}
               </div>
-
             </div>
           )
         })

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router'
 
 import RaisedButton from 'material-ui/RaisedButton';
@@ -7,7 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 /* -----------------    COMPONENT     ------------------ */
 
-export const Welcome = () => {
+const Welcome = () => {
 	return (
 		<div className='splash'>
 			<div className='landingTextBox ' >
@@ -32,17 +31,6 @@ export const Welcome = () => {
 }
 
 
-/* -----------------    CONTAINER     ------------------ */
 
-const mapState = () => ({});
-const mapDispatch = () => ({});
-
-// const handleClick = () => {
-
-// }
-
-export default connect(mapState, mapDispatch)(Welcome);
-
-
-
+export default Welcome;
 
