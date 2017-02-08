@@ -11,6 +11,7 @@
 
 const RECIEVE_MESSAGE = 'RECIEVE_MESSAGE';
 const RECIEVE_VOTE = 'RECIEVE_VOTE';
+const PROMPT_LEADER = 'PROMPT_LEADER';
 const START_GAME = 'START_GAME';
 const LEADER_START = 'LEADER_START';
 const ADD_USER = 'ADD_USER';
@@ -158,6 +159,11 @@ export default class Moderator {
           this.handleJoin(playerAction)
           break;
 
+
+        case PROMPT_LEADER:
+          this.handlePromptLeader()
+          break;
+
         case START_GAME:
           this.handleStart()
           break;
@@ -235,6 +241,11 @@ export default class Moderator {
       type: RECIEVE_GAMEID,
       gameId
     })
+  }
+
+  handlePromptLeader() {
+    let msg = `When all players are present, type '/roles' to assign roles to everyone. Players cannot join after roles have been assigned.`
+    this.narrate(msg, 'public', this.leaderId, 'prompt leader');
   }
 
   handleJoin(playerAction) {

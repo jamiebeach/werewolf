@@ -106,6 +106,7 @@ const reducer = (state = initialState, action) => {
 
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
+const PROMPT_LEADER = 'PROMPT_LEADER';
 const START_GAME = 'START_GAME';
 const LEADER_START = 'LEADER_START';
 
@@ -257,7 +258,8 @@ export const createNewGame = (name, gameName, uid) => {
     dispatch(joinGame(username, gameId.key));
     dispatch(setModerator(uid, [gameId.key, username, uid]))
     dispatch(updatePlayer({leader: true}));
-    browserHistory.push(`/game/${gameId.key}`)
+    browserHistory.push(`/game/${gameId.key}`);
+    dispatch(promptLeader());
   }
 }
 
@@ -284,6 +286,13 @@ const addUserWithUid = gameAction(
     type: ADD_USER,
     name: username,
     uid: uid
+  })
+)
+
+//sends PROMPT-LEADER action to firebase; triggered when leader creates a new game
+export const promptLeader = gameAction(
+  () => ({
+    type: PROMPT_LEADER
   })
 )
 
