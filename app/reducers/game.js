@@ -207,7 +207,7 @@ export const setGameId = (gameId) => {
 // sets gameId on players state
 // dispatches addUser
 // instantiates new Moderator
-// redirects to game chatroom 
+// redirects to game chatroom
 export const createNewGame = (name, gameName, uid) => {
   return (dispatch, getState) => {
     const uid = getState().game.self.uid;
@@ -219,8 +219,10 @@ export const createNewGame = (name, gameName, uid) => {
       dispatch(setGameId(gameId.key));
       dispatch(updateSelf({leader: true}));
       dispatch(joinGame(username, gameId.key));
-      mod = new Moderator(gameId.key, username, uid)
-      browserHistory.push(`/game/${gameId.key}`)
+      mod = new Moderator(gameId.key, username, uid);
+      browserHistory.push(`/game/${gameId.key}`);
+      let msg = `When all the players you invited are present in the chatroom, please type '/roles' to assign roles to everyone.`
+      mod.narrate(msg, 'public', uid, 'assign roles');
     });
   }
 }
@@ -247,12 +249,14 @@ export const addUser = gameAction(
   })
 )
 
+// sends START_GAME action to firebase; triggered when leader types '/roles'
 export const startGame = gameAction(
   () => ({
-    type: START_GAME,
+    type: START_GAME
   })
 )
 
+// sends LEADER_START action to firebase; triggered when leader types '/ready'
 export const leaderStart = gameAction(
   () => ({
     type: LEADER_START,
@@ -261,7 +265,7 @@ export const leaderStart = gameAction(
 
  /*---------
 Game Player Actions
-----------*/ 
+----------*/
 
 // send messages to playerActions
 export const sendMessageAction = gameAction(

@@ -9,7 +9,7 @@ function ChatMessage(props) {
       </div>
       <div className="text-content">
         <div className="player-name">
-          {message.user.toUpperCase()}
+          {message.user && message.user.toUpperCase()}
         </div>
         <div className="message-content">
           {message.text}
