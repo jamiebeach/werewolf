@@ -358,7 +358,7 @@ export default class Moderator {
         if (this.majority && (this.day || (this.didScry && this.didSave))) {
           setTimeout(() => {
             const dayornight = (this.day) ? 'day' : 'night';
-            clearTimeout(this[`${dayornight}Timers`][dayNum])
+            clearTimeout(this[`${dayornight}Timers`][this.dayNum])
             if (this.day) this.lynchActions();
             else this.dayActions();
           }, 5000);
