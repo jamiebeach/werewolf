@@ -184,8 +184,10 @@ export const updateGameActions = () => {
 
     firebase.database().ref(`${storeActions}/${getState().game.player.uid}`).on('child_added', function(action){
       later(() => dispatch(action.val()))
-      if (action.val().type === 'UPDATE_USER' && action.val().role === 'werewolf'){
-        dispatch(updateWolfActions())
+      if (action.val().type === 'UPDATE_USER' && action.val().name === name && action.val().updates.role === 'werewolf'){
+        firebase.database().ref(`${storeActions}/werewolves`).on('child_added', function(action){
+          dispatch(firebaseUpdate(action.val()))
+        })
       }
     })
   }
@@ -193,16 +195,16 @@ export const updateGameActions = () => {
 
 // after roles are assigned, call this dispatcher!!!
 // Action Listener for werewolves
-export const updateWolfActions = (gameId) => {
-  return (dispatch, getState) => {
-    const storeActions = `games/${gameId}/storeActions/`;
-    if (getState().game.player.role === "werewolf") {
-      firebase.database().ref(`${storeActions}/werewolves`).on('child_added', function(action){
-        dispatch(firebaseUpdate(action.val()))
-      })
-    }
-  }
-}
+// export const updateWolfActions = (gameId) => {
+//   return (dispatch, getState) => {
+//     const storeActions = `games/${gameId}/storeActions/`;
+//     if (getState().game.player.role === "werewolf") {
+//       firebase.database().ref(`${storeActions}/werewolves`).on('child_added', function(action){
+//         dispatch(firebaseUpdate(action.val()))
+//       })
+//     }
+//   }
+// }
 
 /* ------------       DISPATCHERS     ------------------ */
 

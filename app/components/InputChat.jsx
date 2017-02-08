@@ -56,8 +56,10 @@ export default class Chat extends Component {
     }
 
     else {
-      console.log(this.props.player, msg, 'public');
-      this.props.sendMessage(this.props.player.name, msg, 'public');
+      // day messages to public
+      // werewolf messages to werewolf
+      // priest/seer to private?!?!
+      this.props.sendMessage(this.props.player.name, msg, role);
     }
 
     e.target.message.value = '';
