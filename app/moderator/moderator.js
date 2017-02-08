@@ -589,7 +589,7 @@ export default class Moderator {
 
     const length = this.players.length;
     let numWerewolves = Math.floor(length / 3);
-    let roles = ['werewolf'];
+    let roles = ['seer', 'priest'];
     while (numWerewolves--) roles.push('werewolf');
     while (roles.length < length) roles.push('villager');
     roles = shuffle(roles);
