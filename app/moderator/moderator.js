@@ -120,6 +120,7 @@ export default class Moderator {
 
     this.colors = shuffle(colors);
     this.avatars = shuffle(avatars);
+    this.modAvatar = `/images/modAvatar.jpg`,
 
     this.players = [];
     this.didAssign = false;

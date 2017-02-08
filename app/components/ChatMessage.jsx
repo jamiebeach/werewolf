@@ -15,7 +15,7 @@ function ChatMessage(props) {
           <img
             src={`/images/avatar${players[message.user].avatar}.jpg`}
             /*style={ { border: `3px solid ${players[message.user].color}` } }*/
-          /> : <div>special mod styling</div>
+          /> : <img src={`/images/modAvatar.jpg`}/>
         }
       </div>
       <div className="text-content">
