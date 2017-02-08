@@ -11,6 +11,7 @@
 
 const RECIEVE_MESSAGE = 'RECIEVE_MESSAGE';
 const RECIEVE_VOTE = 'RECIEVE_VOTE';
+const PROMPT_LEADER = 'PROMPT_LEADER';
 const START_GAME = 'START_GAME';
 const LEADER_START = 'LEADER_START';
 const ADD_USER = 'ADD_USER';
@@ -146,11 +147,15 @@ export default class Moderator {
 
       switch (playerAction.type) {
 
-        case ADD_USER: 
+        case ADD_USER:
           this.handleJoin(playerAction)
           break;
 
-        case START_GAME: 
+        case PROMPT_LEADER:
+          this.handlePromptLeader()
+          break;
+
+        case START_GAME:
           this.handleStart()
           break;
 
@@ -158,7 +163,7 @@ export default class Moderator {
           this.handleGameId()
           break;
 
-        case LEADER_START: 
+        case LEADER_START:
           this.handleLeaderStart()
           break;
 
@@ -227,6 +232,11 @@ export default class Moderator {
       type: RECIEVE_GAMEID,
       gameId
     })
+  }
+
+  handlePromptLeader() {
+    let msg = `When all the players you've invited are present in the chat room, type '/roles' to assign roles to everyone.`
+    this.narrate(msg, 'public', this.leaderId, 'prompt leader');
   }
 
   handleJoin(playerAction) {
