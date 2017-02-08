@@ -82,7 +82,7 @@ const reducer = (state = initialState, action) => {
         player: action.name === state.player.name ? {
           ...state.player,
           ...action.updates,
-        } : player,
+        } : state.player,
       }
 
     case RECIEVE_MESSAGE:
