@@ -126,7 +126,7 @@ export default class Moderator {
     this.priestId = '';
 
     this.votes = [];
-    this.majority = true;
+    this.majority = false;
     this.day = true;
     this.dayNum = 0;
     this.dayTimers = [];
@@ -281,72 +281,80 @@ export default class Moderator {
   }
 
   handleScry(playerAction) {
-    const sender = this.players[playerAction.user];
+    const sender = this.players[playerAction.user.name];
 
-    if (playerAction.user.id === this.seerId && !this.day) {
-
-      let scry = {
-        type: RECIEVE_MESSAGE,
-        user: sender.name,
-        message: `/peek ${playerAction.target}`,
-        role: sender.role,
-      }
-      this.moderate(scry, this.seerId, 'peeking')
-
-      if (this.didScry) {
-
-        let msg = 'You have already exhausted your mystical powers for tonight. Go to bed and try again tomorrow.'
-        this.narrate(msg, sender.role, sender.uid, 'already scryed')
-
-      } else {
-
-        this.didScry = true;
-        let werewolfStatus = this.players[playerAction.target].role === 'werewolf';
-        let msg = werewolfStatus ? `${playerAction.target} definitely howls at the moon` : `${playerAction.target} wouldn't hurt a fly`
-        this.narrate(msg, sender.role, sender.uid, 'scry results')
-
-        if (this.majority && this.didSave) {
-          setTimeout(() => {
-            clearTimeout(this.nightTimers[this.dayNum])
-            this.dayActions();
-          }, 5000);
+    if ((playerAction.user.uid === this.seerId) && !this.day) {
+      if (this.players[playerAction.target]) {
+        let scry = {
+          type: RECIEVE_MESSAGE,
+          user: sender.name,
+          message: `/scry ${playerAction.target}`,
+          role: sender.role,
         }
+        this.moderate(scry, this.seerId, 'scrying')
+
+        if (this.didScry) {
+
+          let msg = 'You have already exhausted your mystical powers for tonight. Go to bed and try again tomorrow.'
+          this.narrate(msg, sender.role, sender.uid, 'already scryed')
+
+        } else {
+
+          this.didScry = true;
+          let werewolfStatus = this.players[playerAction.target].role === 'werewolf';
+          let msg = werewolfStatus ? `${playerAction.target} definitely howls at the moon` : `${playerAction.target} wouldn't hurt a fly`
+          this.narrate(msg, sender.role, sender.uid, 'scry results')
+
+          if (this.majority && this.didSave) {
+            setTimeout(() => {
+              clearTimeout(this.nightTimers[this.dayNum])
+              this.dayActions();
+            }, 5000);
+          }
+        }
+      } else {
+        let msg = `${playerAction.target} is not a resident of this village.`;
+        this.narrate(msg, sender.role, sender.uid, 'bad name scryed');
       }
     }
   }
 
   handleSave(playerAction) {
-    const sender = this.players[playerAction.user];
+    const sender = this.players[playerAction.user.name];
 
-    if (playerAction.user.id === this.priestId && !this.day) {
-
-      let save = {
-        type: RECIEVE_MESSAGE,
-        user: sender.name,
-        message: `/save ${playerAction.target}`,
-        role: sender.role,
-      }
-      this.moderate(save, this.priestId, 'saving')
-
-      if (this.didSave) {
-        let msg = 'You have already exhausted your holy powers for tonight. Go to bed and try again tomorrow.'
-
-        this.narrate(msg, sender.role, sender.uid, 'already saved')
-
-      } else {
-        this.didSave = true;
-        this.players[playerAction.target].immunity = true;
-
-        let msg = `A divine shield surrounds ${playerAction.target}, protecting them from the werewolves for tonight.`
-
-        this.narrate(msg, sender.role, sender.uid, 'saving')
-
-        if (this.majority && this.didScry) {
-          setTimeout(() => {
-            clearTimeout(this.nightTimers[this.dayNum])
-            this.dayActions();
-          }, 5000);
+    if (playerAction.user.uid === this.priestId && !this.day) {
+      if (this.players[playerAction.target]) {
+        let save = {
+          type: RECIEVE_MESSAGE,
+          user: sender.name,
+          message: `/save ${playerAction.target}`,
+          role: sender.role,
         }
+        this.moderate(save, this.priestId, 'saving')
+
+        if (this.didSave) {
+          let msg = 'You have already exhausted your holy powers for tonight. Go to bed and try again tomorrow.'
+
+          this.narrate(msg, sender.role, sender.uid, 'already saved')
+
+        } else {
+          this.didSave = true;
+          this.players[playerAction.target].immunity = true;
+
+          let msg = `A divine shield surrounds ${playerAction.target}, protecting them from the werewolves for tonight.`
+
+          this.narrate(msg, sender.role, sender.uid, 'saving')
+
+          if (this.majority && this.didScry) {
+            setTimeout(() => {
+              clearTimeout(this.nightTimers[this.dayNum])
+              this.dayActions();
+            }, 5000);
+          }
+        }
+      } else {
+        let msg = `${playerAction.target} is not a resident of this village.`;
+        this.narrate(msg, sender.role, sender.uid, 'bad name saved');
       }
     }
   }
@@ -354,6 +362,9 @@ export default class Moderator {
   // playerAction === target username
   handleVote(playerAction) {
     let role = this.day ? 'public' : 'wolf';
+
+    // ignore votes for users that dont exist, send message eventually
+    if (!this.players[playerAction.target]) return;
 
     if (this.players[playerAction.target].alive){
       if (!this.majority) {
@@ -413,8 +424,9 @@ export default class Moderator {
         if (voteCount[keys[i]] > (voters.length / 2)) {
           this.chosen = keys[i];
           this.majority = true;
+          let channel = this.day ? 'public' : 'werewolves';
           let msg = `A majority vote has been reached to ${methodOfMurder} ${keys[i]}.  Any votes given after this will not affect the decision.`
-          this.narrate(msg, role, null, role);
+          this.narrate(msg, role, channel, role);
           return;
         }
         maxUser = [keys[i]];
@@ -442,9 +454,12 @@ export default class Moderator {
       this.playerNames.splice(this.playerNames.indexOf(this.chosen), 1);
       if (chosen.role === 'werewolf') this.wolfNames.splice(this.playerNames.indexOf(this.chosen), 1);
       let kill = {
-          type: KILLING,
-          uid: chosen.uid
+      type: UPDATE_USER,
+      name: chosen.name,
+      updates: {
+          alive: false
         }
+      }
       this.moderate(kill, 'public', 'death')
       msg = `${this.chosen} was eaten by werewolves last night. Avenge their death! `
     }
@@ -524,7 +539,9 @@ export default class Moderator {
     let kill = {
       type: UPDATE_USER,
       name: chosen.name,
-      alive: false,
+      updates: {
+          alive: false
+        }
     }
     this.moderate(kill, 'public', 'death')
     this.checkWin();
@@ -548,7 +565,7 @@ export default class Moderator {
 
   // Players have their roles. When players are ready Game Leader can type /ready and play begins
   handleLeaderStart() {
-    if (!this.didStart) {
+    if (this.didAssign && !this.didStart) {
       // switch from array to object
       const obj = {};
       this.players.forEach(player => obj[player.name] = player);
@@ -574,7 +591,7 @@ export default class Moderator {
     let numWerewolves = Math.floor(length / 3);
     let roles = ['seer', 'priest'];
     while (numWerewolves--) roles.push('werewolf');
-    while (roles.length < length) roles.push('public');
+    while (roles.length < length) roles.push('villager');
     roles = shuffle(roles);
 
     this.players.forEach((player, index) => {
@@ -589,7 +606,9 @@ export default class Moderator {
       {
         type: UPDATE_USER,
         name: player.name,
-        role: player.role,
+        updates: {
+          role: player.role,
+        }
       }
     ));
     const others = this.players.filter(player => (player.role !== 'werewolf'));
@@ -606,7 +625,9 @@ export default class Moderator {
       this.moderate({
         type: UPDATE_USER,
         name: player.name,
-        role: player.role
+        updates: {
+          role: player.role,
+        }
       }, player.uid, 'sending role')
     })
 

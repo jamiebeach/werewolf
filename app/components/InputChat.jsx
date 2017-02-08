@@ -24,7 +24,8 @@ export default class Chat extends Component {
       switch(cmd) {
 
         case '/vote':
-          this.props.sendVote(this.props.player.name, target);
+          if (this.props.day) this.props.sendVote(this.props.player.name, target);
+          else if (!this.props.day && this.props.player.role === 'werewolf') this.props.sendVote(this.props.player.name, target);
           break;
 
         case '/save':
@@ -56,8 +57,10 @@ export default class Chat extends Component {
     }
 
     else {
-      console.log(this.props.player, msg, 'public');
-      this.props.sendMessage(this.props.player.name, msg, 'public');
+      if (this.props.player.role === 'seer' && !this.props.day) this.props.sendMessage(this.props.player.name, msg, this.props.player.uid);
+      else if (this.props.player.role === 'priest' && !this.props.day) this.props.sendMessage(this.props.player.name, msg, this.props.player.uid);
+      else if (this.props.player.role === 'werewolf' && !this.props.day) this.props.sendMessage(this.props.player.name, msg, 'werewolves');
+      else this.props.sendMessage(this.props.player.name, msg, 'public');
     }
 
     e.target.message.value = '';
