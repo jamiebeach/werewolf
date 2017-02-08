@@ -30,7 +30,7 @@ export const JoinGame = props => {
 	                inputStyle={{color: "#FFF", fontWeight: 'normal', fontFamily: 'IM Fell Great Primer SC'}}
 	                floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
   	              />
-	              <RaisedButton type="submit" value="buildGame" label="Start New Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
+	              <RaisedButton type="submit" value="buildGame" label="Join Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
 	            </div>
 	         	</form>
 	         </div>

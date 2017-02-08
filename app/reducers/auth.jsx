@@ -41,7 +41,6 @@ export const anonLogin = () =>
     .then(res => {
       const uid = res.uid;
       const player = {
-        joined: false,
         alive: true,
         won: false,
         uid: uid,
@@ -72,7 +71,6 @@ export const whoami = () =>
       user => {
         if (user) {
           const player = {
-            joined: false,
             alive: true,
             won: false,
             uid: user.uid,

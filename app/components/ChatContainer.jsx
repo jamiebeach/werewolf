@@ -1,20 +1,27 @@
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import NightImage from './NightImage';
 import ChatBox from './ChatBox';
 import PlayersList from './PlayersList';
-import {sendMessageAction, sendVoteAction, sendSaveAction, sendScryAction, startGame, leaderStart} from '../reducers/game'
+import {
+  sendMessageAction,
+  sendVoteAction,
+  sendSaveAction,
+  sendScryAction,
+  startGame,
+  leaderStart
+} from '../reducers/game'
 
 const ChatContainer = props => {
 
   return(
-    <div className={props.game.day? 'day' : 'night'}>
-      <div className="chatContainer">
+    <div className={props.game.day ? 'day container' : 'night container'}>
+      <div className="chatHalf">
         {
-          (props.game.day || props.user.night || !props.user.alive)
+          (props.game.day || !props.player.alive || props.player.role !== 'villager')
           ? <ChatBox
             player={props.player}
-            messages={props.game.public}
+            messages={props.game.messages}
             players={props.game.users}
             day={props.game.day}
             sendMessage={props.sendMessage}
@@ -27,25 +34,24 @@ const ChatContainer = props => {
           : <NightImage/>
         }
       </div>
-      <div className="playerslist">
-        <PlayersList
-        player={props.player}
-        players={props.game.users}
-        day={props.game.day}/>
+      <div className="players-container column-4">
+        <PlayersList player={props.player} players={props.game.users} day={props.game.day}/>
       </div>
     </div>
+
   )
 }
 
 const mapStateToProps = state => {
   return {
     game: state.game,
-    player: state.game.player
+    player: state.game.player,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return ({
+
     sendMessage (user, message, role) {
       return dispatch(sendMessageAction(user, message, role));
     },
@@ -63,11 +69,15 @@ const mapDispatchToProps = dispatch => {
     },
     leaderStart () {
       return dispatch(leaderStart());
+    },
+    dispatchAddImage (image) {
+      return dispatch(addImage(image));
+    },
+    dispatchUpdateGuessed (tags) {
+      return dispatch(updateGuessed(tags));
     }
-
   });
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatContainer);
-
 

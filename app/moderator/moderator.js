@@ -23,6 +23,8 @@ const RECIEVE_USER = 'RECIEVE_USER';
 
 /* ----------------- SETTINGS ------------------ */
 
+// line 481 needs to be commented back in if you want to stop less than5 player games
+
 let colors =
 [
   'chocolate','brown', 'darkred', 'crimson', 'firebrick', 'orangered',
@@ -53,9 +55,9 @@ let avatars = [
 ]
 
 // milliseconds for various setTimeouts
-const timeToRead = 5000;  // 5,000
-const timeForNight = 7000; // 10,000
-const timeForDay = 10000; // 100,000 -> this is 1m40s
+const timeToRead = 1000;  // 5,000
+const timeForNight = 30000; // 10,000
+const timeForDay = 30000; // 100,000 -> this is 1m40s
 
 // shuffle: helper function, used for assigning roles
 // IF YOU COMMENT THIS OUT THEN THE ROLES ARE:
@@ -161,15 +163,7 @@ export default class Moderator {
           break;
 
         case RECIEVE_MESSAGE:
-          if (playerAction.role === 'seer' && playerAction.target) {
-            this.handleScry(playerAction)
-          }
-          else if (playerAction.role === 'priest' && playerAction.target) {
-            this.handleSave(playerAction)
-          }
-          else {
-            this.moderate(playerAction, playerAction.role, 'msg')
-          }
+          this.moderate(playerAction, playerAction.role, 'msg')
           break;
 
         case RECIEVE_VOTE:
@@ -222,7 +216,11 @@ export default class Moderator {
     // typeof: action = object that has type and any other info,
     // ref = the address in storeActions, in a string,
     // error =  1-2 word summary of msg (leave null for generic error)
-    firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
+
+    console.log('ref', ref)
+    let channel = ref ? ref : 'public'
+
+    firebase.database().ref(`games/${this.gameName}/storeActions/${channel}`)
     .push(action)
     .catch(err => console.error(`Error: moderator sending ${error} action to firebase`, err))
   }
@@ -270,14 +268,13 @@ export default class Moderator {
 
     if (playerAction.user.id === this.seerId && !this.day) {
 
-      // this is already done in reducer. sendmessageaction is dispatched
-      // let scry = {
-      //   type: RECIEVE_MESSAGE,
-      //   user: sender.name,
-      //   message: `/peek ${playerAction.target}`,
-      //   role: sender.role,
-      // }
-      // this.moderate(scry, this.seerId, 'peeking')
+      let scry = {
+        type: RECIEVE_MESSAGE,
+        user: sender.name,
+        message: `/peek ${playerAction.target}`,
+        role: sender.role,
+      }
+      this.moderate(scry, this.seerId, 'peeking')
 
       if (this.didScry) {
 
@@ -299,14 +296,13 @@ export default class Moderator {
 
     if (playerAction.user.id === this.priestId && !this.day) {
 
-      // this is already done in reducer. sendmessageaction is dispatched
-      // let save = {
-      //   type: RECIEVE_MESSAGE,
-      //   user: sender.name,
-      //   message: `/save ${playerAction.target}`,
-      //   role: sender.role,
-      // }
-      // this.moderate(save, this.priestId, 'saving')
+      let save = {
+        type: RECIEVE_MESSAGE,
+        user: sender.name,
+        message: `/save ${playerAction.target}`,
+        role: sender.role,
+      }
+      this.moderate(save, this.priestId, 'saving')
 
       if (this.didSave) {
         let msg = 'You have already exhausted your holy powers for tonight. Go to bed and try again tomorrow.'
@@ -390,8 +386,9 @@ export default class Moderator {
     let chosen = this.players[this.chosen];
     let msg;
 
-    if (chosen.immunity){
+    if (!chosen || chosen.immunity){
       msg = `Everyone wakes up and all is well within the village. But werewolves are still lurking in the darkness...`
+      if (chosen) chosen.immunity = false;
     }
     else {
       chosen.alive = false;
@@ -405,7 +402,6 @@ export default class Moderator {
 
     this.narrate(msg, 'public', null, 'morning')
     //resetting the night props
-    chosen.immunity = false;
     this.chosen = null;
     this.didScry = false;
     this.didSave = false;
@@ -512,7 +508,10 @@ export default class Moderator {
   handleStart() {
     console.log("inside handleStart");
     if (this.didAssign) return;
-    else if (this.players.length < 5) this.narrate('Minimum 5 players to start.')
+    else if (this.players.length < 5) {
+      this.narrate('Minimum 5 players to start.', 'public', 'public', '/roles')
+      // return;
+    }
 
     const length = this.players.length;
     let numWerewolves = Math.floor(length / 3);
@@ -532,7 +531,7 @@ export default class Moderator {
       {
         type: UPDATE_USER,
         name: player.name,
-        role: player.role
+        role: player.role,
       }
     ));
     const others = this.players.filter(player => (player.role !== 'werewolf'));
