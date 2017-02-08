@@ -54,9 +54,10 @@ const reducer = (state = initialState, action) => {
           [action.name]: {
             name: action.name,
             uid: action.uid,
-            alive: true,
             color: action.color,
-            role: action.role
+            avatar: action.avatar,
+            role: action.role,
+            alive: true,
           },
         },
       }
@@ -163,7 +164,7 @@ const later = process.nextTick
 export const updateGameActions = () => {
   return (dispatch, getState) => {
     const {gameId, player: {uid, name}} = getState().game
-    
+
     const roster = firebase.database().ref(`games/${gameId}/roster`)
     const me = roster.child(uid)
     me.set(name)

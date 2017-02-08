@@ -28,25 +28,25 @@ const PlayersList = (props) => {
   return (
     <div className='players-list'>
       {
-        Object.keys(players).map((player, index) => {
+        Object.keys(players).map((person, index) => {
           return (
             <div
               className='players'
               key={index}
-              style={ players[player].alive ? {backgroundColor: 'white'} : { backgroundColor: 'grey', opacity: 0.8 } }
+              style={ players[person].alive ? {backgroundColor: 'rgba(255, 255, 255, .5)'} : { backgroundColor: 'rgba(192, 192, 192, .5)' } }
               >
 
               <div className='avatar' >
                 <img
-                  src={`images/avatar${players[player].avatar}.jpg`}
-                  style={ { border: `2.5px solid ${players[player].color}` } }
+                  src={`/images/avatar${players[person].avatar}.jpg`}
+                  style={ { border: `2.5px solid ${players[person].color}` } }
                 />
               </div>
 
               <div
                 className='player-name'
-                style = { { textDecoration: dead(players[player]) } } >
-                {player}
+                style = { { textDecoration: dead(players[person]) } } >
+                {player.name}
               </div>
             </div>
           )

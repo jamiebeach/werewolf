@@ -180,6 +180,8 @@ body {
   display: flex;
   flex-direction: row;
   align-items: flex-end;
+
+  background: rgba(255, 255, 255, .5);
 }
 
 #statement-bubble {
@@ -214,9 +216,8 @@ body {
 }
 
 .message {
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 17px;
+  margin: 10px;
+  padding-bottom: 5px;
   list-style-type: none;
   display: flex;
 }
@@ -242,8 +243,6 @@ body {
 }
 
 .players-list {
-/*  background-color: white;
-  opacity: 0.8;*/
   height: 100%;
   width: 100%;
   padding: 5px;
@@ -262,9 +261,8 @@ body {
   margin: 5px;
   padding-bottom: 5px;
 
-  background-color: white;
-  opacity: 0.8;
-
+/*  background: rgba(255, 255, 255, .5);
+*/
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -468,12 +466,12 @@ body {
   }
 
   .splash{
-    height: 100%;
+    /*height: 100%;*/
   }
 
   /* NEW GAME PAGES */
   .newGame{
-    height: 100%;
+    /*height: 100%;*/
   }
 
   .formContain {
