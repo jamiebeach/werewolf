@@ -235,7 +235,7 @@ export default class Moderator {
   }
 
   handlePromptLeader() {
-    let msg = `When all the players you've invited are present in the chat room, type '/roles' to assign roles to everyone.`
+    let msg = `When all players are present, type '/roles' to assign roles to everyone. Players cannot join after roles have been assigned.`
     this.narrate(msg, 'public', this.leaderId, 'prompt leader');
   }
 
