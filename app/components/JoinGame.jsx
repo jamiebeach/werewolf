@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import {joinGame, gameId} from '../reducers/game';
 
 export const JoinGame = props => {
-
 	const handleSubmit = (evt) => {
 		evt.preventDefault();
 		const userName = evt.target.userName.value;
@@ -26,10 +25,10 @@ export const JoinGame = props => {
 	                floatingLabelText="Player Name"
 	                hintStyle={{color: "#AAA"}}
 	                underlineFocusStyle={{borderColor: "#FFFFFF"}}
-	                inputStyle={{color: "#FFF", fontWeight: 'normal', fontFamily: 'IM Fell Great Primer SC'}}
-	                floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
+	                inputStyle={{color: "#FFF", fontWeight: 'normal' }}
+	                floatingLabelStyle={{color: '#FFF'}}
   	              />
-	              <RaisedButton type="submit" value="buildGame" label="Join Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
+	              <RaisedButton type="submit" value="buildGame" label="Join Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white'}}/>
 	            </div>
 	         	</form>
 	         </div>
@@ -48,6 +47,4 @@ const mapDispatchToProps = dispatch => {
   });
 };
 
-
 export default connect(null, mapDispatchToProps)(JoinGame);
-

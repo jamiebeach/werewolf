@@ -61,6 +61,14 @@ const reducer = (state = initialState, action) => {
         },
       }
 
+    case REMOVE_USER:
+      const users = {...state.users}
+      delete users[action.name]
+      return {
+        ...state,
+        users,
+      }
+
     case UPDATE_USER:
       return {
         ...state,
@@ -106,6 +114,7 @@ const UPDATE_PLAYER = 'UPDATE_PLAYER'
 const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
 const RECIEVE_USER = 'RECIEVE_USER';
+const REMOVE_USER = 'REMOVE_USER';
 
 const RECIEVE_MESSAGE = 'RECIEVE_MESSAGE';
 const RECIEVE_VOTE = 'RECIEVE_VOTE';
@@ -131,6 +140,10 @@ export const getAllUsers = users => ({
   type: GET_USERS, users
 })
 
+export const removeUser = name => ({
+  type: REMOVE_USER, name
+})
+
 export const firebaseUpdate = update => {
   return update;
 }
@@ -144,24 +157,36 @@ Listeners for /storeActions
 the moderator listens for playeractions and dispences storeactions
 ----------*/
 
+const later = process.nextTick
 
 // Generic Action Listener, will RECEIVE actions whenever firebase/actions updates in /public /:uid
 export const updateGameActions = () => {
   return (dispatch, getState) => {
+    const {gameId, player: {uid, name}} = getState().game
+
+    const roster = firebase.database().ref(`games/${gameId}/roster`)
+    const me = roster.child(uid)
+    me.set(name)
+    me.onDisconnect().remove()
+    // TODO: There's an uncomfortable asymmetry here between adding and removing users.
+    // Probably we should get rid of the journaled ADD_USER action and just respond
+    // to the roster in the moderator.
+    roster.on('child_removed', user => later(() => dispatch(removeUser(user.val()))))
+
     const storeActions = `games/${getState().game.gameId}/storeActions/`;
 
     firebase.database().ref(`${storeActions}/public`).on('child_added', function(action) {
       // Without delaying until the next tick, we sometimes encounter "Reducer can't dispatch"
       // errors from Redux. Suspicion: setting values in Firebase calls attached local listeners
       // synchronously. Forcing the dispatch to occur on the next tick fixes it.
-      process.nextTick(() => dispatch(action.val()))
+      later(() => dispatch(action.val()))
     })
 
     firebase.database().ref(`${storeActions}/${getState().game.player.uid}`).on('child_added', function(action){
+      later(() => dispatch(action.val()))
       if (action.val().type === 'UPDATE_USER' && action.val().role === 'werewolf'){
         dispatch(updateWolfActions())
       }
-      process.nextTick(() => dispatch(action.val()))
     })
   }
 }
@@ -228,7 +253,6 @@ export const createNewGame = (name, gameName, uid) => {
     const gameId = firebase.database().ref('games').push({
       name: gameName
     });
-
     dispatch(recieveGameId(gameId.key));
     dispatch(joinGame(username, gameId.key));
     dispatch(setModerator(uid, [gameId.key, username, uid]))
@@ -243,27 +267,34 @@ export const joinGame = (name, gameId) => {
   return (dispatch, getState) => {
     const uid = getState().game.player.uid;
     const username = name.toLowerCase();
-    dispatch(addUser(username, uid, gameId));
+    dispatch(addUserWithUid(username, uid));
     dispatch(updatePlayer({name: username}));
     dispatch(updateGameActions(gameId));
   }
 }
 
 // when user joins a game they input a Player name.
-export const addUser = gameAction(
-  (username, uid, gameId) => ({
+export const addUser = username => (dispatch, getState) => {
+  const uid = getState().game.player.uid
+  dispatch(addUserWithUid(username, uid))
+}
+
+const addUserWithUid = gameAction(
+  (username, uid) => ({
     type: ADD_USER,
     name: username,
     uid: uid
   })
 )
 
+// sends START_GAME action to firebase; triggered when leader types '/roles'
 export const startGame = gameAction(
   () => ({
-    type: START_GAME,
+    type: START_GAME
   })
 )
 
+// sends LEADER_START action to firebase; triggered when leader types '/ready'
 export const leaderStart = gameAction(
   () => ({
     type: LEADER_START,

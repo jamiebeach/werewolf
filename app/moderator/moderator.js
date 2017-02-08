@@ -55,9 +55,15 @@ let avatars = [
 ]
 
 // milliseconds for various setTimeouts
+<<<<<<< HEAD
 const timeToRead = 2000;  // 5,000
 const timeForNight = 20000; // 10,000
 const timeForDay = 20000; // 100,000 -> this is 1m40s
+=======
+const timeToRead = 10000;  // 10 sec
+const timeForNight = 30000; // 30 sec
+const timeForDay = 120000; // 2 min
+>>>>>>> 3110e132d664be5105cf397ff96a5505b6109647
 
 // shuffle: helper function, used for assigning roles
 // IF YOU COMMENT THIS OUT THEN THE ROLES ARE:
@@ -134,6 +140,14 @@ export default class Moderator {
 
     this.winner = ''; // winner is string, villagers or werewolves
 
+    // Listen to player existential crises in Firebase
+    const roster = firebase.database().ref(`games/${this.gameName}/roster`)
+
+    roster.on('child_added', person =>
+      this.narrate(`Welcome, ${person.val()}.`, 'public'))
+    roster.on('child_removed', person =>
+      this.narrate(`${person.val()} fell down a well.`))
+
     // listen to player actions in firebase
     firebase.database().ref(`games/${this.gameName}/playerActions/`)
     .on('child_added', (action) => {
@@ -144,11 +158,11 @@ export default class Moderator {
 
       switch (playerAction.type) {
 
-        case ADD_USER: // make this
+        case ADD_USER:
           this.handleJoin(playerAction)
           break;
 
-        case START_GAME: // make this
+        case START_GAME:
           this.handleStart()
           break;
 
@@ -156,7 +170,7 @@ export default class Moderator {
           this.handleGameId()
           break;
 
-        case LEADER_START: // make this
+        case LEADER_START:
           this.handleLeaderStart()
           break;
 
@@ -190,7 +204,7 @@ export default class Moderator {
 
   }
 // helper function
-  narrate(message, role, personal, error) {
+  narrate(message, role='public', personal=false, error=null) {
     // moderator narration function, takes in message text
     // and sends RECIEVE_MESSAGE object to firebase
     // typeof: message = string,
@@ -198,7 +212,6 @@ export default class Moderator {
     // personal = specific uid or 'werewolves' (leave null to send to everyone)
     // error = 1-2 word summary of msg (leave null for generic error)
     let ref = personal ? personal : 'public';
-
     firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
     .push({
       type: RECIEVE_MESSAGE,
@@ -213,7 +226,6 @@ export default class Moderator {
     // moderate function -- more general form of narrate. for every other action.
     // typeof: action = object that has type and any other info,
     // ref = the address in storeActions, in a string,
-    // error =  1-2 word summary of msg (leave null for generic error)
 
     let channel = ref ? ref : 'public'
 
@@ -248,6 +260,7 @@ export default class Moderator {
 
     let player = {
       type: RECIEVE_USER,
+
       uid: playerAction.uid,
       name: playerAction.name,
 
@@ -331,6 +344,7 @@ export default class Moderator {
     }
   }
 
+  // playerAction === target username
   handleVote(playerAction) {
     let role = this.day ? 'public' : 'wolf';
 
@@ -338,7 +352,7 @@ export default class Moderator {
       this.votes.push(playerAction);
 
       let channel = this.day ? 'public' : 'werewolves';
-      let methodOfMurder = this.day ? 'lynch' : 'maul';
+      let methodOfMurder = this.day ? 'execute' : 'maul';
 
       let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.target}`
       this.narrate(msg, role, channel, `${role} voting`)
@@ -413,7 +427,7 @@ export default class Moderator {
     let msg;
 
     if (!chosen || chosen.immunity){
-      msg = `Everyone wakes up and all is well within the village. But werewolves are still lurking in the darkness...`
+      msg = `All is well within the village. But werewolves are still lurking in the darkness...`
       if (chosen) chosen.immunity = false;
     }
     else {
@@ -423,7 +437,7 @@ export default class Moderator {
           uid: chosen.uid
         }
       this.moderate(kill, 'public', 'death')
-      msg = `Everyone wakes up and discovers that ${this.chosen} was eaten by werewolves last night. Avenge their death!`
+      msg = `${this.chosen} was eaten by werewolves last night. Avenge their death! `
     }
 
     this.narrate(msg, 'public', null, 'morning')
@@ -448,14 +462,14 @@ export default class Moderator {
         this.moderate(timeswitch, 'public', 'night time')
 
         // send messages to special people
-        let wmsg = `Werewolves, awaken.  Select a villager to kill, you must agree on a target`
-        this.narrate(wmsg, 'wolf', 'werewolves', 'awaken wolves')
+        let wmsg = `Werewolves, awaken. Choose a villager to slay. To vote to slay a villager, type '/vote VillagerName'.`
+        this.narrate(wmsg, 'wolf', 'werewolves', 'awaken wolves');
 
-        let smsg = `Seer, awaken.  Select a villager to scry on.  You can only do this once a night.`
-        this.narrate(smsg, 'seer', this.seerId, 'awaken seer')
+        let smsg = `Seer, awaken. Choose a player whose identity you wish to discover by typing '/scry PlayerName'. You can only discover one player's identity each night.`
+        this.narrate(smsg, 'seer', this.seerId, 'awaken seer');
 
-        let pmsg = `Priest, awaken.  Select a villager to save.  You can only do this once a night.`
-        this.narrate(pmsg, 'priest', this.priestId, 'awaken priest')
+        let pmsg = `Priest, awaken. Choose a player to save by typing '/save PlayerName'. You are allowed to save yourself or another player. You may only save once per night.`
+        this.narrate(pmsg, 'priest', this.priestId, 'awaken priest');
 
       }, timeToRead);
 
@@ -535,6 +549,8 @@ export default class Moderator {
     }
   }
 
+
+  // assigns player roles; triggered when leader types '/roles'
   // Game Leader enters /roles - this assigns player roles
   handleStart() {
     if (this.didAssign) return;
@@ -583,15 +599,34 @@ export default class Moderator {
       }, player.uid, 'sending role')
     })
 
-    // send messages containing roles to everyone
+    // send messages to all players informing them of their role
     this.players.forEach((player, index) => {
       let msg = `You are a ${player.role}.  The leader will start the game when everyone is ready.`
-      this.narrate(msg, 'public', player.uid, 'role assign')
+      this.narrate(msg, 'public', player.uid, 'role assign');
+      if (player.role === 'seer') {
+        let msg = `As a seer, you can learn the identity of one player each night.`
+        this.narrate(msg, 'public', player.uid, 'seer role');
+      }
+      else if (player.role === 'priest') {
+        let msg = `As the priest, you can protect one player from the werewolves each night. You can save yourself or another player.`
+        this.narrate(msg, 'public', player.uid, 'priest role');
+      }
+      else if (player.role === 'werewolf') {
+        let msg = `As a werewolf, you will vote to slay one villager each night. During the day, you will pose as an innocent villager.`
+        this.narrate(msg, 'wolf', player.uid, 'werewolf role');
+      }
+      else if (player.role === 'villager') {
+        let msg = `As a villager, you will deduce which of your fellow villagers is a werewolf in disguise and vote to execute them.`
+        this.narrate(msg, 'public', player.uid, 'werewolf role');
+      }
     })
 
-    // tell leader to use slash command to start
-    let msg = `Type '/ready' to begin.`
-    this.narrate(msg, 'public', this.leaderId, 'leader ready')
+    // After a timeout, tell leader to use slash command /ready to start
+    setTimeout(()=>{
+      let msg = `Please type '/ready' to begin the game.`
+      this.narrate(msg, 'public', this.leaderId, 'leader ready');
+    }, timeToRead)
+
 
     // switch didAssign to true
     this.didAssign = true;
