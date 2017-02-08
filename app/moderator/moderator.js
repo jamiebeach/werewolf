@@ -55,7 +55,7 @@ let avatars = [
 ]
 
 // milliseconds for various setTimeouts
-const timeToRead = 1000;  // 5,000
+const timeToRead = 2000;  // 5,000
 const timeForNight = 30000; // 10,000
 const timeForDay = 30000; // 100,000 -> this is 1m40s
 
@@ -115,13 +115,17 @@ export default class Moderator {
     this.leaderId = uid;
 
     this.players = [];
+    this.playerNames = [];
+    this.wolfNames = [];
     this.didAssign = false;
     this.didStart = false; // roles have been assigned and leader sends /ready
     this.seerId = '';
     this.priestId = '';
 
     this.votes = [];
+    this.majority = true;
     this.day = true;
+    this.dayNum = 0;
     this.didScry = false; // seer action once per night
     this.didSave = false; // priest action once per night
     this.chosen = ''; // chosen to die that day/night
@@ -278,6 +282,15 @@ export default class Moderator {
         let werewolfStatus = this.players[playerAction.target].role === 'werewolf';
         let msg = werewolfStatus ? `${playerAction.target} definitely howls at the moon` : `${playerAction.target} wouldn't hurt a fly`
         this.narrate(msg, sender.role, sender.uid, 'scry results')
+
+        if (this.majority && this.didSave) {
+          setTimeout(() => {
+            console.log('early switch scry', new Date)
+            clearTimeout(this[`night${this.dayNum}`])
+            if (this.day) this.lynchActions();
+            else this.dayActions();
+          }, 5000);
+        }
       }
     }
   }
@@ -307,6 +320,15 @@ export default class Moderator {
         let msg = `A divine shield surrounds ${playerAction.target}, protecting them from the werewolves for tonight.`
 
         this.narrate(msg, sender.role, sender.uid, 'saving')
+
+        if (this.majority && this.didScry) {
+          setTimeout(() => {
+            console.log('early switch save', new Date)
+            clearTimeout(this[`night${this.dayNum}`])
+            if (this.day) this.lynchActions();
+            else this.dayActions();
+          }, 5000);
+        }
       }
     }
   }
@@ -327,6 +349,19 @@ export default class Moderator {
 
       let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.vote}`
       this.narrate(msg, role, channel, `${role} voting`)
+
+      if (!this.majority) {
+        this.tallyVotes(role, methodOfMurder);
+        if (this.majority && (this.day || (this.didScry && this.didSave))) {
+          setTimeout(() => {
+            console.log('early switch vote', new Date)
+            const dayornight = (this.day) ? 'day' : 'night';
+            clearTimeout(this[`${dayornight}${this.dayNum}`])
+            if (this.day) this.lynchActions();
+            else this.dayActions();
+          }, 5000);
+        }
+      }
     }
 
     else {
@@ -336,8 +371,10 @@ export default class Moderator {
   }
 
   tallyVotes() {
+    const voters = (methodOfMurder === 'maul') ? this.wolfNames : this.playerNames;
+
     const tally = {};
-    Object.keys(this.players).forEach(name => {
+    voters.forEach(name => {
       tally[name] = {};
     })
 
@@ -357,18 +394,25 @@ export default class Moderator {
 
     let maxVotes = 0;
     let maxUser = [];
-    Object.keys(voteCount).forEach(key => {
-      if (voteCount[key] > maxVotes) {
-        maxUser = [key];
-        maxVotes = voteCount[key];
+    const keys = Object.keys(voteCount);
+    for (let i = 0; i < keys.length; i++) {
+      if (voteCount[keys[i]] > maxVotes) {
+        // if majority is reached, immediately return
+        if (voteCount[keys[i]] > (voters.length / 2)) {
+          this.chosen = keys[i];
+          this.majority = true;
+          let msg = `A majority vote has been reached to ${methodOfMurder} ${keys[i]}.  Any votes given after this will not affect the decision.`
+          this.narrate(msg, role, null, role);
+          return;
+        }
+        maxUser = [keys[i]];
+        maxVotes = voteCount[keys[i]];
       }
-      else if (voteCount[key] === maxVotes) {
-        maxUser.push(key);
+      else if (voteCount[keys[i]] === maxVotes) {
+        maxUser.push(keys[i]);
       }
-    })
+    }
 
-    // const numOfPlayers = Object.keys(this.players).length;
-    // we deleted the majority rules, but you might want to do that
     this.chosen = maxUser[Math.floor(Math.random()*maxUser.length)];
   }
 
@@ -396,6 +440,7 @@ export default class Moderator {
     this.chosen = null;
     this.didScry = false;
     this.didSave = false;
+    this.majority = false;
     this.votes = [];
   }
 
@@ -422,9 +467,8 @@ export default class Moderator {
 
       }, timeToRead);
 
-      setTimeout(() => {
-        this.tallyVotes()
-        this.dayActions()
+      this[`night${dayNum}`] = setTimeout(() => {
+        this.dayActions();
       }, timeForNight)
   }
 
@@ -446,38 +490,41 @@ export default class Moderator {
     }
     else {
       // settimeout for daytime discussions. votes tally as soon as day ends.
-      setTimeout(() => {
-        this.tallyVotes()
-        // when votes finish, kill someone.
-        let chosen = this.players[this.chosen];
-        chosen.alive = false;
-
-        let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
-        this.narrate(msg, 'public', null, 'lynch')
-
-        let kill = {
-          type: UPDATE_USER,
-          name: chosen.name,
-          alive: false,
-        }
-        this.moderate(kill, 'public', 'death')
-        this.checkWin();
-
-        if (this.winner === 'werewolves'){
-          msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
-          this.narrate(msg, 'public', null, 'wolf win')
-        }
-        else if (this.winner === 'villagers'){
-          msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
-          this.narrate(msg, 'public', null, 'village win')
-        } else {
-
-          this.chosen = null;
-          this.votes = [];
-
-          this.nightActions();
-        }
+      this[`day${dayNum}`] = setTimeout(() => {
+        if ((!this.majority || !this.didScry || !this.didSave) && this.day && (this.dayNum === dayNum)) this.lynchActions();
       }, timeForDay)
+    }
+  }
+
+  lynchActions() {
+    let chosen = this.players[this.chosen];
+    chosen.alive = false;
+
+    let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
+    this.narrate(msg, 'public', null, 'lynch')
+
+    let kill = {
+      type: UPDATE_USER,
+      name: chosen.name,
+      alive: false,
+    }
+    this.moderate(kill, 'public', 'death')
+    this.checkWin();
+
+    if (this.winner === 'werewolves'){
+      msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
+      this.narrate(msg, 'public', null, 'wolf win')
+    }
+    else if (this.winner === 'villagers'){
+      msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
+      this.narrate(msg, 'public', null, 'village win')
+    } else {
+
+      this.chosen = null;
+      this.votes = [];
+      this.majority = false;
+
+      this.nightActions();
     }
   }
 
