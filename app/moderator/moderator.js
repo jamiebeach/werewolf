@@ -462,7 +462,7 @@ export default class Moderator {
         }
       }
       this.moderate(kill, 'public', 'death')
-      msg = `${this.chosen} was eaten by werewolves last night. Avenge their death! `
+      msg = `${this.chosen} was eaten by werewolves last night! `
     }
 
     this.narrate(msg, 'public', null, 'morning')
