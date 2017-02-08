@@ -125,7 +125,7 @@ export default class Moderator {
     this.priestId = '';
 
     this.votes = [];
-    this.majority = true;
+    this.majority = false;
     this.day = true;
     this.dayNum = 0;
     this.dayTimers = [];
@@ -352,6 +352,9 @@ export default class Moderator {
   handleVote(playerAction) {
     let role = this.day ? 'public' : 'wolf';
 
+    // ignore votes for users that dont exist, send message eventually
+    if (!this.players[playerAction.target]) return;
+
     if (this.players[playerAction.target].alive){
       if (!this.majority) {
         this.votes.push(playerAction);
@@ -410,8 +413,9 @@ export default class Moderator {
         if (voteCount[keys[i]] > (voters.length / 2)) {
           this.chosen = keys[i];
           this.majority = true;
+          let channel = this.day ? 'public' : 'werewolves';
           let msg = `A majority vote has been reached to ${methodOfMurder} ${keys[i]}.  Any votes given after this will not affect the decision.`
-          this.narrate(msg, role, null, role);
+          this.narrate(msg, role, channel, role);
           return;
         }
         maxUser = [keys[i]];
