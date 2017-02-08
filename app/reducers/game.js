@@ -54,9 +54,10 @@ const reducer = (state = initialState, action) => {
           [action.name]: {
             name: action.name,
             uid: action.uid,
-            alive: true,
             color: action.color,
-            role: action.role
+            avatar: action.avatar,
+            role: action.role,
+            alive: true,
           },
         },
       }

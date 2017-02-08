@@ -2,17 +2,27 @@ import React from 'react';
 
 function ChatMessage(props) {
   let message = props.message;
-  let index = props.index;
-  let player = props.player;
+  let players = props.players;
+
   return (
-    <li className="message">
+
+    <li
+      className="message"
+    >
       <div className="avatar">
-        {/*<img
-          src={`images/avatar${player.avatar}.jpg`}
-          style={ { border: `3px solid ${players[player].color}` } } />*/}
+       {console.log(props)}
+        {message.user !== 'moderator' ?
+          <img
+            src={`/images/avatar${players[message.user].avatar}.jpg`}
+            /*style={ { border: `3px solid ${players[message.user].color}` } }*/
+          /> : <img src={`/images/avatar000.jpg`}/>
+        }
       </div>
       <div className="text-content">
-        <div className="player-name">
+        <div
+          className="player-name"
+          style={ message.user !== 'moderator' ? { color: `${players[message.user].color}` } : {} }
+        >
           {message.user.toUpperCase()}
         </div>
         <div className="message-content">
