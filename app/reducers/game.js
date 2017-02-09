@@ -281,7 +281,8 @@ export const createNewGame = (name, gameName, uid) => {
     const uid = getState().game.player.uid;
     const username = name.toLowerCase();
     const gameId = firebase.database().ref('games').push({
-      name: gameName
+      name: gameName,
+      didStart: false,
     });
     dispatch(recieveGameId(gameId.key));
     dispatch(joinGame(username, gameId.key));
