@@ -6,14 +6,17 @@ import {connect} from 'react-redux';
 const GameContainer = props => {
   return (
     <div>
+      {console.log(props.games)}
       {props.player.joined ? <ChatContainer /> : <JoinGame />}
+      }
     </div>
   )
 }
 
 const mapStateToProps = state => {
   return {
-    player: state.game.player
+    player: state.game.player,
+    games: state.game.games
   };
 };
 

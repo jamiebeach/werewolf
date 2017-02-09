@@ -8,6 +8,8 @@ import Moderator from '../moderator/moderator';
 let mod;
 
 const initialState = {
+  games: [],
+
   gameId: '',
   takenNames: [],
   gameStart: false,
@@ -33,6 +35,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         takenNames: (action.takenName === '!') ? [] : [...state.takenNames, action.takenName]}
+
+    case FETCH_GAME:
+      return {
+        ...state,
+        games: [...state.games, {id: action.id, name: action.name}],
+      }
 
     case RECIEVE_GAMEID:
       return {...state, gameId: action.gameId}
@@ -111,6 +119,8 @@ const reducer = (state = initialState, action) => {
 
 /* -----------------    ACTIONS     ------------------ */
 const RECIEVE_TAKENNAME = 'RECIEVE_TAKENNAME';
+const FETCH_GAME = 'FETCH_GAME';
+
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 const PROMPT_LEADER = 'PROMPT_LEADER';
@@ -163,6 +173,21 @@ export const recieveGameId = gameId => ({
 export const recieveTakenName = takenName => ({
   type: RECIEVE_TAKENNAME, takenName
 })
+
+/*---------
+Listener for all created games
+----------*/
+export const fetchAllGames = () => {
+  return dispatch => {
+    firebase.database().ref(`games`).on('child_added', function(action) {
+      dispatch({
+        type: FETCH_GAME,
+        id: action.key,
+        name: action.val().name,
+      })
+    })
+  }
+}
 
 /*---------
 Listeners for /storeActions

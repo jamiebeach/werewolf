@@ -1,18 +1,21 @@
 'use strict'
 import React from 'react';
-import {Router, Route, IndexRedirect, browserHistory} from 'react-router';
-import {render} from 'react-dom';
-import {connect, Provider} from 'react-redux';
+import { Router, Route, IndexRedirect, browserHistory } from 'react-router';
+import { render } from 'react-dom';
+import { connect, Provider } from 'react-redux';
 import store from './store';
 import App from './components/App';
 import Welcome from './components/Welcome';
 import JoinGame from './components/JoinGame';
 import NewGame from './components/NewGame';
 import Rules from './components/Rules';
+import OpenGames from './components/OpenGames';
 import GameContainer from './components/GameContainer';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import {recieveGameId, recieveTakenName} from './reducers/game';
+
+import { recieveGameId, fetchAllGames, recieveTakenName} from './reducers/game';
+
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -36,15 +39,20 @@ const onGameLeave = nextRouterState => {
   store.dispatch(recieveTakenName('!'));
 }
 
+const onAppEnter = () => {
+  store.dispatch(fetchAllGames());
+}
+
 render(
   <MuiThemeProvider>
     <Provider store={store}>
       <Router history={browserHistory}>
-        <Route path="/" component={App}>
+        <Route path="/" component={App} onEnter={onAppEnter}>
           <IndexRedirect to="/home" />
           <Route path="/home" component={Welcome} />
           <Route path="/newgame" component={NewGame} />
           <Route path="/rules" component={Rules} />
+          <Route path="/opengames" component={OpenGames} />
           <Route path="/joingame/:id" component={JoinGame} />
           <Route path="/game/:id" component={GameContainer} onEnter={onGameEnter} onLeave={onGameLeave}/>
         </Route>
