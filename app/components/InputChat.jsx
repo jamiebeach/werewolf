@@ -59,7 +59,9 @@ export default class Chat extends Component {
     else {
       if (this.props.player.role === 'seer' && !this.props.day) this.props.sendMessage(this.props.player.name, msg, this.props.player.uid);
       else if (this.props.player.role === 'priest' && !this.props.day) this.props.sendMessage(this.props.player.name, msg, this.props.player.uid);
-      else if (this.props.player.role === 'werewolf' && !this.props.day) this.props.sendMessage(this.props.player.name, msg, 'werewolves');
+      else if (this.props.player.role === 'werewolf' && !this.props.day) {
+        // this.props.sendMessage(this.props.player.name, msg, 'werewolves');
+      }
       else this.props.sendMessage(this.props.player.name, msg, 'public');
     }
 
