@@ -27,7 +27,7 @@ export default class Chat extends Component {
           if (this.props.day) this.props.sendVote(this.props.player.name, target);
           else if (!this.props.day && this.props.player.role === 'werewolf') this.props.sendVote(this.props.player.name, target);
           else {
-            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
+            this.props.sendMessage('moderator', `You are forbidden from the "${cmd}" action at this time`, this.props.player.uid)
             }
           break;
 
@@ -36,7 +36,7 @@ export default class Chat extends Component {
             this.props.sendSave(this.props.player, target);
           }
           else {
-            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
+            this.props.sendMessage('moderator', `You are forbidden from the"${cmd}" action at this time`, this.props.player.uid)
           }
           break;
 
@@ -45,7 +45,7 @@ export default class Chat extends Component {
             this.props.sendScry(this.props.player, target);
           }
           else {
-            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
+            this.props.sendMessage('moderator', `You are forbidden from the"${cmd}" action at this time`, this.props.player.uid)
           }
           break;
 
@@ -54,7 +54,7 @@ export default class Chat extends Component {
             this.props.startGame();
           }
           else {
-            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
+            this.props.sendMessage('moderator', `You are forbidden from the"${cmd}" action at this time`, this.props.player.uid)
           }
           break;
 
@@ -96,7 +96,7 @@ export default class Chat extends Component {
 
 // other messages are ignored (unless i missed some other case)
       else {
-        this.props.sendMessage(this.props.player.name, 'You may not speak at this time', this.props.player.uid)
+        this.props.sendMessage('moderator', 'You may not speak at this time', this.props.player.uid)
       }
 
     }

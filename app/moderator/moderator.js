@@ -62,7 +62,7 @@ let avatars = [
 
 // milliseconds for various setTimeouts
 
-const timeToRead = 4000;  // 4 sec
+const timeToRead = 2000;  // 2 sec
 const timeForNight = 60000; // 60 sec
 const timeForDay = 120000; // 2 min
 
@@ -485,7 +485,8 @@ export default class Moderator {
   nightActions() {
     const dayNum = this.dayNum;
     this.narrate(`Everyone in the village goes to sleep.`, 'public')
-    // settimeout gives people a chance to read before night switch
+
+    // settimeout gives people a chance for people to read and night to switch before messages go out...
       setTimeout(() => {
         this.day = false;
         let timeswitch = {
@@ -494,6 +495,9 @@ export default class Moderator {
         }
         this.moderate(timeswitch, 'public', 'night time')
 
+      }, timeToRead);
+
+      setTimeout(() => {
         // send messages to special people
         let wmsg = `Werewolves, awaken. Choose a villager to slay. To vote to slay a villager, type '/vote VillagerName'.`
         this.narrate(wmsg, 'wolf', 'werewolves', 'awaken wolves');
@@ -504,7 +508,7 @@ export default class Moderator {
         let pmsg = `Priest, awaken. Choose a player to save by typing '/save PlayerName'. You are allowed to save yourself or another player. You may only save once per night.`
         this.narrate(pmsg, 'priest', this.priestId, 'awaken priest');
 
-      }, timeToRead);
+      }, timeToRead * 2) // ... bad way to line up the settimeouts, i know
 
       this.nightTimers[dayNum] = setTimeout(() => {
         this.dayActions();
