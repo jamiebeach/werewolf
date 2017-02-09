@@ -9,6 +9,7 @@ let mod;
 
 const initialState = {
   gameId: '',
+  takenNames: [],
   gameStart: false,
   player: {},
   // users: { [playerName: String]: User }
@@ -28,6 +29,11 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case RECIEVE_TAKENNAME:
+      return {
+        ...state,
+        takenNames: (action.takenName === '!') ? [] : [...state.takenNames, action.takenName]}
+
     case RECIEVE_GAMEID:
       return {...state, gameId: action.gameId}
 
@@ -104,7 +110,7 @@ const reducer = (state = initialState, action) => {
 }
 
 /* -----------------    ACTIONS     ------------------ */
-
+const RECIEVE_TAKENNAME = 'RECIEVE_TAKENNAME';
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 const PROMPT_LEADER = 'PROMPT_LEADER';
@@ -152,6 +158,10 @@ export const firebaseUpdate = update => {
 
 export const recieveGameId = gameId => ({
   type: RECIEVE_GAMEID, gameId
+})
+
+export const recieveTakenName = takenName => ({
+  type: RECIEVE_TAKENNAME, takenName
 })
 
 /*---------
