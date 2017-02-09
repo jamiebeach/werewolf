@@ -15,7 +15,7 @@ import {
 const ChatContainer = props => {
 
   return(
-    <div className={props.game.day ? 'day container' : 'night container'}>
+    <div className={props.game.backgroundImage}>
       <div className="chatHalf">
         {
           (props.game.day || !props.player.alive || props.player.role !== 'villager')

@@ -1,4 +1,4 @@
-import updateWinner from '../reducers/game';
+import {updateWinner} from '../reducers/game';
 
 /*
   actions
@@ -451,6 +451,19 @@ export default class Moderator {
     // should be called after night ends to take immmunity into account
     let chosen = this.players[this.chosen];
     let msg;
+
+    // for testing only; checkWin after only one round
+    this.checkWin();
+    if (this.winner === 'werewolves'){
+      msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
+      this.narrate(msg, 'public', null, 'wolf win');
+      dispatch(updateWinner(this.winner));
+    }
+    else if (this.winner === 'villagers'){
+      msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
+      this.narrate(msg, 'public', null, 'village win');
+      dispatch(updateWinner(this.winner));
+    }
 
     if (!chosen || chosen.immunity){
       msg = `All is well within the village. But werewolves are still lurking in the darkness... Discuss with the village who you think is a werewolf and put them to put to death by typing "/vote PlayerName"`
