@@ -149,16 +149,19 @@ export default class Moderator {
 
     this.winner = ''; // winner is string, villagers or werewolves
 
-    // Listen to player existential crises in Firebase
+    // Listen to player existential crises in Firebase aka the roster
     const roster = firebase.database().ref(`games/${this.gameName}/roster`)
 
     roster.on('child_added', person => {
+      // TODO they should not be welcomed if its a page refresh
       this.narrate(`Welcome, ${person.val().name}.`, 'public')
-
+      // TODO we don't want users to need to put in username on page refresh
+      // ADD_USER should be refactored to listen to the roster
+      
+      // most recent session
       const currentSession = person.ref.child('sessions').limitToLast(1)
       
-      // toeBell: TimeoutHandle?
-      //
+      // toeBell: TimeoutHandle
       // Like the bell attached to a corpse's toe, we will cancel the timer
       // that declares them dead if a player comes back in time.
       let toeBell = null, stopListeningToLastSession = () => {}
@@ -175,13 +178,15 @@ export default class Moderator {
         stopListeningToLastSession()
 
         debug('will listen to', endKey)
+        // listens for value being added to 'end' property
         const listener = endKey.on('value', end => {
+          // check if end === null
           if (!end.val()) return
-
           debug('it looks like', person.key, 'may be dead...')
-          
           const timeout = 10000 - (Date.now() - end.val())
           debug(`${person.key}, you have ${timeout} seconds to respond...`)
+
+          // if user doesn't return before setTimeout, they are dead
           toeBell = setTimeout(
             () => {
               debug(`${person.key} is an ex-parrot.`)
@@ -191,19 +196,14 @@ export default class Moderator {
             timeout)
         })
 
+        // removes currentSession listener
         stopListeningToLastSession = () => {
           debug('no longer listening to', endKey)
           endKey.off('value', listener)
         }
       })
     })
-    // roster.on('child_removed', person => {
-    //   console.log("inside moderator bf timeout, person = ", person);
-    //   setTimeout(()=>{
-    //     t
-    //   }, 60000)
-      
-    // })
+
 
     // listen to player actions in firebase
     firebase.database().ref(`games/${this.gameName}/playerActions/`)
