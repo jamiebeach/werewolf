@@ -27,7 +27,6 @@ const RECIEVE_USER = 'RECIEVE_USER';
 /*
 
 line 596 needs to be commented back in if you want to stop less than5 player games
-line 601/602 makes all players werewolves and plain villagers
 
 */
 
@@ -532,6 +531,7 @@ export default class Moderator {
       let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
       this.narrate(msg, 'public', null, 'wolf win')
     }
+
     else {
       // settimeout for daytime discussions
       this.dayTimers[dayNum] = setTimeout(() => {
@@ -602,8 +602,7 @@ export default class Moderator {
 
     const length = this.players.length;
     let numWerewolves = Math.floor(length / 3);
-    // let roles = ['seer', 'priest'];
-    let roles = ['seer', 'werewolf'];
+    let roles = ['seer', 'priest'];
     while (numWerewolves--) roles.push('werewolf');
     while (roles.length < length) roles.push('villager');
     roles = shuffle(roles);
