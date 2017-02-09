@@ -109,6 +109,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         day: action.timeofday === 'daytime',
+        messages: [],
       }
 
     case UPDATE_WINNER:
