@@ -209,6 +209,9 @@ export default class Moderator {
     })
 
   }
+
+/* --------------------- Main Moderator Functionality ------------------ */
+
 // helper function
   narrate(message, role='public', personal=false, error=null) {
     // moderator narration function, takes in message text
@@ -240,6 +243,8 @@ export default class Moderator {
     .catch(err => console.error(`Error: moderator sending ${error} action to firebase`, err))
   }
 
+/* --------------------- Creating/Starting/Joining Game  ------------------------- */
+
   handleGameId(gameId) {
     firebase.database.ref(`games/${this.gameName}/storeActions/public`).push({
       type: RECIEVE_GAMEID,
@@ -247,12 +252,117 @@ export default class Moderator {
     })
   }
 
-  handlePromptLeader() {
-    let msg = `When all players are present, type '/roles' to assign roles to everyone. Players cannot join after roles have been assigned.`
-    this.narrate(msg, 'public', this.leaderId, 'prompt leader');
+
+
+  // Players have their roles. When players are ready Game Leader can type /ready and play begins
+  handleLeaderStart() {
+    if (this.didAssign && !this.didStart) {
+      // switch from array to object
+      const obj = {};
+      this.players.forEach(player => obj[player.name] = player);
+      this.players = obj;
+
+      // first night time is triggered
+      this.nightActions();
+      this.didStart = true;
+    }
   }
 
+
+
+  // Game Leader enters /roles - this assigns player roles
+  handleStart() {
+    if (this.didAssign) return;
+    else if (this.players.length < 5) {
+      this.narrate('Minimum 5 players to start.', 'public', 'public', '/roles')
+      // return;
+    }
+
+    const length = this.players.length;
+    let numWerewolves = Math.floor(length / 3);
+    let roles = ['seer', 'priest'];
+    while (numWerewolves--) roles.push('werewolf');
+    while (roles.length < length) roles.push('villager');
+    roles = shuffle(roles);
+
+    this.players.forEach((player, index) => {
+      player.role = roles[index];
+      if (player.role === 'seer') this.seerId = player.uid;
+      if (player.role === 'priest') this.priestId = player.uid;
+      if (player.role === 'werewolf') this.wolfNames.push(player.name);
+    });
+
+    const werewolves = this.players.filter(player => (player.role === 'werewolf'));
+    const wwToFirebase = werewolves.map(player => (
+      {
+        type: UPDATE_USER,
+        name: player.name,
+        updates: {
+          role: player.role,
+        }
+      }
+    ));
+    const others = this.players.filter(player => (player.role !== 'werewolf'));
+
+    // send werewolf roles to all werewolves
+    for (let i = 0; i < werewolves.length; i++) {
+      for (let j = 0; j < werewolves.length; j++) {
+        this.moderate(wwToFirebase[i], werewolves[j].uid, 'sending wolf role')
+      }
+    }
+
+    // send one role to everyone else
+    others.forEach((player, index) => {
+      this.moderate({
+        type: UPDATE_USER,
+        name: player.name,
+        updates: {
+          role: player.role,
+        }
+      }, player.uid, 'sending role')
+    })
+
+    // send messages to all players informing them of their role
+    this.players.forEach((player, index) => {
+      let msg = `You are a ${player.role}.  The leader will start the game when everyone is ready.`
+      this.narrate(msg, 'public', player.uid, 'role assign');
+      if (player.role === 'seer') {
+        let msg = `As a seer, you can learn the identity of one player each night.`
+        this.narrate(msg, 'public', player.uid, 'seer role');
+      }
+      else if (player.role === 'priest') {
+        let msg = `As the priest, you can protect one player from the werewolves each night. You can save yourself or another player.`
+        this.narrate(msg, 'public', player.uid, 'priest role');
+      }
+      else if (player.role === 'werewolf') {
+        let msg = `As a werewolf, you will vote to slay one villager each night. During the day, you will pose as an innocent villager.`
+        this.narrate(msg, 'wolf', player.uid, 'werewolf role');
+      }
+      else if (player.role === 'villager') {
+        let msg = `As a villager, you will deduce which of your fellow villagers is a werewolf in disguise and vote to execute them.`
+        this.narrate(msg, 'public', player.uid, 'werewolf role');
+      }
+    })
+
+    // After a timeout, tell leader to use slash command /ready to start
+    setTimeout(()=>{
+      let msg = `Please type '/ready' to begin the game.`
+      this.narrate(msg, 'public', this.leaderId, 'leader ready');
+    }, timeToRead)
+
+
+    // switch didAssign to true
+    this.didAssign = true;
+
+    // update  game.didStart in firebase to true
+    console.log("going to update didStart", this.gameName);
+    const game = firebase.database().ref(`games/${this.gameName}`)
+    game.update({didStart:true})
+  }
+
+
   handleJoin(playerAction) {
+
     let i = this.players.length;
     this.players.push(
       {
@@ -283,6 +393,14 @@ export default class Moderator {
     }
     this.moderate(player, 'public', 'adduser')
   }
+
+/* --------------------- Msgs To Players  ------------------------- */ 
+
+  handlePromptLeader() {
+    let msg = `When all players are present, type '/roles' to assign roles to everyone. Players cannot join after roles have been assigned.`
+    this.narrate(msg, 'public', this.leaderId, 'prompt leader');
+  }
+
 
   handleScry(playerAction) {
     const sender = this.players[playerAction.user.name];
@@ -401,6 +519,8 @@ export default class Moderator {
       this.narrate(msg, role, this.players[playerAction.user].uid, 'role')
     }
   }
+
+/* ----------- Game Logic: Vote Tally, Day/Night, Killing Players, Game Over --------------- */
 
   tallyVotes(role, methodOfMurder) {
     const voters = (methodOfMurder === 'maul') ? this.wolfNames : this.playerNames;
@@ -575,108 +695,6 @@ export default class Moderator {
       this.nightActions();
     }
   }
-
-  // Players have their roles. When players are ready Game Leader can type /ready and play begins
-  handleLeaderStart() {
-    if (this.didAssign && !this.didStart) {
-      // switch from array to object
-      const obj = {};
-      this.players.forEach(player => obj[player.name] = player);
-      this.players = obj;
-
-      // first night time is triggered
-      this.nightActions();
-      this.didStart = true;
-    }
-  }
-
-
-  // assigns player roles; triggered when leader types '/roles'
-  // Game Leader enters /roles - this assigns player roles
-  handleStart() {
-    if (this.didAssign) return;
-    else if (this.players.length < 5) {
-      this.narrate('Minimum 5 players to start.', 'public', 'public', '/roles')
-      // return;
-    }
-
-    const length = this.players.length;
-    let numWerewolves = Math.floor(length / 3);
-    let roles = ['seer', 'priest'];
-    while (numWerewolves--) roles.push('werewolf');
-    while (roles.length < length) roles.push('villager');
-    roles = shuffle(roles);
-
-    this.players.forEach((player, index) => {
-      player.role = roles[index];
-      if (player.role === 'seer') this.seerId = player.uid;
-      if (player.role === 'priest') this.priestId = player.uid;
-      if (player.role === 'werewolf') this.wolfNames.push(player.name);
-    });
-
-    const werewolves = this.players.filter(player => (player.role === 'werewolf'));
-    const wwToFirebase = werewolves.map(player => (
-      {
-        type: UPDATE_USER,
-        name: player.name,
-        updates: {
-          role: player.role,
-        }
-      }
-    ));
-    const others = this.players.filter(player => (player.role !== 'werewolf'));
-
-    // send werewolf roles to all werewolves
-    for (let i = 0; i < werewolves.length; i++) {
-      for (let j = 0; j < werewolves.length; j++) {
-        this.moderate(wwToFirebase[i], werewolves[j].uid, 'sending wolf role')
-      }
-    }
-
-    // send one role to everyone else
-    others.forEach((player, index) => {
-      this.moderate({
-        type: UPDATE_USER,
-        name: player.name,
-        updates: {
-          role: player.role,
-        }
-      }, player.uid, 'sending role')
-    })
-
-    // send messages to all players informing them of their role
-    this.players.forEach((player, index) => {
-      let msg = `You are a ${player.role}.  The leader will start the game when everyone is ready.`
-      this.narrate(msg, 'public', player.uid, 'role assign');
-      if (player.role === 'seer') {
-        let msg = `As a seer, you can learn the identity of one player each night.`
-        this.narrate(msg, 'public', player.uid, 'seer role');
-      }
-      else if (player.role === 'priest') {
-        let msg = `As the priest, you can protect one player from the werewolves each night. You can save yourself or another player.`
-        this.narrate(msg, 'public', player.uid, 'priest role');
-      }
-      else if (player.role === 'werewolf') {
-        let msg = `As a werewolf, you will vote to slay one villager each night. During the day, you will pose as an innocent villager.`
-        this.narrate(msg, 'wolf', player.uid, 'werewolf role');
-      }
-      else if (player.role === 'villager') {
-        let msg = `As a villager, you will deduce which of your fellow villagers is a werewolf in disguise and vote to execute them.`
-        this.narrate(msg, 'public', player.uid, 'werewolf role');
-      }
-    })
-
-    // After a timeout, tell leader to use slash command /ready to start
-    setTimeout(()=>{
-      let msg = `Please type '/ready' to begin the game.`
-      this.narrate(msg, 'public', this.leaderId, 'leader ready');
-    }, timeToRead)
-
-
-    // switch didAssign to true
-    this.didAssign = true;
-  }
-
   checkWin(){
     let werewolfCount = 0;
     let villagerCount = 0;
@@ -697,4 +715,5 @@ export default class Moderator {
       this.winner = 'werewolves';
     }
   }
+
 }

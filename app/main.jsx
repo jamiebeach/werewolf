@@ -13,7 +13,9 @@ import OpenGames from './components/OpenGames';
 import GameContainer from './components/GameContainer';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import { recieveGameId, fetchAllGames } from './reducers/game';
+
+import { recieveGameId, fetchAllGames, recieveTakenName} from './reducers/game';
+
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -22,6 +24,19 @@ injectTapEventPlugin();
 const onGameEnter = nextRouterState => {
   const gameId = nextRouterState.params.id;
   store.dispatch(recieveGameId(gameId));
+
+  // gets all playernames from roster and adds it to store in takennames array
+  firebase.database().ref(`games/${gameId}/roster`).on('child_added', function(player) {
+    store.dispatch(recieveTakenName(player.val()));
+  })
+}
+
+// stops listening to roster if you leave that specific game and try to join a new one
+// the '!' tells the store to clear the takennames array
+const onGameLeave = nextRouterState => {
+  const gameId = nextRouterState.params.id;
+  firebase.database().ref(`games/${gameId}/roster`).off();
+  store.dispatch(recieveTakenName('!'));
 }
 
 const onAppEnter = () => {
@@ -39,7 +54,7 @@ render(
           <Route path="/rules" component={Rules} />
           <Route path="/opengames" component={OpenGames} />
           <Route path="/joingame/:id" component={JoinGame} />
-          <Route path="/game/:id" component={GameContainer} onEnter={onGameEnter} />
+          <Route path="/game/:id" component={GameContainer} onEnter={onGameEnter} onLeave={onGameLeave}/>
         </Route>
       </Router>
     </Provider>

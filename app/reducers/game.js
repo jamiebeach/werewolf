@@ -11,6 +11,7 @@ const initialState = {
   games: [],
 
   gameId: '',
+  takenNames: [],
   gameStart: false,
   player: {},
   // users: { [playerName: String]: User }
@@ -30,6 +31,10 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case RECIEVE_TAKENNAME:
+      return {
+        ...state,
+        takenNames: (action.takenName === '!') ? [] : [...state.takenNames, action.takenName]}
 
     case FETCH_GAME:
       return {
@@ -114,7 +119,7 @@ const reducer = (state = initialState, action) => {
 }
 
 /* -----------------    ACTIONS     ------------------ */
-
+const RECIEVE_TAKENNAME = 'RECIEVE_TAKENNAME';
 const FETCH_GAME = 'FETCH_GAME';
 
 const ADD_GAMEID = 'ADD_GAMEID';
@@ -166,20 +171,10 @@ export const recieveGameId = gameId => ({
   type: RECIEVE_GAMEID, gameId
 })
 
-/*---------
-Listener for all created games
-----------*/
-export const fetchAllGames = () => {
-  return dispatch => {
-    firebase.database().ref(`games`).on('child_added', function(action) {
-      dispatch({
-        type: FETCH_GAME,
-        id: action.key,
-        name: action.val().name,
-      })
-    })
-  }
-}
+export const recieveTakenName = takenName => ({
+  type: RECIEVE_TAKENNAME, takenName
+})
+
 
 /*---------
 Listeners for /storeActions
@@ -235,6 +230,22 @@ export const updateGameActions = () => {
 //   }
 // }
 
+/*---------
+Listener for all games in which roles have not yet been assigned
+----------*/
+export const fetchAllGames = () => {
+  return dispatch => {
+    firebase.database().ref('games').orderByChild('didStart').equalTo(false).on('child_added', function(action){
+      console.log("inside Fetch All games, action = ", action);
+      dispatch({
+        type: FETCH_GAME,
+        id: action.key,
+        name: action.val().name,
+      })
+    })
+  }
+}
+
 /* ------------       DISPATCHERS     ------------------ */
 
 // in util.js
@@ -282,7 +293,8 @@ export const createNewGame = (name, gameName, uid) => {
     const uid = getState().game.player.uid;
     const username = name.toLowerCase();
     const gameId = firebase.database().ref('games').push({
-      name: gameName
+      name: gameName,
+      didStart: false,
     });
     dispatch(recieveGameId(gameId.key));
     dispatch(joinGame(username, gameId.key));
