@@ -17,7 +17,7 @@ const Navbar = () => {
           >
           <ActionHome
             color={'#FFFFFF'}
-            hoverColor={'#6E0300'}
+            hoverColor={'#D6C967'}
           />
         </IconButton>
         <h3 className='navBtnLeft'>Nightfall</h3>

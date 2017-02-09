@@ -14,6 +14,7 @@ const RECIEVE_VOTE = 'RECIEVE_VOTE';
 const PROMPT_LEADER = 'PROMPT_LEADER';
 const START_GAME = 'START_GAME';
 const LEADER_START = 'LEADER_START';
+const GAME_LOOPING = 'GAME_LOOPING';
 const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
 const SCRYING = 'SCRYING';
@@ -131,8 +132,8 @@ export default class Moderator {
     this.players = [];
     this.playerNames = [];
     this.wolfNames = [];
-    this.didAssign = false;
-    this.didStart = false; // roles have been assigned and leader sends /ready
+    this.didAssign = false; // roles have been assigned
+    this.inGameLoop = false; // leader confirmed /ready and night began
     this.seerId = '';
     this.priestId = '';
 
@@ -256,7 +257,7 @@ export default class Moderator {
 
   // Players have their roles. When players are ready Game Leader can type /ready and play begins
   handleLeaderStart() {
-    if (this.didAssign && !this.didStart) {
+    if (this.didAssign && !this.inGameLoop) {
       // switch from array to object
       const obj = {};
       this.players.forEach(player => obj[player.name] = player);
@@ -264,7 +265,10 @@ export default class Moderator {
 
       // first night time is triggered
       this.nightActions();
-      this.didStart = true;
+
+      // game has officially started, update folks so they may use their commands
+      this.inGameLoop = true;
+      this.moderate({type: GAME_LOOPING})
     }
   }
 
@@ -394,7 +398,7 @@ export default class Moderator {
     this.moderate(player, 'public', 'adduser')
   }
 
-/* --------------------- Msgs To Players  ------------------------- */ 
+/* --------------------- Msgs To Players  ------------------------- */
 
   handlePromptLeader() {
     let msg = `When all players are present, type '/roles' to assign roles to everyone. Players cannot join after roles have been assigned.`
@@ -481,14 +485,15 @@ export default class Moderator {
     }
   }
 
-  // playerAction === target username
+// unlike save and scry, playerAction ONLY contains straight up NAMES for voting
   handleVote(playerAction) {
+    const sender = this.players[playerAction.user];
     let role = this.day ? 'public' : 'wolf';
 
     // ignore votes for users that dont exist, send message eventually
     if (!this.players[playerAction.target]){
       let msg = `${playerAction.target} is not a resident of this village.... Did you mean to vote on someone else?`;
-      this.narrate(msg, sender.role, sender.uid, 'bad name scryed');
+      this.narrate(msg, sender.role, sender.uid, 'bad name voted');
       return;
     }
 

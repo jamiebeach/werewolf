@@ -21,18 +21,19 @@ export default class Chat extends Component {
       let cmd = words[0].toLowerCase();
       let target;
       if (words.length > 1) target = words[1].toLowerCase();
-      switch(cmd) {
+
+      switch (cmd) {
 
         case '/vote':
-          if (this.props.day) this.props.sendVote(this.props.player.name, target);
-          else if (!this.props.day && this.props.player.role === 'werewolf') this.props.sendVote(this.props.player.name, target);
+          if (this.props.day && this.props.gameloop) this.props.sendVote(this.props.player.name, target);
+          else if (!this.props.day && this.props.player.role === 'werewolf' && this.props.gameloop) this.props.sendVote(this.props.player.name, target);
           else {
             this.props.sendMessage('moderator', `You are forbidden from the "${cmd}" action at this time`, this.props.player.uid)
             }
           break;
 
         case '/save':
-          if (this.props.player.role === 'priest' && !this.props.day) {
+          if (this.props.player.role === 'priest' && !this.props.day && this.props.gameloop) {
             this.props.sendSave(this.props.player, target);
           }
           else {
@@ -41,7 +42,7 @@ export default class Chat extends Component {
           break;
 
         case '/scry':
-          if (this.props.player.role === 'seer' && !this.props.day) {
+          if (this.props.player.role === 'seer' && !this.props.day && this.props.gameloop) {
             this.props.sendScry(this.props.player, target);
           }
           else {
@@ -50,7 +51,7 @@ export default class Chat extends Component {
           break;
 
         case '/roles':
-          if (this.props.player.leader) {
+          if (this.props.player.leader && !this.props.gameloop) {
             this.props.startGame();
           }
           else {
@@ -59,7 +60,7 @@ export default class Chat extends Component {
           break;
 
         case '/ready':
-          if (this.props.player.leader) {
+          if (this.props.player.leader && !this.props.gameloop) {
             this.props.leaderStart();
           }
           else {

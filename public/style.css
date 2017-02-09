@@ -253,7 +253,7 @@ body {
   overflow-y: scroll;
 }
 
-.players{
+.players {
   width: 100%;
   height: auto;
   min-height: 50px;
@@ -263,6 +263,11 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.player-btn {
+  display: flex;
+  flex-direction: row;
 }
 
 .dark {
@@ -406,7 +411,6 @@ body {
     flex-direction: column;
     width: auto;
     min-width: 80px;
-    /*height: 0px;*/
   }
 
   /* NEW GAME PAGES */
@@ -496,6 +500,10 @@ body {
     margin-left: 10px;
     margin-top: 65px;
     height: 75%;
+  }
+
+  .player-btn {
+    min-width: 90px;
   }
 
     /* RULES PAGE */
