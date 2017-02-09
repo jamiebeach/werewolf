@@ -15,7 +15,7 @@ const initialState = {
   // users: { [playerName: String]: User }
   users: {},
   day: true,
-  backgroundImage: '',
+  backgroundImage: 'day',
   messages: [],
 }
 
@@ -56,6 +56,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         moderator: state.player.uid === action.uid ? new Moderator(...action.config) : null,
+        backgroundImage: 'day'
       }
 
     case RECIEVE_USER:
@@ -108,13 +109,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         day: action.timeofday === 'daytime',
-        backgroundImage: state.day ? 'day' : 'night'
       }
 
     case UPDATE_WINNER:
       return {
         ...state,
-        backgroundImage: action.winner === 'villagers' ? 'villagers-victory' : 'werewolves-victory'
+        backgroundImage: action.winner === 'villagers' ? 'day villagers-victory' : 'day werewolves-victory'
       }
 
     default:

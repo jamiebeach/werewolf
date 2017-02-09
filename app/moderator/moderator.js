@@ -1,4 +1,5 @@
 import {updateWinner} from '../reducers/game';
+import store from '../store';
 
 /*
   actions
@@ -60,7 +61,7 @@ let avatars = [
 // milliseconds for various setTimeouts
 
 const timeToRead = 4000;  // 4 sec
-const timeForNight = 60000; // 60 sec
+const timeForNight = 10000; // 10 sec
 const timeForDay = 120000; // 2 min
 
 
@@ -354,7 +355,6 @@ export default class Moderator {
     this.didAssign = true;
 
     // update  game.didStart in firebase to true
-    console.log("going to update didStart", this.gameName);
     const game = firebase.database().ref(`games/${this.gameName}`)
     game.update({didStart:true})
   }
@@ -393,7 +393,7 @@ export default class Moderator {
     this.moderate(player, 'public', 'adduser')
   }
 
-/* --------------------- Msgs To Players  ------------------------- */ 
+/* --------------------- Msgs To Players  ------------------------- */
 
   handlePromptLeader() {
     let msg = `When all players are present, type '/roles' to assign roles to everyone. Players cannot join after roles have been assigned.`
@@ -572,19 +572,6 @@ export default class Moderator {
     let chosen = this.players[this.chosen];
     let msg;
 
-    // for testing only; checkWin after only one round
-    this.checkWin();
-    if (this.winner === 'werewolves'){
-      msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
-      this.narrate(msg, 'public', null, 'wolf win');
-      dispatch(updateWinner(this.winner));
-    }
-    else if (this.winner === 'villagers'){
-      msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
-      this.narrate(msg, 'public', null, 'village win');
-      dispatch(updateWinner(this.winner));
-    }
-
     if (!chosen || chosen.immunity){
       msg = `All is well within the village. But werewolves are still lurking in the darkness... Discuss with the village who you think is a werewolf and put them to put to death by typing "/vote PlayerName"`
       if (chosen) chosen.immunity = false;
@@ -651,6 +638,7 @@ export default class Moderator {
     }
     this.moderate(timeswitch, 'public', 'day time')
     this.narrate(`The sun rises. A new day begins for the village.`, 'public')
+
     this.resolveNightEvents();
 
     //werewolves may have won at this point
@@ -658,6 +646,8 @@ export default class Moderator {
     if (this.winner === 'werewolves'){
       let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
       this.narrate(msg, 'public', null, 'wolf win');
+      //changes background image to show winners
+      return store.dispatch(updateWinner(this.winner));
     }
     else {
       // settimeout for daytime discussions
@@ -689,12 +679,14 @@ export default class Moderator {
     if (this.winner === 'werewolves'){
       msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
       this.narrate(msg, 'public', null, 'wolf win');
-      dispatch(updateWinner(this.winner));
+      //changes background image to show winners
+      return store.dispatch(updateWinner(this.winner));
     }
     else if (this.winner === 'villagers'){
       msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
       this.narrate(msg, 'public', null, 'village win');
-      dispatch(updateWinner(this.winner));
+      //changes background image to show winners
+      return store.dispatch(updateWinner(this.winner));
     } else {
 
       this.chosen = null;
