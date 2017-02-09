@@ -174,20 +174,6 @@ export const recieveTakenName = takenName => ({
   type: RECIEVE_TAKENNAME, takenName
 })
 
-/*---------
-Listener for all created games
-----------*/
-export const fetchAllGames = () => {
-  return dispatch => {
-    firebase.database().ref(`games`).on('child_added', function(action) {
-      dispatch({
-        type: FETCH_GAME,
-        id: action.key,
-        name: action.val().name,
-      })
-    })
-  }
-}
 
 /*---------
 Listeners for /storeActions
@@ -243,6 +229,22 @@ export const updateGameActions = () => {
 //   }
 // }
 
+/*---------
+Listener for all games in which roles have not yet been assigned
+----------*/
+export const fetchAllGames = () => {
+  return dispatch => {
+    firebase.database().ref('games').orderByChild('didStart').equalTo(false).on('child_added', function(action){
+      console.log("inside Fetch All games, action = ", action);
+      dispatch({
+        type: FETCH_GAME,
+        id: action.key,
+        name: action.val().name,
+      })
+    })
+  }
+}
+
 /* ------------       DISPATCHERS     ------------------ */
 
 // in util.js
@@ -290,7 +292,8 @@ export const createNewGame = (name, gameName, uid) => {
     const uid = getState().game.player.uid;
     const username = name.toLowerCase();
     const gameId = firebase.database().ref('games').push({
-      name: gameName
+      name: gameName,
+      didStart: false,
     });
     dispatch(recieveGameId(gameId.key));
     dispatch(joinGame(username, gameId.key));

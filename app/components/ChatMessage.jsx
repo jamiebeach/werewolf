@@ -10,7 +10,7 @@ function ChatMessage(props) {
       className="message"
     >
       <div className="avatar">
-       {console.log(props)}
+
         {message.user !== 'moderator' ?
           <img
             src={`/images/avatar${players[message.user].avatar}.jpg`}
