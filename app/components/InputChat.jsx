@@ -26,11 +26,17 @@ export default class Chat extends Component {
         case '/vote':
           if (this.props.day) this.props.sendVote(this.props.player.name, target);
           else if (!this.props.day && this.props.player.role === 'werewolf') this.props.sendVote(this.props.player.name, target);
+          else {
+            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
+            }
           break;
 
         case '/save':
           if (this.props.player.role === 'priest' && !this.props.day) {
             this.props.sendSave(this.props.player, target);
+          }
+          else {
+            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
           }
           break;
 
@@ -38,15 +44,26 @@ export default class Chat extends Component {
           if (this.props.player.role === 'seer' && !this.props.day) {
             this.props.sendScry(this.props.player, target);
           }
+          else {
+            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
+          }
           break;
+
         case '/roles':
           if (this.props.player.leader) {
             this.props.startGame();
           }
+          else {
+            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
+          }
           break;
+
         case '/ready':
           if (this.props.player.leader) {
             this.props.leaderStart();
+          }
+          else {
+            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
           }
           break;
 
@@ -57,14 +74,33 @@ export default class Chat extends Component {
     }
 
     else {
-      if (this.props.player.role === 'seer' && !this.props.day) this.props.sendMessage(this.props.player.name, msg, this.props.player.uid);
-      else if (this.props.player.role === 'priest' && !this.props.day) this.props.sendMessage(this.props.player.name, msg, this.props.player.uid);
-      else if (this.props.player.role === 'werewolf' && !this.props.day) {
-        // this.props.sendMessage(this.props.player.name, msg, 'werewolves');
+// dead people may only ever talk to one another
+      if (!this.props.player.alive) {
+        this.props.sendMessage(this.props.player.name, msg, 'purgatory')
       }
-      else this.props.sendMessage(this.props.player.name, msg, 'public');
-    }
 
+// if it's a morning message that is not a command, this always goes to the public villager channel
+      else if (this.props.day) {
+        this.props.sendMessage(this.props.player.name, msg, 'public');
+      }
+
+// if it's a night message from the special villagers, it always goes to their user id
+      else if (this.props.player.role === 'seer' || this.props.player.role === 'priest') {
+        this.props.sendMessage(this.props.player.name, msg, this.props.player.uid);
+      }
+
+// if it's a night message from the werewolves, it always goes to the werewolf channel
+      else if (this.props.player.role === 'werewolf') {
+        this.props.sendMessage(this.props.player.name, msg, 'werewolves');
+      }
+
+// other messages are ignored (unless i missed some other case)
+      else {
+        this.props.sendMessage(this.props.player.name, 'You may not speak at this time', this.props.player.uid)
+      }
+
+    }
+  //always clear out the input box
     e.target.message.value = '';
   }
 
@@ -78,16 +114,14 @@ export default class Chat extends Component {
           <TextField
             style={{flexGrow: 1, marginLeft: '10px'}}
             id="message"
-            floatingLabelText={(this.props.player.alive) ? "" : "You can't chat when you're dead"}
+            floatingLabelText={(this.props.player.alive) ? "" : "The living cannot hear you when you're dead"}
             floatingLabelStyle={{color: day ? '#000' : '#AAA', fontFamily: 'IM Fell French Canon' }}
             underlineFocusStyle={{borderColor: day ? '#0D7A58' : '#6E0300 ' }}
             inputStyle={{color: day ? '#000' : '#FFF', fontWeight: 'normal', fontFamily: 'IM Fell French Canon' }}
-            disabled={(!this.props.player.alive)}
           />
            <IconButton
             type="submit"
             className="enterText"
-            disabled={(!this.props.player.alive)}
           >
             <Send
               color={day ? '#000' : '#FFF'}

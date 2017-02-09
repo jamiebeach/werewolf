@@ -24,7 +24,12 @@ const RECIEVE_USER = 'RECIEVE_USER';
 
 /* ----------------- SETTINGS ------------------ */
 
-// line 481 needs to be commented back in if you want to stop less than5 player games
+/*
+
+line 596 needs to be commented back in if you want to stop less than5 player games
+line 601/602 makes all players werewolves and plain villagers
+
+*/
 
 let colors =
 [
@@ -68,20 +73,20 @@ const timeForDay = 120000; // 2 min
 // the next werewolves, and remaining villagers
 
 const shuffle = (array) => {
-  var currentIndex = array.length, temporaryValue, randomIndex;
+  // var currentIndex = array.length, temporaryValue, randomIndex;
 
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
+  // // While there remain elements to shuffle...
+  // while (0 !== currentIndex) {
 
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
+  //   // Pick a remaining element...
+  //   randomIndex = Math.floor(Math.random() * currentIndex);
+  //   currentIndex -= 1;
 
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
+  //   // And swap it with the current element.
+  //   temporaryValue = array[currentIndex];
+  //   array[currentIndex] = array[randomIndex];
+  //   array[randomIndex] = temporaryValue;
+  // }
   return array;
 }
 
@@ -123,7 +128,6 @@ export default class Moderator {
 
     this.colors = shuffle(colors);
     this.avatars = shuffle(avatars);
-    this.modAvatar = `/images/modAvatar.jpg`,
 
     this.players = [];
     this.playerNames = [];
@@ -314,7 +318,7 @@ export default class Moderator {
           }
         }
       } else {
-        let msg = `${playerAction.target} is not a resident of this village.`;
+        let msg = `${playerAction.target} is not a resident of this village... Did you mean to scry on someone else?`;
         this.narrate(msg, sender.role, sender.uid, 'bad name scryed');
       }
     }
@@ -354,7 +358,7 @@ export default class Moderator {
           }
         }
       } else {
-        let msg = `${playerAction.target} is not a resident of this village.`;
+        let msg = `${playerAction.target} is not a resident of this village.... Did you mean to save someone else?`;
         this.narrate(msg, sender.role, sender.uid, 'bad name saved');
       }
     }
@@ -366,7 +370,7 @@ export default class Moderator {
 
     // ignore votes for users that dont exist, send message eventually
     if (!this.players[playerAction.target]){
-      let msg = `${playerAction.target} is not a resident of this village.`;
+      let msg = `${playerAction.target} is not a resident of this village.... Did you mean to vote on someone else?`;
       this.narrate(msg, sender.role, sender.uid, 'bad name scryed');
       return;
     }
@@ -386,7 +390,7 @@ export default class Moderator {
           setTimeout(() => {
             const dayornight = (this.day) ? 'day' : 'night';
             clearTimeout(this[`${dayornight}Timers`][this.dayNum])
-            if (this.day) this.lynchActions();
+            if (this.day) this.executeActions();
             else this.dayActions();
           }, 5000);
         }
@@ -527,19 +531,19 @@ export default class Moderator {
     else {
       // settimeout for daytime discussions
       this.dayTimers[dayNum] = setTimeout(() => {
-        this.lynchActions();
+        this.executeActions();
       }, timeForDay)
     }
   }
 
-  lynchActions() {
+  executeActions() {
     let chosen = this.players[this.chosen];
     if (this.chosen) chosen.alive = false;
     this.playerNames.splice(this.playerNames.indexOf(this.chosen), 1);
     if (chosen.role === 'werewolf') this.wolfNames.splice(this.playerNames.indexOf(this.chosen), 1);
 
     let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
-    this.narrate(msg, 'public', null, 'lynch')
+    this.narrate(msg, 'public', null, 'execution')
 
     let kill = {
       type: UPDATE_USER,
@@ -594,7 +598,8 @@ export default class Moderator {
 
     const length = this.players.length;
     let numWerewolves = Math.floor(length / 3);
-    let roles = ['seer', 'priest'];
+    // let roles = ['seer', 'priest'];
+    let roles = ['seer', 'werewolf'];
     while (numWerewolves--) roles.push('werewolf');
     while (roles.length < length) roles.push('villager');
     roles = shuffle(roles);
