@@ -4,9 +4,12 @@ import React from 'react';
 
 const PlayersList = (props) => {
   const day = props.day;
-
   const player = props.player;
   const players = props.players;
+
+  const vote = props.vote;
+  const chooseVote = props.chooseVote;
+  const sendVote = props.sendVote;
 
   const dead = (player) => {
   if (!player.alive) return 'line-through';
@@ -34,6 +37,7 @@ const PlayersList = (props) => {
               className={ day ? 'players light' : 'players dark' }
               key={index}
               style={ !players[person].alive ? { backgroundColor: 'rgba(192, 192, 192, .5)' } : {} }
+              onClick={}
             >
               <div className="avatar" >
                 <img
