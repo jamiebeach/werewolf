@@ -16,11 +16,16 @@ const PlayersList = (props) => {
   else return null;
 }
 
-  // const pickColor = (player, user, day) => {
-  //   if ((user.role === 'werewolf') && (player.role === 'werewolf') || (!user.alive && (player.role === 'werewolf'))) return 'thistle';
-  //   if ((!user.night && !day) || ((user.night && !day) && (player.role !== user.role))) return 'lightgrey';
-  //   else return 'white';
-  // }
+  const pickColor = (person, currentPlayer, day) => {
+    if
+      ( // if both the player and the person on the roster are werewolves, or if the player is dead, show werewolf color
+        (person.role === 'werewolf') && (!day) &&
+        (!currentPlayer.alive || (currentPlayer.role === 'werewolf'))
+      ) return { backgroundColor: 'rgba(214, 201, 103, .8)' };
+
+    else if (!person.alive) return { backgroundColor: 'rgba(192, 192, 192, .5)' }
+    else return {};
+  }
 
   // const getIcon = (player, user) => {
   //   if (((!user.alive) || (user.role === 'doctor')) && (player.role === 'doctor')) return <Healing/>;
@@ -36,8 +41,12 @@ const PlayersList = (props) => {
             <div
               className={ day ? 'players light' : 'players dark' }
               key={index}
+<<<<<<< HEAD
               style={ !players[person].alive ? { backgroundColor: 'rgba(192, 192, 192, .5)' } : {} }
               onClick={}
+=======
+              style={pickColor(players[person], player, day)}
+>>>>>>> 454af184ce77ec92297c95d81f4a0e6a1809ec39
             >
               <div className="avatar" >
                 <img
