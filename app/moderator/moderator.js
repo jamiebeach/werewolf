@@ -214,8 +214,9 @@ export default class Moderator {
   // personal = specific uid or 'werewolves' (leave null to send to everyone)
   // error = 1-2 word summary of msg (leave null for generic error)
   // fontColor used to color diff moderator messages
-  narrate(message, role='public', personal=false, fontColor='black', error=null) {
+  narrate(message, role='public', personal=false, fontColor='none', error=null) {
     let ref = personal ? personal : 'public';
+    console.log('inside narrate, color = ', fontColor);
     firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
     .push({
       type: RECIEVE_MESSAGE,
@@ -323,8 +324,6 @@ export default class Moderator {
       if (player.role === 'seer') {
         let msg = `As a seer, you can learn the identity of one player each night.`
         this.narrate(msg, 'public', player.uid, 'seer role');
-        let msg2 = `At night, type '/scry name', to see that person's true identity`
-        this.narrate(msg2, 'public', player.uid, '#0D7A58', 'seer role cmd')
       }
       else if (player.role === 'priest') {
         let msg = `As the priest, you can protect one player from the werewolves each night. You can save yourself or another player.`
@@ -343,7 +342,7 @@ export default class Moderator {
     // After a timeout, tell leader to use slash command /ready to start
     setTimeout(()=>{
       let msg = `Please type '/ready' to begin the game.`
-      this.narrate(msg, 'public', this.leaderId, 'leader ready');
+      this.narrate(msg, 'public', this.leaderId, 'rgba(13,122,88, .5)', 'leader ready');
     }, timeToRead)
 
 
@@ -393,7 +392,7 @@ export default class Moderator {
 
   handlePromptLeader() {
     let msg = `When all players are present, type '/roles' to assign roles to everyone. Players cannot join after roles have been assigned.`
-    this.narrate(msg, 'public', this.leaderId, '#0D7A58', 'prompt leader');
+    this.narrate(msg, 'public', this.leaderId, 'rgba(13,122,88, .5)', 'prompt leader');
   }
 
 
@@ -567,10 +566,11 @@ export default class Moderator {
     // should be called after night ends to take immmunity into account
     let chosen = this.players[this.chosen];
     let msg;
-
+    let msg2 = ` Vote to put them to death by typing "/vote name"`;
     if (!chosen || chosen.immunity){
-      msg = `All is well within the village. But werewolves are still lurking in the darkness... Discuss with the village who you think is a werewolf and put them to put to death by typing "/vote PlayerName"`
+      msg = `All is well within the village. But werewolves still lurk in the darkness...Gossip with your neighbors about who you think the werewolf is.`
       if (chosen) chosen.immunity = false;
+      this.narrate(msg, 'public', null, 'morning');
     }
     else {
       chosen.alive = false;
@@ -583,11 +583,14 @@ export default class Moderator {
           alive: false
         }
       }
-      this.moderate(kill, 'public', 'death')
-      msg = `${this.chosen} was eaten by werewolves last night! Discuss with the village who you think is a werewolf and put them to put to death by typing "/vote PlayerName"`
+      this.moderate(kill, 'public', 'death');
+      msg = `${this.chosen} was eaten by werewolves last night! Gossip with your neighbors about who you think the werewolf is.`;
+      // red msg background
+      this.narrate(msg, 'public', null, 'rgba(110,3,0, .5)', 'morning');
     }
+    // green msg background
+    this.narrate(msg2, 'public', null, 'rgba(13,122,88, .5)', 'morning');
 
-    this.narrate(msg, 'public', null, 'morning')
     //resetting the night props
     this.chosen = null;
     this.didScry = false;

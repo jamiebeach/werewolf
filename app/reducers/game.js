@@ -103,7 +103,7 @@ const reducer = (state = initialState, action) => {
     case RECIEVE_MESSAGE:
       return {
         ...state,
-        messages: [...state.messages, {text: action.message, user: action.user}],
+        messages: [...state.messages, {text: action.message, user: action.user, color: action.color}],
       }
 
     case SWITCH_TIME:
@@ -235,7 +235,6 @@ Listener for all games in which roles have not yet been assigned
 export const fetchAllGames = () => {
   return dispatch => {
     firebase.database().ref('games').orderByChild('didStart').equalTo(false).on('child_added', function(action){
-      console.log("inside Fetch All games, action = ", action);
       dispatch({
         type: FETCH_GAME,
         id: action.key,
