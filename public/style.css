@@ -35,9 +35,38 @@ body {
   margin: 1rem;
 }
 
-.navBtnRight .icons{
+.navBtnRight {
   float: right;
+}
+
+.CircularProgressbar {
+  width: auto;
+  height: 40px;
+  margin: 2px;
+}
+
+.CircularProgressbar .CircularProgressbar-path {
+  stroke: #FFFF66;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease 0s;
+}
+
+.CircularProgressbar .CircularProgressbar-trail {
+  stroke: #d6d6d6;
+}
+
+.CircularProgressbar .CircularProgressbar-text {
+  fill: #FFFF66;
+  font-size: 45px;
+  font-family: 'IM Fell Great Primer SC';
+  dominant-baseline: middle;
+  text-anchor: middle;
+  float: left;
+}
+
+.navBtnRight .icons{
   /*padding-right: 3%;*/
+  float: right;
   margin: 1rem;
   text-decoration: none;
   color: #FFF;
