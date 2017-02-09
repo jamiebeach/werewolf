@@ -41,12 +41,7 @@ const PlayersList = (props) => {
             <div
               className={ day ? 'players light' : 'players dark' }
               key={index}
-<<<<<<< HEAD
-              style={ !players[person].alive ? { backgroundColor: 'rgba(192, 192, 192, .5)' } : {} }
-              onClick={}
-=======
               style={pickColor(players[person], player, day)}
->>>>>>> 454af184ce77ec92297c95d81f4a0e6a1809ec39
             >
               <div className="avatar" >
                 <img
