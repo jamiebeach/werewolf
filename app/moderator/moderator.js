@@ -207,32 +207,31 @@ export default class Moderator {
 
 /* --------------------- Main Moderator Functionality ------------------ */
 
-// helper function
-  narrate(message, role='public', personal=false, error=null) {
-    // moderator narration function, takes in message text
-    // and sends RECIEVE_MESSAGE object to firebase
-    // typeof: message = string,
-    // role = role, in a string,
-    // personal = specific uid or 'werewolves' (leave null to send to everyone)
-    // error = 1-2 word summary of msg (leave null for generic error)
+  // moderator narration function, takes in message text
+  // and sends RECIEVE_MESSAGE object to firebase
+  // typeof: message = string,
+  // role = role, in a string,
+  // personal = specific uid or 'werewolves' (leave null to send to everyone)
+  // error = 1-2 word summary of msg (leave null for generic error)
+  // fontColor used to color diff moderator messages
+  narrate(message, role='public', personal=false, fontColor='black', error=null) {
     let ref = personal ? personal : 'public';
     firebase.database().ref(`games/${this.gameName}/storeActions/${ref}`)
     .push({
       type: RECIEVE_MESSAGE,
       user: 'moderator',
       message: `${message}`,
-      role: `${role}`
+      role: `${role}`,
+      color: fontColor,
     })
     .catch(err => console.error(`Error: moderator sending ${error} message to firebase`, err))
   }
-// helper function
+
+  // moderate function -- more general form of narrate. for every other action.
+  // typeof: action = object that has type and any other info,
+  // ref = the address in storeActions, in a string,
   moderate(action, ref, error) {
-    // moderate function -- more general form of narrate. for every other action.
-    // typeof: action = object that has type and any other info,
-    // ref = the address in storeActions, in a string,
-
     let channel = ref ? ref : 'public'
-
     firebase.database().ref(`games/${this.gameName}/storeActions/${channel}`)
     .push(action)
     .catch(err => console.error(`Error: moderator sending ${error} action to firebase`, err))
@@ -269,7 +268,7 @@ export default class Moderator {
   handleStart() {
     if (this.didAssign) return;
     else if (this.players.length < 5) {
-      this.narrate('Minimum 5 players to start.', 'public', 'public', '/roles')
+      this.narrate('You need a minimum 5 players to start.', 'public', 'public', '/roles')
       // return;
     }
 
@@ -324,13 +323,15 @@ export default class Moderator {
       if (player.role === 'seer') {
         let msg = `As a seer, you can learn the identity of one player each night.`
         this.narrate(msg, 'public', player.uid, 'seer role');
+        let msg2 = `At night, type '/scry name', to see that person's true identity`
+        this.narrate(msg2, 'public', player.uid, '#0D7A58', 'seer role cmd')
       }
       else if (player.role === 'priest') {
         let msg = `As the priest, you can protect one player from the werewolves each night. You can save yourself or another player.`
         this.narrate(msg, 'public', player.uid, 'priest role');
       }
       else if (player.role === 'werewolf') {
-        let msg = `As a werewolf, you will vote to slay one villager each night. During the day, you will pose as an innocent villager.`
+        let msg = `As a werewolf, you will vote to slay one villager each night. During the day, you pretend to be an innocent villager.`
         this.narrate(msg, 'wolf', player.uid, 'werewolf role');
       }
       else if (player.role === 'villager') {
@@ -350,7 +351,6 @@ export default class Moderator {
     this.didAssign = true;
 
     // update  game.didStart in firebase to true
-    console.log("going to update didStart", this.gameName);
     const game = firebase.database().ref(`games/${this.gameName}`)
     game.update({didStart:true})
   }
@@ -393,7 +393,7 @@ export default class Moderator {
 
   handlePromptLeader() {
     let msg = `When all players are present, type '/roles' to assign roles to everyone. Players cannot join after roles have been assigned.`
-    this.narrate(msg, 'public', this.leaderId, 'prompt leader');
+    this.narrate(msg, 'public', this.leaderId, '#0D7A58', 'prompt leader');
   }
 
 
@@ -483,7 +483,7 @@ export default class Moderator {
     // ignore votes for users that dont exist, send message eventually
     if (!this.players[playerAction.target]){
       let msg = `${playerAction.target} is not a resident of this village.`;
-      this.narrate(msg, sender.role, sender.uid, 'bad name scryed');
+      this.narrate(msg, sender.role, sender.uid, 'bad name voted');
       return;
     }
 

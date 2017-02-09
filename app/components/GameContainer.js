@@ -6,7 +6,6 @@ import {connect} from 'react-redux';
 const GameContainer = props => {
   return (
     <div>
-      {console.log(props.games)}
       {props.player.joined ? <ChatContainer /> : <JoinGame />}
       }
     </div>

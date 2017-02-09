@@ -3,7 +3,8 @@ import React from 'react';
 function ChatMessage(props) {
   let message = props.message;
   let players = props.players;
-
+  let color = props.message.color;
+  console.log("inside ChatMessage, color = ", color);
   return (
 
     <li
@@ -21,7 +22,7 @@ function ChatMessage(props) {
       <div className="text-content">
         <div
           className="player-name"
-          style={ message.user !== 'moderator' ? { color: `${players[message.user].color}` } : {} }
+          style={ message.user !== 'moderator' ? { color: `${players[message.user].color}` } : color }
         >
           {message.user.toUpperCase()}
         </div>
