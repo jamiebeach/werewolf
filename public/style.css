@@ -439,7 +439,7 @@ body {
   .players{
     flex-direction: column;
     width: auto;
-    min-width: 80px;
+
   }
 
   /* NEW GAME PAGES */
