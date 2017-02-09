@@ -58,7 +58,7 @@ let avatars = [
 // milliseconds for various setTimeouts
 
 const timeToRead = 4000;  // 4 sec
-const timeForNight = 30000; // 30 sec
+const timeForNight = 60000; // 60 sec
 const timeForDay = 120000; // 2 min
 
 
@@ -365,7 +365,11 @@ export default class Moderator {
     let role = this.day ? 'public' : 'wolf';
 
     // ignore votes for users that dont exist, send message eventually
-    if (!this.players[playerAction.target]) return;
+    if (!this.players[playerAction.target]){
+      let msg = `${playerAction.target} is not a resident of this village.`;
+      this.narrate(msg, sender.role, sender.uid, 'bad name scryed');
+      return;
+    }
 
     if (this.players[playerAction.target].alive){
       if (!this.majority) {
@@ -447,7 +451,7 @@ export default class Moderator {
     let msg;
 
     if (!chosen || chosen.immunity){
-      msg = `All is well within the village. But werewolves are still lurking in the darkness...`
+      msg = `All is well within the village. But werewolves are still lurking in the darkness... Discuss with the village who you think is a werewolf and put them to put to death by typing "/vote PlayerName"`
       if (chosen) chosen.immunity = false;
     }
     else {
@@ -462,7 +466,7 @@ export default class Moderator {
         }
       }
       this.moderate(kill, 'public', 'death')
-      msg = `${this.chosen} was eaten by werewolves last night! `
+      msg = `${this.chosen} was eaten by werewolves last night! Discuss with the village who you think is a werewolf and put them to put to death by typing "/vote PlayerName"`
     }
 
     this.narrate(msg, 'public', null, 'morning')
