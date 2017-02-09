@@ -1,3 +1,5 @@
+import updateWinner from '../reducers/game';
+
 /*
   actions
   settings -- use this to toggle options for testing
@@ -522,7 +524,7 @@ export default class Moderator {
     this.checkWin();
     if (this.winner === 'werewolves'){
       let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
-      this.narrate(msg, 'public', null, 'wolf win')
+      this.narrate(msg, 'public', null, 'wolf win');
     }
     else {
       // settimeout for daytime discussions
@@ -553,11 +555,13 @@ export default class Moderator {
 
     if (this.winner === 'werewolves'){
       msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
-      this.narrate(msg, 'public', null, 'wolf win')
+      this.narrate(msg, 'public', null, 'wolf win');
+      dispatch(updateWinner(this.winner));
     }
     else if (this.winner === 'villagers'){
       msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
-      this.narrate(msg, 'public', null, 'village win')
+      this.narrate(msg, 'public', null, 'village win');
+      dispatch(updateWinner(this.winner));
     } else {
 
       this.chosen = null;
