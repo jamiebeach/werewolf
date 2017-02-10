@@ -340,7 +340,7 @@ export default class Moderator {
         let msg = `You are a VILLAGER. As a villager, you will deduce which of your fellow villagers is a werewolf in disguise and vote to execute them.`
         this.narrate(msg, 'public', player.uid, 'rgba(13,122,88, .5)', 'werewolf role');
       }
-      let msg = `The leader will start the game when everyone is ready.`
+      let msg = `${player.name}, The leader will start the game when everyone is ready. I will give more instructions to you in private messages as necessary. All slash commands you send to me will be private, with the exception of daytime voting. Type '/help' at any time to ask me for more information on gameplay.`
       this.narrate(msg, 'public', player.uid, 'role assign');
     })
 
@@ -573,7 +573,7 @@ export default class Moderator {
     let chosen = this.players[this.chosen];
     let msg;
     if (!chosen || chosen.immunity){
-      msg = `All is well within the village. But werewolves still lurk in the darkness...Gossip with your neighbors about who you think the werewolf is.`
+      msg = `All is well within the village. But werewolves still lurk in the darkness... Gossip with your neighbors about who you think the werewolf is.`
       if (chosen) chosen.immunity = false;
       this.narrate(msg, 'public', null, 'morning');
     }
@@ -597,7 +597,7 @@ export default class Moderator {
     // once news of the night has been absorbed, call the village to action
     // has green msg background
     setTimeout(()=>{
-      let msg2 = ` Vote to put them to death by typing '/VOTE NAME'`;
+      let msg2 = ` ALL: Vote to put a suspect to death by typing '/VOTE NAME'. You may vote multiple times. Votes will be publicly announced.`;
       this.narrate(msg2, 'public', null, 'rgba(13,122,88, .5)', 'morning');
     }, timeToRead)
     
@@ -628,18 +628,18 @@ export default class Moderator {
         // send messages to special people
         let wmsg = `Werewolves, awaken. Choose a villager to slay. `
         this.narrate(wmsg, 'wolf', 'werewolves', 'awaken wolves');
-        let wmsg2 = `To vote to slay a villager, type '/VOTE NAME'.`
+        let wmsg2 = `WEREWOLVES: To vote to slay a villager, type '/VOTE NAME'. You must agree on a single target.`
         this.narrate(wmsg2, 'wolf', 'werewolves', 'rgba(54,4,87, .5)', 'awaken wolves');
 
         let smsg = `Seer, awaken. Choose a player whose identity you wish to discover. You can only discover one player's identity each night.`
         this.narrate(smsg, 'seer', this.seerId, 'awaken seer');
-        let smsg2 = `Type '/SCRY NAME' to discover their true identity.`;
+        let smsg2 = `SEER: To check if a certain villager is a werewolf, type '/SCRY NAME'.`;
         this.narrate(smsg2, 'seer', this.seerId, 'rgba(54,4,87, .5)', 'awaken seer');
 
         let pmsg = `Priest, awaken. Choose a player to save. You are allowed to save yourself or another player. You may only save once per night.`
         this.narrate(pmsg, 'priest', this.priestId, 'awaken priest');
-        let pmsg2 = `Type '/SAVE NAME' to protect them from death`;
-        this.narrate(pmsg, 'priest', this.priestId, 'rgba(54,4,87, .5)', 'awaken priest');
+        let pmsg2 = `PRIEST: To protect a villager from death by werewolves, type '/SAVE NAME'`;
+        this.narrate(pmsg2, 'priest', this.priestId, 'rgba(54,4,87, .5)', 'awaken priest');
 
       }, timeToRead * 2) // ... bad way to line up the settimeouts, i know
 
