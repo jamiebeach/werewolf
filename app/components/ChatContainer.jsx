@@ -25,6 +25,7 @@ const ChatContainer = props => {
             messages={props.game.messages}
             players={props.game.users}
             day={props.game.day}
+            gameloop={props.game.gameInProgress}
 
             sendMessage={props.sendMessage}
             sendVote={props.sendVote}
@@ -43,10 +44,13 @@ const ChatContainer = props => {
           player={props.player}
           players={props.game.users}
           day={props.game.day}
+          gameloop={props.game.gameInProgress}
 
-          vote={props.game.vote}
+          voteTarget={props.game.voteTarget}
           chooseVote={props.chooseVote}
           sendVote={props.sendVote}
+          sendSave={props.sendSave}
+          sendScry={props.sendScry}
         />
       </div>
     </div>

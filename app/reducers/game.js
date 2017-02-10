@@ -12,7 +12,7 @@ const initialState = {
 
   gameId: '',
   takenNames: [],
-  gameStart: false,
+  gameInProgress: false,
   player: {},
   // users: { [playerName: String]: User }
   users: {},
@@ -20,7 +20,8 @@ const initialState = {
   day: true,
   messages: [],
   vote: {},
-  winner: ''
+  winner: '',
+  voteTarget: '',
 }
 
 //TODOS
@@ -46,6 +47,9 @@ const reducer = (state = initialState, action) => {
 
     case RECIEVE_GAMEID:
       return {...state, gameId: action.gameId}
+
+    case GAME_LOOPING:
+      return {...state, gameInProgress: true}
 
     case SET_PLAYER:
       return {...state, player: action.player}
@@ -113,12 +117,13 @@ const reducer = (state = initialState, action) => {
         ...state,
         day: action.timeofday === 'daytime',
         messages: [],
+        voteTarget: '',
       }
 
     case SELECT_VOTE:
       return {
         ...state,
-        vote: action.vote,
+        voteTarget: action.target,
       }
 
     default:
@@ -135,6 +140,7 @@ const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 const PROMPT_LEADER = 'PROMPT_LEADER';
 const START_GAME = 'START_GAME';
 const LEADER_START = 'LEADER_START';
+const GAME_LOOPING = 'GAME_LOOPING';
 
 const SET_PLAYER = 'SET_PLAYER';
 const UPDATE_PLAYER = 'UPDATE_PLAYER'
@@ -185,9 +191,9 @@ export const recieveTakenName = takenName => ({
 })
 
 // for using the player roster as a voting button tool
-export const selectVote = (target) => {
+export const selectVote = target => ({
   type: SELECT_VOTE, target
-}
+})
 
 /*---------
 Listeners for /storeActions
@@ -261,9 +267,10 @@ export const fetchAllGames = () => {
 /* ------------       DISPATCHERS     ------------------ */
 
 //  a normal dispatcher for local redux state. selected vote button on the roster
-export const chooseVote = (target) =>
-  dispatch => {
+export const chooseVote = (target) => {
+  return dispatch => {
     dispatch(selectVote(target))
+  }
 };
 
 // in util.js
@@ -274,6 +281,7 @@ const gameAction =
     const {gameId} = getState().game
     const playerActions = firebase.database().ref(`games/${gameId}/playerActions`)
     const action = actionCreator(...args)
+
     return playerActions.push(action)
   }
 
@@ -385,7 +393,7 @@ export const sendMessageAction = gameAction(
 )
 
 // send votes to playerActions
-export const sendVoteAction = gameAction (
+export const sendVoteAction = gameAction(
   (user, target) => ({
     type: RECIEVE_VOTE,
     user,
