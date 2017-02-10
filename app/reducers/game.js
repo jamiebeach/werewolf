@@ -280,8 +280,6 @@ const gameAction =
     const playerActions = firebase.database().ref(`games/${gameId}/playerActions`)
     const action = actionCreator(...args)
 
-    console.log('actions inside of gameaction in game', action)
-
     return playerActions.push(action)
   }
 
