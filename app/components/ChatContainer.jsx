@@ -35,7 +35,7 @@ const ChatContainer = props => {
             />
           : <NightImage/>
         }
-        {props.game.winner ? <VictoryModal /> : null }
+        {props.startGame ? <VictoryModal /> : null }
 
       </div>
       <div className="players-container column-4">
