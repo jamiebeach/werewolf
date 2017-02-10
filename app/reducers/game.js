@@ -16,6 +16,7 @@ const initialState = {
   users: {},
   day: true,
   backgroundImage: 'day',
+  winner: '',
   messages: [],
 }
 
@@ -106,15 +107,24 @@ const reducer = (state = initialState, action) => {
       }
 
     case SWITCH_TIME:
+      let image;
+      if (state.winner) {
+        image = state.winner === 'villagers' ? 'day villagers-victory' : 'day werewolves-victory';
+      }
+      else {
+        image = action.timeofday === 'daytime' ? 'day' : 'night';
+      }
       return {
         ...state,
         day: action.timeofday === 'daytime',
+        backgroundImage: image,
         messages: [],
       }
 
     case UPDATE_WINNER:
       return {
         ...state,
+        winner: action.winner,
         backgroundImage: action.winner === 'villagers' ? 'day villagers-victory' : 'day werewolves-victory'
       }
 
@@ -246,7 +256,6 @@ Listener for all games in which roles have not yet been assigned
 export const fetchAllGames = () => {
   return dispatch => {
     firebase.database().ref('games').orderByChild('didStart').equalTo(false).on('child_added', function(action){
-      console.log("inside Fetch All games, action = ", action);
       dispatch({
         type: FETCH_GAME,
         id: action.key,

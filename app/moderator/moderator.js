@@ -1,5 +1,4 @@
 import {updateWinner} from '../reducers/game';
-import store from '../store';
 
 /*
   actions
@@ -24,6 +23,7 @@ const SAVING = 'SAVING';
 const KILLING = 'KILLING';
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_USER = 'RECIEVE_USER';
+const UPDATE_WINNER = 'UPDATE_WINNER';
 
 /* ----------------- SETTINGS ------------------ */
 
@@ -65,7 +65,7 @@ let avatars = [
 // milliseconds for various setTimeouts
 
 const timeToRead = 2000;  // 2 sec
-const timeForNight = 60000; // 60 sec
+const timeForNight = 6000; // 6 sec
 const timeForDay = 120000; // 2 min
 
 
@@ -204,6 +204,10 @@ export default class Moderator {
 
         case SAVING:
           this.handleSave(playerAction)
+          break;
+
+        case UPDATE_WINNER:
+          this.handleUpdateWinner(winner)
           break;
 
         default:
@@ -522,6 +526,12 @@ export default class Moderator {
     }
   }
 
+/* -------------------- Victory ------------------ */
+
+handleUpdateWinner(winner) {
+
+}
+
 /* ----------- Game Logic: Vote Tally, Day/Night, Killing Players, Game Over --------------- */
 
   tallyVotes(role, methodOfMurder) {
@@ -650,11 +660,16 @@ export default class Moderator {
 
     //werewolves may have won at this point
     this.checkWin();
+
     if (this.winner === 'werewolves'){
       let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
       this.narrate(msg, 'public', null, 'wolf win');
       //changes background image to show winners
-      return store.dispatch(updateWinner(this.winner));
+      let win = {
+        type: UPDATE_WINNER,
+        winner: this.winner
+      }
+      this.moderate(win, 'public', 'update winner');
     }
 
     else {
@@ -688,13 +703,21 @@ export default class Moderator {
       msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
       this.narrate(msg, 'public', null, 'wolf win');
       //changes background image to show winners
-      return store.dispatch(updateWinner(this.winner));
+      let win = {
+        type: UPDATE_WINNER,
+        winner: this.winner
+      }
+      this.moderate(win, 'public', 'update winner');
     }
     else if (this.winner === 'villagers'){
       msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
       this.narrate(msg, 'public', null, 'village win');
       //changes background image to show winners
-      return store.dispatch(updateWinner(this.winner));
+      let win = {
+        type: UPDATE_WINNER,
+        winner: this.winner
+      }
+      this.moderate(win, 'public', 'update winner');
     } else {
 
       this.chosen = null;
