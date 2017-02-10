@@ -127,6 +127,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         winner: action.winner,
         backgroundImage: action.winner === 'villagers' ? 'day villagers-victory' : 'day werewolves-victory'
+      }
 
     case SELECT_VOTE:
       return {

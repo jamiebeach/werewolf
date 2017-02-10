@@ -65,7 +65,7 @@ let avatars = [
 // milliseconds for various setTimeouts
 
 const timeToRead = 2000;  // 2 sec
-const timeForNight = 6000; // 6 sec
+const timeForNight = 60000; // 60 sec
 const timeForDay = 120000; // 2 min
 
 
@@ -347,8 +347,8 @@ export default class Moderator {
         let msg = `You are a VILLAGER. As a villager, you will deduce which of your fellow villagers is a werewolf in disguise and vote to execute them.`
         this.narrate(msg, 'public', player.uid, 'rgba(13,122,88, .5)', 'werewolf role');
       }
-      let msg = `${player.name}, the leader will start the game when everyone is ready. 
-I will private message you instructions as necessary. 
+      let msg = `${player.name}, the leader will start the game when everyone is ready.
+I will private message you instructions as necessary.
 Type '/help' to ask me for help`
       this.narrate(msg, 'public', player.uid, 'role assign');
     })
@@ -615,7 +615,7 @@ handleUpdateWinner(winner) {
       let msg2 = ` ALL: Vote to put a suspect to death by typing '/VOTE NAME'. You may vote multiple times. Votes will be publicly announced.`;
       this.narrate(msg2, 'public', null, 'rgba(13,122,88, .5)', 'morning');
     }, timeToRead)
-    
+
     //resetting the night props
     this.chosen = null;
     this.didScry = false;
