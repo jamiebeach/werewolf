@@ -343,9 +343,10 @@ export default class Moderator {
         let msg = `You are a VILLAGER. As a villager, you will deduce which of your fellow villagers is a werewolf in disguise and vote to execute them.`
         this.narrate(msg, 'public', player.uid, 'rgba(13,122,88, .5)', 'werewolf role');
       }
+
       let msg = `${player.name.toUpperCase()}, the leader will start the game when everyone is ready.
 I will private message you instructions as necessary.
-Type '/help' to ask me for help`
+Type '/help' to ask me for help.`
       this.narrate(msg, 'public', player.uid, 'role assign');
     })
 
