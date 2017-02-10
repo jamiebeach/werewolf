@@ -1,15 +1,10 @@
 import { browserHistory } from 'react-router';
 import Moderator from '../moderator/moderator';
 
-// export let gameId;
-// const playerActions = `games/${gameId}/playerActions/`;
-// const storeActions = `games/${gameId}/storeActions/`;
-
 let mod;
 
 const initialState = {
   games: [],
-
   gameId: '',
   takenNames: ['moderator'],
   gameInProgress: false,
@@ -22,10 +17,6 @@ const initialState = {
   voteTarget: '',
 }
 
-//TODOS
-
-// startGame actions
-// listen to /werewolf after roles are assigned
 
 /* ------------       REDUCER     ------------------ */
 
@@ -160,6 +151,10 @@ const SET_MODERATOR = 'SET_MODERATOR'
 
 /* ------------     ACTION CREATORS     ------------------ */
 
+export const firebaseUpdate = update => {
+  return update;
+}
+
 export const setPlayer = player => ({
   type: SET_PLAYER, player
 })
@@ -175,10 +170,6 @@ export const getAllUsers = users => ({
 export const removeUser = name => ({
   type: REMOVE_USER, name
 })
-
-export const firebaseUpdate = update => {
-  return update;
-}
 
 export const recieveGameId = gameId => ({
   type: RECIEVE_GAMEID, gameId
@@ -207,8 +198,10 @@ export const updateGameActions = () => {
 
     const roster = firebase.database().ref(`games/${gameId}/roster`)
     const me = roster.child(uid)
-    me.set(name)
-    me.onDisconnect().remove()
+    me.update({name})
+    const session = me.child('sessions').push({start: firebase.database.ServerValue.TIMESTAMP})
+    // when player disconnects place timestamp
+    session.onDisconnect().update({end: firebase.database.ServerValue.TIMESTAMP})
     // TODO: There's an uncomfortable asymmetry here between adding and removing users.
     // Probably we should get rid of the journaled ADD_USER action and just respond
     // to the roster in the moderator.
@@ -340,6 +333,7 @@ export const joinGame = (name, gameId) => {
     dispatch(updateGameActions(gameId));
   }
 }
+
 
 // when user joins a game they input a Player name.
 export const addUser = username => (dispatch, getState) => {

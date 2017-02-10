@@ -22,6 +22,7 @@ const SAVING = 'SAVING';
 const KILLING = 'KILLING';
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_USER = 'RECIEVE_USER';
+const UPDATE_PLAYER = 'UPDATE_PLAYER';
 
 /* ----------------- SETTINGS ------------------ */
 
@@ -112,6 +113,7 @@ the leader then commands "/ready", triggering the moderator's assignment of role
 /* -------------- eventually... --------------- */
 // the moderator is run on another server and the leader is not the one invoking the methods
 
+const debug = (...args) => console.log('[MOD]', ...args)
 
 export default class Moderator {
   // created when a leader creates a game
@@ -148,13 +150,69 @@ export default class Moderator {
 
     this.winner = ''; // winner is string, villagers or werewolves
 
-    // Listen to player existential crises in Firebase
+/* --------------------- Player Roster ------------------ */
+
+    // Listen to player existential crises in Firebase (aka the roster)
     const roster = firebase.database().ref(`games/${this.gameName}/roster`)
 
-    roster.on('child_added', person =>
-      this.narrate(`Welcome, ${person.val().toUpperCase()}.`, 'public'))
-    roster.on('child_removed', person =>
-      this.narrate(`${person.val().toUpperCase()} fell down a well.`))
+    roster.on('child_added', person => {
+      // TODO we don't want users to need to put in username on page refresh
+      // ADD_USER should be refactored to listen to the roster
+
+      // most recent session
+      const currentSession = person.ref.child('sessions').limitToLast(1)
+
+      // toeBell: TimeoutHandle
+      // Like the bell attached to a corpse's toe, we will cancel the timer
+      // that declares them dead if a player comes back in time.
+      let toeBell = null, stopListeningToLastSession = () => {}
+
+      // When session becomes the active session...
+      currentSession.on('child_added', session => {
+        // person should not be welcomed if its a page refresh
+        if (!person.val().welcomed) {
+          this.narrate(`Welcome, ${person.val().name}.`, 'public')
+          person.ref.update({welcomed: true}, () => {
+            let newPerson = firebase.database().ref(`games/${this.gameName}/roster/${person.key}`).once('value')
+            newPerson.then(res => person = res)
+          })
+        }
+
+        const endKey = session.ref.child('end')
+        // debug(person.key, 'has a session', session.key)
+        if (session.val().moderated) return
+
+        toeBell && clearTimeout(toeBell)
+        toeBell = null
+
+        stopListeningToLastSession()
+
+        // debug('will listen to', endKey)
+        // listens for value being added to 'end' property
+        const listener = endKey.on('value', end => {
+          // check if end === null
+          if (!end.val()) return
+          // debug('it looks like', person.key, 'may be dead...')
+          const timeout = 10000 - (Date.now() - end.val())
+          // debug(`${person.key}, you have ${timeout} seconds to respond...`)
+
+          // if user doesn't return before setTimeout, they are dead
+          toeBell = setTimeout(
+            () => {
+              // debug(`${person.key} is an ex-parrot.`)
+              this.narrate(`${person.val().name} fell down a well.`)
+              session.ref.update({moderated: true})
+            },
+            timeout)
+        })
+
+        // removes currentSession listener
+        stopListeningToLastSession = () => {
+          // debug('no longer listening to', endKey)
+          endKey.off('value', listener)
+        }
+      })
+    })
 
     // listen to player actions in firebase
     firebase.database().ref(`games/${this.gameName}/playerActions/`)
@@ -169,7 +227,6 @@ export default class Moderator {
         case ADD_USER:
           this.handleJoin(playerAction)
           break;
-
 
         case PROMPT_LEADER:
           this.handlePromptLeader()
