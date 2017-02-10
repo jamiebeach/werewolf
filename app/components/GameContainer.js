@@ -37,7 +37,6 @@ export class GameContainer extends Component {
     return (
       <div>
         {this.props.player.joined ? <ChatContainer /> : <JoinGame gameId={this.props.gameId}/>}
-        }
       </div>
     )
   }
