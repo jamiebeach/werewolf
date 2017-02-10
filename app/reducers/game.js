@@ -18,6 +18,7 @@ const initialState = {
   backgroundImage: 'day',
   winner: '',
   messages: [],
+  vote: {},
 }
 
 //TODOS
@@ -103,7 +104,7 @@ const reducer = (state = initialState, action) => {
     case RECIEVE_MESSAGE:
       return {
         ...state,
-        messages: [...state.messages, {text: action.message, user: action.user}],
+        messages: [...state.messages, {text: action.message, user: action.user, color: action.color}],
       }
 
     case SWITCH_TIME:
@@ -126,6 +127,11 @@ const reducer = (state = initialState, action) => {
         ...state,
         winner: action.winner,
         backgroundImage: action.winner === 'villagers' ? 'day villagers-victory' : 'day werewolves-victory'
+
+    case SELECT_VOTE:
+      return {
+        ...state,
+        vote: action.vote,
       }
 
     default:
@@ -152,6 +158,7 @@ const REMOVE_USER = 'REMOVE_USER';
 
 const RECIEVE_MESSAGE = 'RECIEVE_MESSAGE';
 const RECIEVE_VOTE = 'RECIEVE_VOTE';
+const SELECT_VOTE = 'SELECT_VOTE';
 const SWITCH_TIME = 'SWITCH_TIME';
 
 const SCRYING = 'SCRYING';
@@ -195,6 +202,10 @@ export const recieveTakenName = takenName => ({
   type: RECIEVE_TAKENNAME, takenName
 })
 
+// for using the player roster as a voting button tool
+export const selectVote = (target) => {
+  type: SELECT_VOTE, target
+}
 
 /*---------
 Listeners for /storeActions
@@ -266,6 +277,12 @@ export const fetchAllGames = () => {
 }
 
 /* ------------       DISPATCHERS     ------------------ */
+
+//  a normal dispatcher for local redux state. selected vote button on the roster
+export const chooseVote = (target) =>
+  dispatch => {
+    dispatch(selectVote(target))
+};
 
 // in util.js
 // Helper function to wrap actions and send them to firebase
@@ -388,19 +405,19 @@ export const sendMessageAction = gameAction(
 // send votes to playerActions
 export const sendVoteAction = gameAction (
   (user, target) => ({
-      type: RECIEVE_VOTE,
-      user,
-      target
-    })
+    type: RECIEVE_VOTE,
+    user,
+    target
+  })
 )
 
 // send scrys to playerActions
 export const sendScryAction = gameAction (
   (user, target) => ({
-      type: SCRYING,
-      user,
-      target
-    })
+    type: SCRYING,
+    user,
+    target
+  })
 )
 
 // send saves to playerActions

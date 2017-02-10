@@ -6,6 +6,7 @@ import PlayersList from './PlayersList';
 import {
   sendMessageAction,
   sendVoteAction,
+  chooseVote,
   sendSaveAction,
   sendScryAction,
   startGame,
@@ -25,6 +26,7 @@ let backgroundImage = props.game.backgroundImage + " " + "container";
             messages={props.game.messages}
             players={props.game.users}
             day={props.game.day}
+
             sendMessage={props.sendMessage}
             sendVote={props.sendVote}
             sendSave={props.sendSave}
@@ -36,7 +38,15 @@ let backgroundImage = props.game.backgroundImage + " " + "container";
         }
       </div>
       <div className="players-container column-4">
-        <PlayersList player={props.player} players={props.game.users} day={props.game.day}/>
+        <PlayersList
+          player={props.player}
+          players={props.game.users}
+          day={props.game.day}
+
+          vote={props.game.vote}
+          chooseVote={props.chooseVote}
+          sendVote={props.sendVote}
+        />
       </div>
     </div>
 
@@ -59,6 +69,9 @@ const mapDispatchToProps = dispatch => {
     sendVote (user, target) {
       return dispatch(sendVoteAction(user, target));
     },
+    chooseVote (targetObject) {
+      return dispatch(chooseVote(targetObject));
+    },
     sendScry (seerName, targetName) {
       return dispatch(sendScryAction(seerName, targetName));
     },
@@ -71,12 +84,7 @@ const mapDispatchToProps = dispatch => {
     leaderStart () {
       return dispatch(leaderStart());
     },
-    dispatchAddImage (image) {
-      return dispatch(addImage(image));
-    },
-    dispatchUpdateGuessed (tags) {
-      return dispatch(updateGuessed(tags));
-    }
+
   });
 };
 

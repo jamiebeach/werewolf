@@ -4,9 +4,12 @@ import React from 'react';
 
 const PlayersList = (props) => {
   const day = props.day;
-
   const player = props.player;
   const players = props.players;
+
+  const vote = props.vote;
+  const chooseVote = props.chooseVote;
+  const sendVote = props.sendVote;
 
   const dead = (player) => {
   if (!player.alive) return 'line-through';
