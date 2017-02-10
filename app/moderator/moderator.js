@@ -21,6 +21,7 @@ const SAVING = 'SAVING';
 const KILLING = 'KILLING';
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_USER = 'RECIEVE_USER';
+const UPDATE_PLAYER = 'UPDATE_PLAYER';
 
 /* ----------------- SETTINGS ------------------ */
 
@@ -156,10 +157,7 @@ export default class Moderator {
 
     roster.on('child_added', person => {
       // person should not be welcomed if its a page refresh
-      if (!person.val().welcomed) {
-        this.narrate(`Welcome, ${person.val().name}.`, 'public')
-        person.ref.update({welcomed: true})
-      }
+      console.log("inside roster listener, person = ", person);
       
       // TODO we don't want users to need to put in username on page refresh
       // ADD_USER should be refactored to listen to the roster
@@ -174,8 +172,23 @@ export default class Moderator {
       
       // When session becomes the active session...
       currentSession.on('child_added', session => {
+        console.log("inside currentSession listenter, person.val =", person.val())
+        if (!person.val().welcomed) {
+          this.narrate(`Welcome, ${person.val().name}.`, 'public')
+          person.ref.update({welcomed: true}, () => {
+            let newPerson = firebase.database().ref(`games/${this.gameName}/roster/${person.key}`).once('value')
+            newPerson.then(res => person = res)
+            console.log('after welcomed is true, person =', person)
+          })
+          
+
+        }
+        else {
+          this.handleRejoin({name: person.val().name})
+        }
+
         const endKey = session.ref.child('end')
-        debug(person.key, 'has a session', session.key)
+        // debug(person.key, 'has a session', session.key)
         if (session.val().moderated) return
 
         toeBell && clearTimeout(toeBell)
@@ -183,19 +196,19 @@ export default class Moderator {
 
         stopListeningToLastSession()
 
-        debug('will listen to', endKey)
+        // debug('will listen to', endKey)
         // listens for value being added to 'end' property
         const listener = endKey.on('value', end => {
           // check if end === null
           if (!end.val()) return
-          debug('it looks like', person.key, 'may be dead...')
+          // debug('it looks like', person.key, 'may be dead...')
           const timeout = 10000 - (Date.now() - end.val())
-          debug(`${person.key}, you have ${timeout} seconds to respond...`)
+          // debug(`${person.key}, you have ${timeout} seconds to respond...`)
 
           // if user doesn't return before setTimeout, they are dead
           toeBell = setTimeout(
             () => {
-              debug(`${person.key} is an ex-parrot.`)
+              // debug(`${person.key} is an ex-parrot.`)
               this.narrate(`${person.val().name} fell down a well.`)
               session.ref.update({moderated: true})
             },
@@ -204,7 +217,7 @@ export default class Moderator {
 
         // removes currentSession listener
         stopListeningToLastSession = () => {
-          debug('no longer listening to', endKey)
+          // debug('no longer listening to', endKey)
           endKey.off('value', listener)
         }
       })
@@ -224,7 +237,6 @@ export default class Moderator {
         case ADD_USER:
           this.handleJoin(playerAction)
           break;
-
 
         case PROMPT_LEADER:
           this.handlePromptLeader()
@@ -446,6 +458,21 @@ export default class Moderator {
       role: 'villager' //everyone is "villager" at first
     }
     this.moderate(player, 'public', 'adduser')
+  }
+
+  handleRejoin(playerAction) {
+    let player 
+    console.log("~~~~~~~~~~~~~~inside handleRejoin, playerAction=", playerAction);
+    if (this.didStart) {
+      player = this.players[playerAction.name];
+    } else {
+      player = this.players.find((player) => {
+        return player.name === playerAction.name
+      })  
+      console.log("game not started, player = ", player);
+    }
+    player.type = UPDATE_PLAYER;
+    this.moderate(player, player.uid, 'rejoinPlayer')
   }
 
 /* --------------------- Msgs To Players  ------------------------- */ 

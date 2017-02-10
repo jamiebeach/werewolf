@@ -310,6 +310,7 @@ export const joinGame = (name, gameId) => {
   }
 }
 
+
 // when user joins a game they input a Player name.
 export const addUser = username => (dispatch, getState) => {
   const uid = getState().game.player.uid
