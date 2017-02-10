@@ -21,17 +21,17 @@ export class GameContainer extends Component {
     }
   }
 
-  componentDidMount (){
-    if (this.props.auth.uid) {
-      const rosterPlayer = firebase.database().ref(`games/${this.props.gameId}/roster/${this.props.auth.uid}`).once('value');
-      rosterPlayer.then(res => {
-        if (res) {
-          this.props.updatePlayer({name: res.val().name});
-          this.props.updateGameActions();
-        }
-      })
-    }
-  }
+  // componentDidMount (){
+  //   if (this.props.auth.uid) {
+  //     const rosterPlayer = firebase.database().ref(`games/${this.props.gameId}/roster/${this.props.auth.uid}`).once('value');
+  //     rosterPlayer.then(res => {
+  //       if (res) {
+  //         this.props.updatePlayer({name: res.val().name});
+  //         this.props.updateGameActions();
+  //       }
+  //     })
+  //   }
+  // }
 
   render () {
     return (

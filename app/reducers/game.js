@@ -200,7 +200,7 @@ export const updateGameActions = () => {
     const me = roster.child(uid)
     me.update({name})
     const session = me.child('sessions').push({start: firebase.database.ServerValue.TIMESTAMP})
-    // when player disconnects place timestamp 
+    // when player disconnects place timestamp
     session.onDisconnect().update({end: firebase.database.ServerValue.TIMESTAMP})
     // TODO: There's an uncomfortable asymmetry here between adding and removing users.
     // Probably we should get rid of the journaled ADD_USER action and just respond
