@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import ChatContainer from './ChatContainer';
 import JoinGame from './JoinGame';
 import {connect} from 'react-redux';
-import {updateGameActions, updatePlayer, joinGame} from '../reducers/game';
+import {updateGameActions, updatePlayer} from '../reducers/game';
 
 export class GameContainer extends Component {
   constructor(props) {
@@ -10,10 +10,10 @@ export class GameContainer extends Component {
   }
 
   componentDidUpdate (prevProps, prevState){
-    if(!prevProps.auth.uid && this.props.auth.uid) {
+    if (!prevProps.auth.uid && this.props.auth.uid) {
       const rosterPlayer = firebase.database().ref(`games/${this.props.gameId}/roster/${this.props.auth.uid}`).once('value');
       rosterPlayer.then(res => {
-        if(res) {
+        if (res) {
           this.props.updatePlayer({name: res.val().name});
           this.props.updateGameActions();
         }
@@ -22,10 +22,10 @@ export class GameContainer extends Component {
   }
 
   componentDidMount (){
-    if(this.props.auth.uid) {
+    if (this.props.auth.uid) {
       const rosterPlayer = firebase.database().ref(`games/${this.props.gameId}/roster/${this.props.auth.uid}`).once('value');
       rosterPlayer.then(res => {
-        if(res) {
+        if (res) {
           this.props.updatePlayer({name: res.val().name});
           this.props.updateGameActions();
         }
