@@ -149,12 +149,18 @@ export default class Moderator {
 
     this.winner = ''; // winner is string, villagers or werewolves
 
-    // Listen to player existential crises in Firebase aka the roster
+/* --------------------- Player Roster ------------------ */
+
+    // Listen to player existential crises in Firebase (aka the roster)
     const roster = firebase.database().ref(`games/${this.gameName}/roster`)
 
     roster.on('child_added', person => {
-      // TODO they should not be welcomed if its a page refresh
-      this.narrate(`Welcome, ${person.val().name}.`, 'public')
+      // person should not be welcomed if its a page refresh
+      if (!person.val().welcomed) {
+        this.narrate(`Welcome, ${person.val().name}.`, 'public')
+        person.ref.update({welcomed: true})
+      }
+      
       // TODO we don't want users to need to put in username on page refresh
       // ADD_USER should be refactored to listen to the roster
       
