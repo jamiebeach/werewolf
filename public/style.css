@@ -104,9 +104,19 @@ body {
   font-size: 3rem;
 }
 
-.landingButton{
+.buttonContainer {
   margin-left: 12%;
+}
+
+.landingButton{
   margin-top: 2rem;
+  float: left;
+}
+
+.gameButton {
+  float: left;
+  margin-top: 2rem;
+  margin-left: 2rem;
 }
 
 /* ----- NEW GAME ----- */
