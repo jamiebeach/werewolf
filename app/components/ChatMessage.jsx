@@ -4,7 +4,7 @@ function ChatMessage(props) {
   let message = props.message;
   let players = props.players;
   let color = props.message.color;
-  console.log("inside ChatMessage, msg = ", color);
+
   return (
 
     <li
