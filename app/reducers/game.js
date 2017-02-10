@@ -11,7 +11,7 @@ const initialState = {
   games: [],
 
   gameId: '',
-  takenNames: [],
+  takenNames: ['moderator'],
   gameInProgress: false,
   player: {},
   // users: { [playerName: String]: User }
@@ -35,7 +35,7 @@ const reducer = (state = initialState, action) => {
     case RECIEVE_TAKENNAME:
       return {
         ...state,
-        takenNames: (action.takenName === '!') ? [] : [...state.takenNames, action.takenName]}
+        takenNames: (action.takenName === '!') ? ['moderator'] : [...state.takenNames, action.takenName]}
 
     case FETCH_GAME:
       return {

@@ -17,7 +17,9 @@ export class NewGame extends React.Component {
 		evt.preventDefault();
 		const userName = evt.target.userName.value;
 		const gameName = evt.target.gameName.value;
-		this.props.createNewGame(userName, gameName);
+		if (userName.toLowerCase() === 'moderator') this.setState({warning: 'That name is already taken'})
+		else if (userName === '') this.setState({warning: 'Please provide a name.'})
+		else this.props.createNewGame(userName, gameName);
 	}
 
 	handleKeyDown(evt) {
@@ -59,7 +61,7 @@ export class NewGame extends React.Component {
 								floatingLabelText="Player Name"
 								hintStyle={{color: "#AAA"}}
 								underlineFocusStyle={{borderColor: "#FFFFFF"}}
-								inputStyle={{color: "#FFF", fontWeight: 'normal', fontFamily: 'IM Fell Great Primer SC'}}
+								inputStyle={{color: "#FFF", fontWeight: 'normal', fontFamily: 'IM Fell Great Primer SC', textTransform: 'lowercase' }}
 								floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
 								onKeyPress={this.handleKeyPress}
 								onKeyDown={this.handleKeyDown}

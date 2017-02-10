@@ -20,6 +20,7 @@ export class JoinGame extends React.Component {
 		const userName = evt.target.userName.value.toLowerCase();
 		if (this.props.takenNames.indexOf(userName) !== -1)
 			this.setState({warning: 'A player in this game already has that name.'});
+		else if (userName === '') this.setState({warning: 'Please provide a name.'})
 		else this.props.joinGame(userName, gameId);
 	}
 

@@ -36,7 +36,10 @@ body {
 }
 
 .navBtnRight {
-  float: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .CircularProgressbar {
@@ -61,12 +64,9 @@ body {
   font-family: 'IM Fell Great Primer SC';
   dominant-baseline: middle;
   text-anchor: middle;
-  float: left;
 }
 
 .navBtnRight .icons{
-  /*padding-right: 3%;*/
-  float: right;
   margin: 1rem;
   text-decoration: none;
   color: #FFF;
