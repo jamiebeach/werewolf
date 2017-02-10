@@ -341,10 +341,8 @@ export default class Moderator {
         this.narrate(msg, 'public', player.uid, 'rgba(13,122,88, .5)', 'werewolf role');
       }
       let msg = `${player.name}, the leader will start the game when everyone is ready. 
-I will give more instructions to you in private messages as necessary. 
-
-All slash commands you send to me will be private, with the exception of daytime voting. 
-Type '/help' at any time to ask me for more information on gameplay.`
+I will private message you instructions as necessary. 
+Type '/help' to ask me for help`
       this.narrate(msg, 'public', player.uid, 'role assign');
     })
 
