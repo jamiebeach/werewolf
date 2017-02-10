@@ -28,7 +28,7 @@ export default class Chat extends Component {
           if (this.props.day && this.props.gameloop) this.props.sendVote(this.props.player.name, target);
           else if (!this.props.day && this.props.player.role === 'werewolf' && this.props.gameloop) this.props.sendVote(this.props.player.name, target);
           else {
-            this.props.sendMessage('moderator', `You are forbidden from the "${cmd}" action at this time`, this.props.player.uid)
+            this.props.sendMessage('moderator', `You are forbidden from the '${cmd}' action at this time`, this.props.player.uid)
             }
           break;
 
@@ -37,7 +37,7 @@ export default class Chat extends Component {
             this.props.sendSave(this.props.player, target);
           }
           else {
-            this.props.sendMessage('moderator', `You are forbidden from the"${cmd}" action at this time`, this.props.player.uid)
+            this.props.sendMessage('moderator', `You are forbidden from the '${cmd}' action at this time`, this.props.player.uid)
           }
           break;
 
@@ -46,8 +46,23 @@ export default class Chat extends Component {
             this.props.sendScry(this.props.player, target);
           }
           else {
-            this.props.sendMessage('moderator', `You are forbidden from the"${cmd}" action at this time`, this.props.player.uid)
+            this.props.sendMessage('moderator', `You are forbidden from the '${cmd}' action at this time`, this.props.player.uid)
           }
+          break;
+
+        case '/help':
+          this.props.sendMessage(
+            'moderator',
+            `Hi, ${this.props.player.name.toUpperCase()}. Your role is ${this.props.player.role ? this.props.player.role.toUpperCase() : 'not assigned yet'}.\n` +
+            `In Nightfall, you have the option between text and button commands.\n` +
+            `The button at the end of the player roster will change based on the actions you are allowed at any given time\n` +
+            `Text commands can be given by typing slash commands:\n` +
+            `'/vote [name]' to vote to nominate someone as a target\n` +
+            `'/save [name]' lets the priest save 1 person from the werewolves at night, \n` +
+            `'/scry [name]' lets the seer check if 1 person is a werewolf at night\n` +
+            `'/roles' and '/ready' are only used by the leader to ask me to hand out roles and start the game, respectively.\n`,
+            this.props.player.uid
+            )
           break;
 
         case '/roles':
@@ -55,7 +70,7 @@ export default class Chat extends Component {
             this.props.startGame();
           }
           else {
-            this.props.sendMessage('moderator', `You are forbidden from the"${cmd}" action at this time`, this.props.player.uid)
+            this.props.sendMessage('moderator', `You are forbidden from the '${cmd}' action at this time`, this.props.player.uid)
           }
           break;
 
@@ -64,7 +79,7 @@ export default class Chat extends Component {
             this.props.leaderStart();
           }
           else {
-            this.props.sendMessage('moderator', `You are forbidden from the ${cmd} action at this time`, this.props.player.uid)
+            this.props.sendMessage('moderator', `You are forbidden from the '${cmd}' action at this time`, this.props.player.uid)
           }
           break;
 
@@ -115,7 +130,7 @@ export default class Chat extends Component {
           <TextField
             style={{flexGrow: 1, marginLeft: '10px'}}
             id="message"
-            floatingLabelText={(this.props.player.alive) ? "" : "The living cannot hear you when you're dead"}
+            floatingLabelText={(this.props.player.alive) ? "" : "The living cannot hear you"}
             floatingLabelStyle={{color: day ? '#000' : '#AAA', fontFamily: 'IM Fell French Canon' }}
             underlineFocusStyle={{borderColor: day ? '#0D7A58' : '#6E0300 ' }}
             inputStyle={{color: day ? '#000' : '#FFF', fontWeight: 'normal', fontFamily: 'IM Fell French Canon' }}

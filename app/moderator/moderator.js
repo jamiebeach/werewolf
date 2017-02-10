@@ -39,7 +39,6 @@ let colors =
   'darkcyan', 'darkturquoise', 'cadetblue', 'deepskyblue', 'darkblue',
   'midnightblue', 'darkslateblue', 'blueviolet', 'indigo',  'rebeccapurple',
   'purple', 'darkmagenta', 'plum', 'violet', 'lightcoral', 'darksalmon',
-  'darkslategrey',
 ];
 
 let avatars = [
@@ -153,9 +152,9 @@ export default class Moderator {
     const roster = firebase.database().ref(`games/${this.gameName}/roster`)
 
     roster.on('child_added', person =>
-      this.narrate(`Welcome, ${person.val()}.`, 'public'))
+      this.narrate(`Welcome, ${person.val().toUpperCase()}.`, 'public'))
     roster.on('child_removed', person =>
-      this.narrate(`${person.val()} fell down a well.`))
+      this.narrate(`${person.val().toUpperCase()} fell down a well.`))
 
     // listen to player actions in firebase
     firebase.database().ref(`games/${this.gameName}/playerActions/`)
@@ -344,9 +343,10 @@ export default class Moderator {
         let msg = `You are a VILLAGER. As a villager, you will deduce which of your fellow villagers is a werewolf in disguise and vote to execute them.`
         this.narrate(msg, 'public', player.uid, 'rgba(13,122,88, .5)', 'werewolf role');
       }
-      let msg = `${player.name}, the leader will start the game when everyone is ready.
+
+      let msg = `${player.name.toUpperCase()}, the leader will start the game when everyone is ready.
 I will private message you instructions as necessary.
-Type '/help' to ask me for help`
+Type '/help' to ask me for help.`
       this.narrate(msg, 'public', player.uid, 'role assign');
     })
 
@@ -415,7 +415,7 @@ Type '/help' to ask me for help`
         let scry = {
           type: RECIEVE_MESSAGE,
           user: sender.name,
-          message: `/scry ${playerAction.target}`,
+          message: `/scry ${playerAction.target.toUpperCase()}`,
           role: sender.role,
         }
         this.moderate(scry, this.seerId, 'scrying')
@@ -429,7 +429,7 @@ Type '/help' to ask me for help`
 
           this.didScry = true;
           let werewolfStatus = this.players[playerAction.target].role === 'werewolf';
-          let msg = werewolfStatus ? `${playerAction.target} definitely howls at the moon` : `${playerAction.target} wouldn't hurt a fly`
+          let msg = werewolfStatus ? `${playerAction.target.toUpperCase()} definitely howls at the moon` : `${playerAction.target.toUpperCase()} wouldn't hurt a fly`
           this.narrate(msg, sender.role, sender.uid, 'scry results')
 
           if (this.majority && this.didSave) {
@@ -440,7 +440,7 @@ Type '/help' to ask me for help`
           }
         }
       } else {
-        let msg = `${playerAction.target} is not a resident of this village... Did you mean to scry on someone else?`;
+        let msg = `${playerAction.target.toUpperCase()} is not a resident of this village... Did you mean to scry on someone else?`;
         this.narrate(msg, sender.role, sender.uid, 'bad name scryed');
       }
     }
@@ -454,7 +454,7 @@ Type '/help' to ask me for help`
         let save = {
           type: RECIEVE_MESSAGE,
           user: sender.name,
-          message: `/save ${playerAction.target}`,
+          message: `/save ${playerAction.target.toUpperCase()}`,
           role: sender.role,
         }
         this.moderate(save, this.priestId, 'saving')
@@ -468,7 +468,7 @@ Type '/help' to ask me for help`
           this.didSave = true;
           this.players[playerAction.target].immunity = true;
 
-          let msg = `A divine shield surrounds ${playerAction.target}, protecting them from the werewolves for tonight.`
+          let msg = `A divine shield surrounds ${playerAction.target.toUpperCase()}, protecting them from the werewolves for tonight.`
 
           this.narrate(msg, sender.role, sender.uid, 'saving')
 
@@ -480,7 +480,7 @@ Type '/help' to ask me for help`
           }
         }
       } else {
-        let msg = `${playerAction.target} is not a resident of this village.... Did you mean to save someone else?`;
+        let msg = `${playerAction.target.toUpperCase()} is not a resident of this village.... Did you mean to save someone else?`;
         this.narrate(msg, sender.role, sender.uid, 'bad name saved');
       }
     }
@@ -493,7 +493,7 @@ Type '/help' to ask me for help`
 
     // ignore votes for users that dont exist, send message eventually
     if (!this.players[playerAction.target]){
-      let msg = `${playerAction.target} is not a resident of this village.... Did you mean to vote on someone else?`;
+      let msg = `${playerAction.target.toUpperCase()} is not a resident of this village.... Did you mean to vote on someone else?`;
       this.narrate(msg, sender.role, sender.uid, 'bad name voted');
       return;
     }
@@ -505,7 +505,7 @@ Type '/help' to ask me for help`
         let channel = this.day ? 'public' : 'werewolves';
         let methodOfMurder = this.day ? 'execute' : 'maul';
 
-        let msg = `${playerAction.user} votes to ${methodOfMurder} ${playerAction.target}`
+        let msg = `${playerAction.user.toUpperCase()} votes to ${methodOfMurder} ${playerAction.target.toUpperCase()}`
         this.narrate(msg, role, channel, `${role} voting`)
 
         this.tallyVotes(role, methodOfMurder);
@@ -559,7 +559,7 @@ Type '/help' to ask me for help`
           this.chosen = keys[i];
           this.majority = true;
           let channel = this.day ? 'public' : 'werewolves';
-          let msg = `A majority vote has been reached to ${methodOfMurder} ${keys[i]}.  Any votes given after this will not affect the decision.`
+          let msg = `A majority vote has been reached to ${methodOfMurder} ${keys[i].toUpperCase()}.  Any votes given after this will not affect the decision.`
           this.narrate(msg, role, channel, role);
           return;
         }
@@ -596,7 +596,7 @@ Type '/help' to ask me for help`
         }
       }
       this.moderate(kill, 'public', 'death');
-      msg = `${this.chosen} was eaten by werewolves last night! Gossip with your neighbors about who you think the werewolf is.`;
+      msg = `${this.chosen.toUpperCase()} was eaten by werewolves last night! Gossip with your neighbors about who you think the werewolf is.`;
       // red msg background
       this.narrate(msg, 'public', null, 'rgba(110,3,0, .8)', 'morning');
     }
@@ -604,7 +604,8 @@ Type '/help' to ask me for help`
     // once news of the night has been absorbed, call the village to action
     // has green msg background
     setTimeout(()=>{
-      let msg2 = ` ALL: Vote to put a suspect to death by typing '/VOTE NAME'. You may vote multiple times. Votes will be publicly announced.`;
+      let msg2 = `ALL: Vote to put a suspect to death by typing '/vote [name]'.
+       You may vote multiple times. Votes will be publicly announced.`;
       this.narrate(msg2, 'public', null, 'rgba(13,122,88, .5)', 'morning');
     }, timeToRead)
 
@@ -635,17 +636,18 @@ Type '/help' to ask me for help`
         // send messages to special people
         let wmsg = `Werewolves, awaken. Choose a villager to slay. `
         this.narrate(wmsg, 'wolf', 'werewolves', 'awaken wolves');
-        let wmsg2 = `WEREWOLVES: To vote to slay a villager, type '/VOTE NAME'. You must agree on a single target.`
+        let wmsg2 = `WEREWOLVES: To vote to slay a villager, type '/vote [name]'.
+        You must agree on a single target.`
         this.narrate(wmsg2, 'wolf', 'werewolves', 'rgba(54,4,87, .5)', 'awaken wolves');
 
         let smsg = `Seer, awaken. Choose a player whose identity you wish to discover. You can only discover one player's identity each night.`
         this.narrate(smsg, 'seer', this.seerId, 'awaken seer');
-        let smsg2 = `SEER: To check if a certain villager is a werewolf, type '/SCRY NAME'.`;
+        let smsg2 = `SEER: To check if a certain villager is a werewolf, type '/scry [name]'.`;
         this.narrate(smsg2, 'seer', this.seerId, 'rgba(54,4,87, .5)', 'awaken seer');
 
         let pmsg = `Priest, awaken. Choose a player to save. You are allowed to save yourself or another player. You may only save once per night.`
         this.narrate(pmsg, 'priest', this.priestId, 'awaken priest');
-        let pmsg2 = `PRIEST: To protect a villager from death by werewolves, type '/SAVE NAME'`;
+        let pmsg2 = `PRIEST: To protect a villager from death by werewolves, type '/save [name]'`;
         this.narrate(pmsg2, 'priest', this.priestId, 'rgba(54,4,87, .5)', 'awaken priest');
 
       }, timeToRead * 2) // ... bad way to line up the settimeouts, i know
@@ -687,7 +689,7 @@ Type '/help' to ask me for help`
     this.playerNames.splice(this.playerNames.indexOf(this.chosen), 1);
     if (chosen.role === 'werewolf') this.wolfNames.splice(this.playerNames.indexOf(this.chosen), 1);
 
-    let msg = `The villagers find ${this.chosen} extremely suspiscious and hang them at townsquare before sundown.`
+    let msg = `The villagers find ${this.chosen.toUpperCase()} extremely suspiscious and hang them at townsquare before sundown.`
     this.narrate(msg, 'public', null, 'execution')
 
     let kill = {

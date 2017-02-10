@@ -4,10 +4,10 @@ import JoinGame from './JoinGame';
 import {connect} from 'react-redux';
 
 const GameContainer = props => {
+
   return (
     <div>
       {props.player.joined ? <ChatContainer /> : <JoinGame />}
-      }
     </div>
   )
 }

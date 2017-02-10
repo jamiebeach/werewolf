@@ -49,17 +49,16 @@ class Navbar extends React.Component {
   render() {
     return (
       <div className='navbar'>
-        <div >
+        <div className='navBtnLeft'>
           <IconButton
-            className='navBtnLeft'
             onClick={() => browserHistory.push('/home')}
             >
             <ActionHome
               color={'#FFFFFF'}
-              hoverColor={'#6E0300'}
+              hoverColor={'#D6C967'}
             />
           </IconButton>
-          <h3 className='navBtnLeft'>Nightfall</h3>
+          <h3>Nightfall</h3>
         </div>
 
         <div className="navBtnRight">
