@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import NightImage from './NightImage';
 import ChatBox from './ChatBox';
 import PlayersList from './PlayersList';
+import VictoryModal from './VictoryModal';
+
 import {
   sendMessageAction,
   sendVoteAction,
@@ -36,7 +38,7 @@ const ChatContainer = props => {
             />
           : <NightImage/>
         }
-        {props.startGame ? <VictoryModal /> : null }
+      {props.game.gameId ? <VictoryModal winner='werewolves' /> : null}
 
       </div>
       <div className="players-container column-4">

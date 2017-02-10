@@ -201,6 +201,16 @@ body {
   background-size: cover;
 }
 
+/* ----- VICTORY MODALS ----- */
+
+.werewolves-modal {
+   background-image: url('/images/werewolf.jpg') !important;
+}
+
+.villagers-modal {
+   background-image: url('/images/village.jpg') !important;
+}
+
 
 /* ----- CHAT BOX ----- */
 #chat-input form {
