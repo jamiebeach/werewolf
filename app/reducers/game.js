@@ -20,6 +20,7 @@ const initialState = {
   day: true,
   messages: [],
   vote: {},
+  winner: ''
 }
 
 //TODOS
