@@ -20,10 +20,13 @@ export class ChatContainer extends React.Component {
   }
 
   componentDidMount() {
-    window.onbeforeunload = () => {
-      return 'You may forfeit any current games if you leave.';
-      // this makes the browser ask you if you really want to leave or reload the page
-      //no custom message is possible....
+    // if the leader tries to refresh their game, they're asked if they really want to refresh.
+    if (this.props.player.leader){
+      window.onbeforeunload = () => {
+        return 'You may forfeit any current games if you leave.';
+        // this makes the browser ask you if you really want to leave or reload the page
+        //no custom message is possible....
+      }
     }
   }
 
