@@ -340,9 +340,11 @@ export default class Moderator {
         let msg = `You are a VILLAGER. As a villager, you will deduce which of your fellow villagers is a werewolf in disguise and vote to execute them.`
         this.narrate(msg, 'public', player.uid, 'rgba(13,122,88, .5)', 'werewolf role');
       }
-      let msg = `${player.name}, the leader will start the game when everyone is ready. I will give more instructions to you in private messages as necessary. 
+      let msg = `${player.name}, the leader will start the game when everyone is ready. 
+I will give more instructions to you in private messages as necessary. 
 
-All slash commands you send to me will be private, with the exception of daytime voting. Type '/help' at any time to ask me for more information on gameplay.`
+All slash commands you send to me will be private, with the exception of daytime voting. 
+Type '/help' at any time to ask me for more information on gameplay.`
       this.narrate(msg, 'public', player.uid, 'role assign');
     })
 
