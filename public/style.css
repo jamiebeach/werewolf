@@ -19,10 +19,10 @@ body {
 
 /* ----- NAVBAR ----- */
 .navbar {
-/*
+
   display: flex;
   justify-content: space-between;
-*/
+
   background-color: #1E052B;
   opacity: .8;
   position: fixed;
@@ -31,8 +31,8 @@ body {
 }
 
 .navBtnLeft{
-  float: left;
-  margin: 1rem;
+  display: flex;
+  align-items: center;
 }
 
 .navBtnRight {
@@ -121,11 +121,10 @@ body {
 
 .formContain {
   width: 75%;
-  margin: 0 auto;
+  margin: 5% auto;
   background: rgba(0, 0, 0, .5);
   color: #FFF;
   padding: 5%;
-  margin-top: 5%;
 }
 
 .formHeader {
