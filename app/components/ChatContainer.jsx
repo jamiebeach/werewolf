@@ -6,40 +6,70 @@ import PlayersList from './PlayersList';
 import {
   sendMessageAction,
   sendVoteAction,
+  chooseVote,
   sendSaveAction,
   sendScryAction,
   startGame,
   leaderStart
 } from '../reducers/game'
 
-const ChatContainer = props => {
+export class ChatContainer extends React.Component {
 
-  return(
-    <div className={props.game.day ? 'day container' : 'night container'}>
-      <div className="chatHalf">
-        {
-          (props.game.day || !props.player.alive || props.player.role !== 'villager')
-          ? <ChatBox
-            player={props.player}
-            messages={props.game.messages}
-            players={props.game.users}
-            day={props.game.day}
-            sendMessage={props.sendMessage}
-            sendVote={props.sendVote}
-            sendSave={props.sendSave}
-            sendScry={props.sendScry}
-            startGame={props.startGame}
-            leaderStart={props.leaderStart}
-            />
-          : <NightImage/>
-        }
-      </div>
-      <div className="players-container column-4">
-        <PlayersList player={props.player} players={props.game.users} day={props.game.day}/>
-      </div>
-    </div>
+  constructor(props){
+    super(props)
+  }
 
-  )
+  componentDidMount() {
+    // if the leader tries to refresh their game, they're asked if they really want to refresh.
+    if (this.props.player.leader){
+      window.onbeforeunload = () => {
+        return 'You may forfeit any current games if you leave.';
+        // this makes the browser ask you if you really want to leave or reload the page
+        //no custom message is possible....
+      }
+    }
+  }
+
+  render() {
+    return (
+      <div className={this.props.game.day ? 'day container' : 'night container'}>
+        <div className="chatHalf">
+          {
+            (this.props.game.day || !this.props.player.alive || this.props.player.role !== 'villager')
+            ? <ChatBox
+              player={this.props.player}
+              messages={this.props.game.messages}
+              players={this.props.game.users}
+              day={this.props.game.day}
+              gameloop={this.props.game.gameInProgress}
+
+              sendMessage={this.props.sendMessage}
+              sendVote={this.props.sendVote}
+              sendSave={this.props.sendSave}
+              sendScry={this.props.sendScry}
+              startGame={this.props.startGame}
+              leaderStart={this.props.leaderStart}
+              />
+            : <NightImage/>
+          }
+        </div>
+        <div className="players-container column-4">
+          <PlayersList
+            player={this.props.player}
+            players={this.props.game.users}
+            day={this.props.game.day}
+            gameloop={this.props.game.gameInProgress}
+
+            voteTarget={this.props.game.voteTarget}
+            chooseVote={this.props.chooseVote}
+            sendVote={this.props.sendVote}
+            sendSave={this.props.sendSave}
+            sendScry={this.props.sendScry}
+          />
+        </div>
+      </div>
+    )
+  }
 }
 
 const mapStateToProps = state => {
@@ -58,6 +88,9 @@ const mapDispatchToProps = dispatch => {
     sendVote (user, target) {
       return dispatch(sendVoteAction(user, target));
     },
+    chooseVote (targetObject) {
+      return dispatch(chooseVote(targetObject));
+    },
     sendScry (seerName, targetName) {
       return dispatch(sendScryAction(seerName, targetName));
     },
@@ -70,12 +103,7 @@ const mapDispatchToProps = dispatch => {
     leaderStart () {
       return dispatch(leaderStart());
     },
-    dispatchAddImage (image) {
-      return dispatch(addImage(image));
-    },
-    dispatchUpdateGuessed (tags) {
-      return dispatch(updateGuessed(tags));
-    }
+
   });
 };
 

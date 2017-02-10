@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 const Rules = () => {
   return (
@@ -12,7 +13,8 @@ const Rules = () => {
               <h2>Starting a New Game</h2>
             </div>
             <div className="rules-col-8">
-              <p>To start a new game, go on <a href="/newgame">Start Game</a> and enter your username and enter a name for the game. This starts a chat room where you can see who else is playing or who else wants to join the game. In order to start a game, you need at least six players and the person who is initiating the game (the game leader) must click on the "Start a Game"" button. Each game will have at least 1 seer, 1 priest, and 2 werewolves, and the rest of the players will be Villagers. Each player should keep their role a secret from other players.</p>
+              <p>To create a new game, go to <Link to="/newgame" style={{color: '#D6C967', textDecoration: 'none'}}>CREATE NEW GAME</Link> and enter your username and enter a name for the game. This starts a chat room where you can see who else is playing or who else wants to join the game. In order to start a game, you need at least five players, including the game leader who created the game.
+              Each game has werewolves and villagers. Two of the villagers will have secret powers as the Seer or the Priest. The number of werewolves depends on the number of players, because they are set as a 1:2 ratio to the villagers. Each player should keep their role a secret from other players.</p>
             </div>
           </div>
           <div className="rules-row">

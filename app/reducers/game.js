@@ -6,14 +6,15 @@ let mod;
 const initialState = {
   games: [],
   gameId: '',
-  takenNames: [],
-  gameStart: false,
+  takenNames: ['moderator'],
+  gameInProgress: false,
   player: {},
   // users: { [playerName: String]: User }
   users: {},
 
   day: true,
   messages: [],
+  voteTarget: '',
 }
 
 
@@ -25,7 +26,7 @@ const reducer = (state = initialState, action) => {
     case RECIEVE_TAKENNAME:
       return {
         ...state,
-        takenNames: (action.takenName === '!') ? [] : [...state.takenNames, action.takenName]}
+        takenNames: (action.takenName === '!') ? ['moderator'] : [...state.takenNames, action.takenName]}
 
     case FETCH_GAME:
       return {
@@ -35,6 +36,9 @@ const reducer = (state = initialState, action) => {
 
     case RECIEVE_GAMEID:
       return {...state, gameId: action.gameId}
+
+    case GAME_LOOPING:
+      return {...state, gameInProgress: true}
 
     case SET_PLAYER:
       return {...state, player: action.player}
@@ -94,7 +98,7 @@ const reducer = (state = initialState, action) => {
     case RECIEVE_MESSAGE:
       return {
         ...state,
-        messages: [...state.messages, {text: action.message, user: action.user}],
+        messages: [...state.messages, {text: action.message, user: action.user, color: action.color}],
       }
 
     case SWITCH_TIME:
@@ -102,6 +106,13 @@ const reducer = (state = initialState, action) => {
         ...state,
         day: action.timeofday === 'daytime',
         messages: [],
+        voteTarget: '',
+      }
+
+    case SELECT_VOTE:
+      return {
+        ...state,
+        voteTarget: action.target,
       }
 
     default:
@@ -118,6 +129,7 @@ const RECIEVE_GAMEID = 'RECIEVE_GAMEID';
 const PROMPT_LEADER = 'PROMPT_LEADER';
 const START_GAME = 'START_GAME';
 const LEADER_START = 'LEADER_START';
+const GAME_LOOPING = 'GAME_LOOPING';
 
 const SET_PLAYER = 'SET_PLAYER';
 const UPDATE_PLAYER = 'UPDATE_PLAYER'
@@ -128,6 +140,7 @@ const REMOVE_USER = 'REMOVE_USER';
 
 const RECIEVE_MESSAGE = 'RECIEVE_MESSAGE';
 const RECIEVE_VOTE = 'RECIEVE_VOTE';
+const SELECT_VOTE = 'SELECT_VOTE';
 const SWITCH_TIME = 'SWITCH_TIME';
 
 const SCRYING = 'SCRYING';
@@ -166,6 +179,10 @@ export const recieveTakenName = takenName => ({
   type: RECIEVE_TAKENNAME, takenName
 })
 
+// for using the player roster as a voting button tool
+export const selectVote = target => ({
+  type: SELECT_VOTE, target
+})
 
 /*---------
 Listeners for /storeActions
@@ -229,7 +246,6 @@ Listener for all games in which roles have not yet been assigned
 export const fetchAllGames = () => {
   return dispatch => {
     firebase.database().ref('games').orderByChild('didStart').equalTo(false).on('child_added', function(action){
-      console.log("inside Fetch All games, action = ", action);
       dispatch({
         type: FETCH_GAME,
         id: action.key,
@@ -241,6 +257,13 @@ export const fetchAllGames = () => {
 
 /* ------------       DISPATCHERS     ------------------ */
 
+//  a normal dispatcher for local redux state. selected vote button on the roster
+export const chooseVote = (target) => {
+  return dispatch => {
+    dispatch(selectVote(target))
+  }
+};
+
 // in util.js
 // Helper function to wrap actions and send them to firebase
 const gameAction =
@@ -249,6 +272,7 @@ const gameAction =
     const {gameId} = getState().game
     const playerActions = firebase.database().ref(`games/${gameId}/playerActions`)
     const action = actionCreator(...args)
+
     return playerActions.push(action)
   }
 
@@ -361,21 +385,21 @@ export const sendMessageAction = gameAction(
 )
 
 // send votes to playerActions
-export const sendVoteAction = gameAction (
+export const sendVoteAction = gameAction(
   (user, target) => ({
-      type: RECIEVE_VOTE,
-      user,
-      target
-    })
+    type: RECIEVE_VOTE,
+    user,
+    target
+  })
 )
 
 // send scrys to playerActions
 export const sendScryAction = gameAction (
   (user, target) => ({
-      type: SCRYING,
-      user,
-      target
-    })
+    type: SCRYING,
+    user,
+    target
+  })
 )
 
 // send saves to playerActions

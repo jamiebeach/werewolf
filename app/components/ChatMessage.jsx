@@ -3,11 +3,13 @@ import React from 'react';
 function ChatMessage(props) {
   let message = props.message;
   let players = props.players;
+  let color = props.message.color;
 
   return (
 
     <li
       className="message"
+      style={message.user === 'moderator' ? {background: color} : {}}
     >
       <div className="avatar">
 
@@ -26,7 +28,11 @@ function ChatMessage(props) {
           {message.user.toUpperCase()}
         </div>
         <div className="message-content">
-          {message.text}
+          {message.text.split('\n').map(line => {
+            return (
+              <p>{line}</p>
+            )
+          })}
         </div>
       </div>
     </li>);
