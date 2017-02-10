@@ -14,8 +14,8 @@ import {createNewGame} from '../reducers/game';
 */
 
 export class NewGame extends React.Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		this.state = {
 			warning: '',
 			newgame: {},
