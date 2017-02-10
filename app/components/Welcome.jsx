@@ -30,7 +30,7 @@ const Welcome = () => {
 				<div className='gameButton'>
 					<RaisedButton
 						label="See open games"
-						backgroundColor={'#1E052B'}
+						backgroundColor={'#0D7A58'}
 						labelStyle={ {color: 'white', fontFamily: 'IM Fell English SC'} }
 						containerElement={ <Link to="/opengames" /> }
 					/>
