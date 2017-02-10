@@ -7,35 +7,35 @@ import {updateGameActions, updatePlayer, joinGame} from '../reducers/game';
 export class GameContainer extends Component {
   constructor(props) {
     super(props)
-    console.log(props.auth);
-
   }
 
-  // ComponentDidUpdate (prevProps, prevState){
-  //   console.log("changed: ", prevProps, this.props);
-  //   if(!prevProps.auth && this.props.auth) {
-  //     console.log('****** inside if Statement *********')
-
-  //   }
-  // }
-
-  componentDidMount (){
-    console.log('mounted!!!!', this.props)
-    const rosterPlayer = firebase.database().ref(`games/${this.props.params.id.gameId}/roster/${this.props.auth.uid}`).once('value')
+  componentDidUpdate (prevProps, prevState){
+    if(!prevProps.auth.uid && this.props.auth.uid) {
+      const rosterPlayer = firebase.database().ref(`games/${this.props.gameId}/roster/${this.props.auth.uid}`).once('value');
       rosterPlayer.then(res => {
-        console.log(res, res.name)
         if(res) {
-          console.log('hello??')
-          updatePlayer({name: res.name});
-          updateGameActions();
+          this.props.updatePlayer({name: res.val().name});
+          this.props.updateGameActions();
         }
       })
+    }
+  }
+
+  componentDidMount (){
+    if(this.props.auth.uid) {
+      const rosterPlayer = firebase.database().ref(`games/${this.props.gameId}/roster/${this.props.auth.uid}`).once('value');
+      rosterPlayer.then(res => {
+        if(res) {
+          this.props.updatePlayer({name: res.val().name});
+          this.props.updateGameActions();
+        }
+      })
+    }
   }
 
   render () {
     return (
       <div>
-        {/*console.log('inside gameContainer, player = ', this.props.player)*/}
         {this.props.player.joined ? <ChatContainer /> : <JoinGame />}
         }
       </div>
@@ -48,10 +48,18 @@ const mapStateToProps = state => {
   return {
     auth: state.auth,
     player: state.game.player,
-    games: state.game.games
+    games: state.game.games,
+    gameId: state.game.gameId
   };
 };
 
-export default connect(mapStateToProps)(GameContainer);
+const mapDispatchToProps = dispatch => {
+  return {
+    updateGameActions: () => dispatch(updateGameActions()),
+    updatePlayer: (update) => dispatch(updatePlayer(update))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameContainer);
 
 

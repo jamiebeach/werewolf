@@ -156,33 +156,26 @@ export default class Moderator {
     const roster = firebase.database().ref(`games/${this.gameName}/roster`)
 
     roster.on('child_added', person => {
-      // person should not be welcomed if its a page refresh
-      console.log("inside roster listener, person = ", person);
-      
       // TODO we don't want users to need to put in username on page refresh
       // ADD_USER should be refactored to listen to the roster
-      
+
       // most recent session
       const currentSession = person.ref.child('sessions').limitToLast(1)
-      
+
       // toeBell: TimeoutHandle
       // Like the bell attached to a corpse's toe, we will cancel the timer
       // that declares them dead if a player comes back in time.
       let toeBell = null, stopListeningToLastSession = () => {}
-      
+
       // When session becomes the active session...
       currentSession.on('child_added', session => {
-        console.log("inside currentSession listenter, person.val =", person.val())
+        // person should not be welcomed if its a page refresh
         if (!person.val().welcomed) {
           this.narrate(`Welcome, ${person.val().name}.`, 'public')
           person.ref.update({welcomed: true}, () => {
             let newPerson = firebase.database().ref(`games/${this.gameName}/roster/${person.key}`).once('value')
             newPerson.then(res => person = res)
-            console.log('after welcomed is true, person =', person)
           })
-        }
-        else {
-          this.handleRejoin({name: person.val().name})
         }
 
         const endKey = session.ref.child('end')
@@ -458,22 +451,7 @@ export default class Moderator {
     this.moderate(player, 'public', 'adduser')
   }
 
-  handleRejoin(playerAction) {
-    let player 
-    console.log("~~~~~~~~~~~~~~inside handleRejoin, playerAction=", playerAction);
-    if (this.didStart) {
-      player = this.players[playerAction.name];
-    } else {
-      player = this.players.find((player) => {
-        return player.name === playerAction.name
-      })  
-      console.log("game not started, player = ", player);
-    }
-    player.type = UPDATE_PLAYER;
-    this.moderate(player, player.uid, 'rejoinPlayer')
-  }
-
-/* --------------------- Msgs To Players  ------------------------- */ 
+/* --------------------- Msgs To Players  ------------------------- */
 
   handlePromptLeader() {
     let msg = `When all players are present, type '/roles' to assign roles to everyone. Players cannot join after roles have been assigned.`
