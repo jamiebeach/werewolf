@@ -424,6 +424,7 @@ Type '/help' to ask me for help.`
 
 
   handleJoin(playerAction) {
+    if (this.didAssign) return;
 
     let i = this.players.length;
     this.players.push(

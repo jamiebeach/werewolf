@@ -5,7 +5,9 @@ function ChatMessage(props) {
   let players = props.players;
   let color = props.message.color;
 
-  return (
+  if (message.user !== 'moderator' && !players[message.user]) return <div/>;
+
+  else return (
 
     <li
       className="message"
@@ -28,9 +30,9 @@ function ChatMessage(props) {
           {message.user.toUpperCase()}
         </div>
         <div className="message-content">
-          {message.text.split('\n').map(line => {
+          {message.text.split('\n').map((line, i) => {
             return (
-              <p>{line}</p>
+              <p key={i}>{line}</p>
             )
           })}
         </div>
