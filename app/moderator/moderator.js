@@ -180,8 +180,6 @@ export default class Moderator {
             newPerson.then(res => person = res)
             console.log('after welcomed is true, person =', person)
           })
-          
-
         }
         else {
           this.handleRejoin({name: person.val().name})
