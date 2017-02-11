@@ -61,8 +61,11 @@ export class JoinGame extends React.Component {
 								onKeyPress={this.handleKeyPress}
 								onKeyDown={this.handleKeyDown}
 								/>
-							<RaisedButton type="submit" value="buildGame" label="Join Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
+							<br/>
 						</div>
+
+							<RaisedButton type="submit" value="buildGame" label="Join Game" backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
+
 						{(this.state.warning) ? <div>{this.state.warning}</div> : null}
 					</form>
 					</div>

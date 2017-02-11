@@ -1,0 +1,230 @@
+/*-----  MEDIA QUERIES ----- */
+/* Desktops */
+@media (min-width : 769px) {
+  .home{
+    display: flex;
+  }
+}
+
+/* Tablets */
+@media only screen and (max-width : 768px) {
+  .home{
+    width: 100%;
+    display: block;
+    overflow: hidden;
+  }
+  .rules-row {
+    margin-right: 0%;
+    margin-left: 0%;
+  }
+}
+
+/* Phones - Portrait */
+@media only screen and (max-width : 570px) and (orientation: portrait) {
+
+  /* SPLASH PAGE */
+  .home{
+    width: 100%;
+    display: block;
+    overflow: hidden;
+  }
+
+  .splash{
+    align-items: center;
+
+    padding: 0px;
+  }
+
+  .landingTextBox {
+    margin: 3%;
+    margin-bottom: 5px;
+    margin-top: 65px;
+    padding: 3%;
+  }
+
+  .landingButton{
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  /* CHAT PAGES */
+  .day .night {
+    display: flex;
+    justify-content: center;
+  }
+
+  .chatHalf {
+    display: flex;
+    width: 95%;
+    height: 70%;
+    margin-top: 65px;
+  }
+
+  .chat-window {
+    width: 100%;
+  }
+
+  .message {
+    margin: 5px;
+  }
+
+  .text-content {
+    flex-grow: 0;
+  }
+
+  .players-container {
+    margin: 0px;
+    margin-bottom: 10px;
+
+    width: 95%;
+    display: flex;
+
+    height: 20%;
+  }
+
+  .players-list {
+    flex-direction: row;
+    overflow-x: scroll;
+    overflow-y: visible;
+
+    padding: 0;
+
+    height: auto;
+    width: auto;
+  }
+
+  .players{
+    flex-direction: column;
+    width: auto;
+
+  }
+
+  /* NEW GAME PAGES */
+
+  .newGame {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding: 0px;
+    height: 100%;
+  }
+
+  .formContain {
+    margin-bottom: 5px;
+    margin-top: 65px;
+    padding-top: 3% 0;
+  }
+
+  .formContain form {
+  display: flex;
+  flex-direction: column;
+/*  justify-content: space-between;
+  align-items: flex-end;*/
+}
+
+
+  /* RULES PAGE */
+
+  .rules-container {
+    width: 100%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    padding: 5%;
+    text-align : left;
+    background: rgba(0, 0, 0, .5);
+    color: #FFF;
+  }
+
+  .rules-header {
+    color : #D6C967;
+    text-align: center;
+  }
+
+  .rules-row {
+    margin-right: 0%;
+    margin-left: 0%;
+  }
+  .rules-col-4 {
+    z-index: 1;
+    width: 100%;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  .rules-col-8 {
+    z-index: 2;
+    width: 100%;
+  }
+
+}
+
+/* Phones - Landscape */
+@media only screen and (max-width : 700px) and (orientation: landscape) {
+  /* SPLASH PAGE */
+  .home{
+    width: 100%;
+    display: block;
+    overflow: hidden;
+  }
+
+  .splash{
+    height: 100%;
+  }
+
+  /* NEW GAME PAGES */
+  .newGame{
+    height: 100%;
+  }
+
+  .formContain {
+    width: 80%;
+    height: auto;
+    margin: auto;
+
+  }
+
+  .chatHalf {
+    display: flex;
+    height: 75%;
+    margin-top: 65px;
+  }
+
+  .players-container {
+    margin-left: 10px;
+    margin-top: 65px;
+    height: 75%;
+  }
+
+  .player-btn {
+    min-width: 90px;
+  }
+
+    /* RULES PAGE */
+  .rules-container {
+    width: 100%;
+    margin-top: 0%;
+    margin-bottom: 0%;
+    padding: 5%;
+    text-align : left;
+    background: rgba(0, 0, 0, .5);
+    color: #FFF;
+  }
+
+  .rules-row {
+    margin-right: 0%;
+    margin-left: 0%;
+  }
+
+  .rules-col-4 {
+    width: 30%;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  .rules-col-8 {
+    width: 70%;
+  }
+
+}
