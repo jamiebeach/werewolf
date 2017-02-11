@@ -27,7 +27,7 @@ const PlayersList = (props) => {
     }
 
     else if (
-      (person.role === 'werewolf') && (!daytime) &&
+      ((person.role === 'werewolf') && person.alive) && (!daytime) &&
       (!currentPlayer.alive || (currentPlayer.role === 'werewolf'))
       ) { // if both the player and the person on the roster are werewolves, or if the player is dead, show werewolf color
         return { backgroundColor: 'rgba(214, 201, 103, .8)' };
@@ -122,7 +122,7 @@ const PlayersList = (props) => {
         backgroundColor={ target ? '#0D7A58' : 'rgba(192, 192, 192)' }
         hoverColor={ target ? '#5cc4a3' : 'rgba(192, 192, 192)' }
         onClick={ () => {sendAction(player, target, day)} }
-        disabled={!target || !gameloop}
+        disabled={!target || !gameloop || !player.alive || (player.name === '!!!!!') || (!day && player.role === 'villager')}
       />
     </div>
   )

@@ -12,7 +12,6 @@ class Navbar extends React.Component {
     super(props);
     console.log(props);
     this.state = {
-      didStart: false,
       percentage: 100,
       time: 119,
     }
@@ -38,7 +37,7 @@ class Navbar extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.day && !this.props.day) { // day to night
       clearInterval(this.state.intervalId);
-      this.setState({didStart: true, time: 58, percentage: 100, intervalId: setInterval(this.timer, 1000)});
+      this.setState({time: 58, percentage: 100, intervalId: setInterval(this.timer, 1000)});
     }
     else if (!prevProps.day && this.props.day) { // night to day
       clearInterval(this.state.intervalId);
@@ -62,7 +61,7 @@ class Navbar extends React.Component {
         </div>
 
         <div className="navBtnRight">
-          {(this.state.didStart)
+          {(this.props.gameInProgress)
             ? <CircularProgressbar
                 percentage={this.state.percentage}
                 strokeWidth={4}
@@ -82,7 +81,8 @@ class Navbar extends React.Component {
 const mapState = state => {
   return {
     user: state.game.player,
-    day: state.game.day
+    day: state.game.day,
+    gameInProgress: state.game.gameInProgress
   }
 };
 

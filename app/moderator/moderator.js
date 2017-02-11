@@ -182,6 +182,7 @@ export default class Moderator {
           })
         }
         else {
+          console.log(this.deadNames);
           if (this.deadNames.indexOf(person.val().name) === -1) this.narrate(`${person.val().name.toUpperCase()} is back!`)
         }
 
@@ -209,21 +210,58 @@ export default class Moderator {
             () => {
               // debug(`${person.key} is an ex-parrot.`)
               if (this.deadNames.indexOf(person.val().name) === -1) {
-              this.narrate(`${person.val().name.toUpperCase()} fell down a well and died!`)
-              let kill = {
-                type: UPDATE_USER,
-                name: person.val().name,
-                updates: {
-                    alive: false
+                this.narrate(`${person.val().name.toUpperCase()} fell down a well and died!`)
+                let kill = {
+                  type: UPDATE_USER,
+                  name: person.val().name,
+                  updates: {
+                      alive: false
+                    }
+                }
+                this.moderate(kill, 'public', 'death')
+
+                let theplayer;
+
+                if (this.inGameLoop) {
+                  theplayer = this.players[person.val().name];
+                  this.players[person.val().name].alive = false;
+                }
+                else {
+                  this.players.forEach(player => {
+                    if (player.name === person.val().name){
+                      theplayer = player;
+                      player.alive = false;
+                    }
+                  })
+                }
+
+                this.playerNames.splice(this.playerNames.indexOf(person.val().name), 1);
+                if (this.wolfNames.indexOf(person.val().name) !== 1) this.wolfNames.splice(this.wolfNames.indexOf(person.val().name), 1);
+                if (theplayer.role === 'seer') this.seerDead = true;
+                if (theplayer.role === 'priest') this.priestDead = true;
+                this.deadNames.push(person.val().name);
+
+                if (this.inGameLoop) {
+                  this.checkWin();
+                  //if there is a winner, send winner update action to fb
+                  if (this.winner) {
+                    let winaction = {
+                    type: UPDATE_WINNER,
+                    winner: this.winner
+                    };
+                    this.moderate(winaction, 'public', 'update winner');
                   }
-              }
-              this.moderate(kill, 'public', 'death')
-              this.playerNames.splice(this.playerNames.indexOf(person.val().name), 1);
-              if (this.wolfNames.indexOf(person.val().name) !== 1) this.wolfNames.splice(this.wolfNames.indexOf(person.val().name), 1);
-              if (chosen.role === 'seer') this.seerDead = true;
-              if (chosen.role === 'priest') this.priestDead = true;
-              this.deadNames.push(person.val().name);
-              session.ref.update({moderated: true})
+                  let msg;
+                  if (this.winner === 'werewolves'){
+                    msg = `With the death of ${person.val().name}, werewolves have overrun your village and there is no hope for the innocent.`
+                    this.narrate(msg, 'public', null, 'wolf win')
+                  }
+                  else if (this.winner === 'villagers'){
+                    msg = `The last werewolf has drowned! Your village and can sleep peacefully now.`
+                    this.narrate(msg, 'public', null, 'village win')
+                  }
+                }
+                session.ref.update({moderated: true})
               }
             },
             timeout)
@@ -359,7 +397,6 @@ export default class Moderator {
       this.narrate('You need a minimum 5 active players to start.', 'public', 'public', '/roles')
       // return;
     }
-    //const livingPlayers = this.players.filter(player => (player.alive === true));
 
     const length = this.playerNames.length;
     let numWerewolves = Math.floor(length / 3);
@@ -368,14 +405,19 @@ export default class Moderator {
     while (roles.length < length) roles.push('villager');
     roles = shuffle(roles);
 
-    this.players.forEach((player, index) => {
+    for (let i = 0, j = 0; i < roles.length, j < this.players.length; i++, j++) {
+      const player = this.players[j];
       if (player.alive) {
-        player.role = roles[index];
+        player.role = roles[i];
         if (player.role === 'seer') this.seerId = player.uid;
         if (player.role === 'priest') this.priestId = player.uid;
         if (player.role === 'werewolf') this.wolfNames.push(player.name);
       }
-    });
+      else {
+        i--;
+        player.role = 'villager';
+      }
+    };
 
     const werewolves = this.players.filter(player => (player.role === 'werewolf'));
     const wwToFirebase = werewolves.map(player => (
@@ -572,6 +614,8 @@ Type '/help' to ask me for help.`
 // unlike save and scry, playerAction ONLY contains straight up NAMES for voting
   handleVote(playerAction) {
     const sender = this.players[playerAction.user];
+    if (!sender.alive) return;
+
     let role = this.day ? 'public' : 'wolf';
 
     // ignore votes for users that dont exist, send message eventually
@@ -687,14 +731,6 @@ Type '/help' to ask me for help.`
       this.narrate(msg, 'public', null, 'rgba(110,3,0, .8)', 'morning');
     }
 
-    // once news of the night has been absorbed, call the village to action
-    // has green msg background
-    setTimeout(()=>{
-      let msg2 = `ALL: Vote to put a suspect to death by typing '/vote [name]' or select a player from the roster and click the VOTE button.
-       You may vote multiple times. Votes will be publicly announced.`;
-      this.narrate(msg2, 'public', null, 'rgba(13,122,88, .5)', 'morning');
-    }, timeToRead)
-
     //resetting the night props
     this.chosen = null;
     this.didScry = this.seerDead;
@@ -755,26 +791,36 @@ Type '/help' to ask me for help.`
     this.resolveNightEvents();
 
     //werewolves may have won at this point
-    this.checkWin();
-    //if there is a winner, send winner update action to fb
-    if (this.winner) {
-      let winaction = {
-      type: UPDATE_WINNER,
-      winner: this.winner
-      };
-      this.moderate(winaction, 'public', 'update winner');
-    }
+    if (!this.winner) {
+      this.checkWin();
+      //if there is a winner, send winner update action to fb
+      if (this.winner) {
+        let winaction = {
+        type: UPDATE_WINNER,
+        winner: this.winner
+        };
+        this.moderate(winaction, 'public', 'update winner');
+      }
 
-    if (this.winner === 'werewolves'){
-      let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
-      this.narrate(msg, 'public', null, 'wolf win')
-    }
+      if (this.winner === 'werewolves'){
+        let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
+        this.narrate(msg, 'public', null, 'wolf win')
+      }
 
-    else {
-      // settimeout for daytime discussions
-      this.dayTimers[dayNum] = setTimeout(() => {
-        this.executeActions();
-      }, timeForDay)
+      else {
+        // once news of the night has been absorbed, call the village to action
+        // has green msg background
+        setTimeout(()=>{
+          let msg2 = `ALL: Vote to put a suspect to death by typing '/vote [name]'.
+          You may vote multiple times. Votes will be publicly announced.`;
+          this.narrate(msg2, 'public', null, 'rgba(13,122,88, .5)', 'morning');
+        }, timeToRead)
+
+        // settimeout for daytime discussions
+        this.dayTimers[dayNum] = setTimeout(() => {
+          this.executeActions();
+        }, timeForDay)
+      }
     }
   }
 
@@ -810,32 +856,35 @@ Type '/help' to ask me for help.`
         }
     }
     this.moderate(kill, 'public', 'death')
-    this.checkWin();
-    //if there is a winner, send winner update action to fb
-    if (this.winner) {
-      let winaction = {
-      type: UPDATE_WINNER,
-      winner: this.winner
-      };
-      this.moderate(winaction, 'public', 'update winner');
-    }
+    if (!this.winner) {
+      this.checkWin();
+      //if there is a winner, send winner update action to fb
+      if (this.winner) {
+        let winaction = {
+        type: UPDATE_WINNER,
+        winner: this.winner
+        };
+        this.moderate(winaction, 'public', 'update winner');
+      }
 
-    if (this.winner === 'werewolves'){
-      msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
-      this.narrate(msg, 'public', null, 'wolf win')
-    }
-    else if (this.winner === 'villagers'){
-      msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
-      this.narrate(msg, 'public', null, 'village win')
-    } else {
+      if (this.winner === 'werewolves'){
+        msg = `The village chose to kill a fellow villager... Werewolves have overrun your village and there is no hope for the innocent.`
+        this.narrate(msg, 'public', null, 'wolf win')
+      }
+      else if (this.winner === 'villagers'){
+        msg = `The last werewolf has been killed! You have exterminated all the werewolves from your village and can sleep peacefully now.`
+        this.narrate(msg, 'public', null, 'village win')
+      } else {
 
-      this.chosen = null;
-      this.votes = [];
-      this.majority = false;
+        this.chosen = null;
+        this.votes = [];
+        this.majority = false;
 
-      setTimeout(() => this.nightActions(), timeToRead);
+        setTimeout(() => this.nightActions(), timeToRead);
+      }
     }
   }
+
   checkWin(){
     let werewolfCount = 0;
     let villagerCount = 0;
