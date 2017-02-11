@@ -175,7 +175,7 @@ export default class Moderator {
       currentSession.on('child_added', session => {
         // person should not be welcomed if its a page refresh
         if (!person.val().welcomed) {
-          this.narrate(`Welcome, ${person.val().name}.`, 'public')
+          this.narrate(`Welcome, ${person.val().name.toUpperCase()}.`, 'public')
           person.ref.update({welcomed: true}, () => {
             let newPerson = firebase.database().ref(`games/${this.gameName}/roster/${person.key}`).once('value')
             newPerson.then(res => person = res)
@@ -253,13 +253,15 @@ export default class Moderator {
                   }
                   let msg;
                   if (this.winner === 'werewolves'){
-                    msg = `With the death of ${person.val().name}, werewolves have overrun your village and there is no hope for the innocent.`
+                    msg = `With the death of ${person.val().name.toUpperCase()}, werewolves have overrun your village and there is no hope for the innocent.`
                     this.narrate(msg, 'public', null, 'wolf win')
                   }
                   else if (this.winner === 'villagers'){
                     msg = `The last werewolf has drowned! Your village and can sleep peacefully now.`
                     this.narrate(msg, 'public', null, 'village win')
                   }
+                  const dayornight = (this.day) ? 'day' : 'night';
+                  clearTimeout(this[`${dayornight}Timers`][this.dayNum])
                 }
                 session.ref.update({moderated: true})
               }
@@ -417,7 +419,7 @@ export default class Moderator {
         i--;
         player.role = 'villager';
       }
-    };
+    }
 
     const werewolves = this.players.filter(player => (player.role === 'werewolf'));
     const wwToFirebase = werewolves.map(player => (
@@ -662,6 +664,7 @@ Type '/help' to ask me for help.`
     voters.forEach(name => {
       tally[name] = {};
     })
+
     this.votes.forEach(vote => {
       tally[vote.user][vote.target] = true;
     })
@@ -680,25 +683,35 @@ Type '/help' to ask me for help.`
     let maxUser = [];
     const keys = Object.keys(voteCount);
     for (let i = 0; i < keys.length; i++) {
-      if (voteCount[keys[i]] > maxVotes) {
-        // if majority is reached, immediately return
+      if (voteCount[keys[i]] > maxVotes && role === 'public') {
+        // if majority is reached for village, immediately return for the villagers
         if (voteCount[keys[i]] > (voters.length / 2)) {
           this.chosen = keys[i];
           this.majority = true;
-          let channel = this.day ? 'public' : 'werewolves';
           let msg = `A majority vote has been reached to ${methodOfMurder} ${keys[i].toUpperCase()}.  Any votes given after this will not affect the decision.`
-          this.narrate(msg, role, channel, role);
+          this.narrate(msg, role, 'public');
           return;
         }
         maxUser = [keys[i]];
         maxVotes = voteCount[keys[i]];
       }
-      else if (voteCount[keys[i]] === maxVotes) {
+
+      else if (voteCount[keys[i]] === maxVotes && role === 'public') {
         maxUser.push(keys[i]);
       }
-    }
 
-    this.chosen = maxUser[Math.floor(Math.random()*maxUser.length)];
+      else if (methodOfMurder === 'maul' && voteCount[keys[i]] === this.wolfNames.length) {
+        this.chosen = keys[i];
+        this.majority = true;
+        let msg = `A unanimous decision has been reached to ${methodOfMurder} ${keys[i].toUpperCase()}.  Any votes given after this will not affect the decision.`
+        this.narrate(msg, role, 'werewolves');
+        return;
+      }
+    }
+// VILLAGERS PUBLIC VOTES: if even after all the tallying there has not been a decision,
+// the people with the max votes will be randomly selected for death
+  if (role === 'public') this.chosen = maxUser[Math.floor(Math.random()*maxUser.length)];
+
   }
 
   // called once day resumes

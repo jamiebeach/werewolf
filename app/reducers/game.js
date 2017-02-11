@@ -14,9 +14,9 @@ const initialState = {
 
   day: true,
   messages: [],
-  vote: {},
+  vote: {}, //holding the selected person when you click their button on the roster
+  voteTarget: '', // final vote that's sent
 
-  voteTarget: '',
   winner:'',
   backgroundImage: 'day container'
 }
@@ -137,6 +137,25 @@ const reducer = (state = initialState, action) => {
         backgroundImage: action.winner === 'villagers' ? 'day container villagers-victory' : 'day container werewolves-victory'
       }
 
+    case CLEAR_GAME:
+      return {
+        ...state,
+        gameId: '',
+        takenNames: ['moderator'],
+        gameInProgress: false,
+        player: {
+          alive: true,
+          uid: state.player.uid,
+        },
+        users: {},
+        day: true,
+        messages: [],
+        vote: {}, //holding the selected person when you click their button on the roster
+        voteTarget: '', // final vote that's sent
+        winner:'',
+        backgroundImage: 'day container'
+      }
+
     default:
       return state;
   }
@@ -170,7 +189,8 @@ const SAVING = 'SAVING';
 const KILLING = 'KILLING';
 const UPDATE_WINNER = 'UPDATE_WINNER';
 
-const SET_MODERATOR = 'SET_MODERATOR'
+const SET_MODERATOR = 'SET_MODERATOR';
+const CLEAR_GAME = 'CLEAR_GAME';
 
 /* ------------     ACTION CREATORS     ------------------ */
 
@@ -205,6 +225,10 @@ export const recieveTakenName = takenName => ({
 // for using the player roster as a voting button tool
 export const selectVote = target => ({
   type: SELECT_VOTE, target
+})
+
+export const clearGame = () => ({
+  type: CLEAR_GAME
 })
 
 /*---------

@@ -12,24 +12,37 @@ import {
   sendSaveAction,
   sendScryAction,
   startGame,
-  leaderStart
+  leaderStart,
+  clearGame,
 } from '../reducers/game'
 
 export class ChatContainer extends React.Component {
 
   constructor(props){
     super(props)
+    this.handler = this.handler.bind(this);
   }
 
   componentDidMount() {
     // if the leader tries to refresh their game, they're asked if they really want to refresh.
     if (this.props.player.leader){
-      window.onbeforeunload = () => {
-        return 'You may forfeit any current games if you leave.';
-        // this makes the browser ask you if you really want to leave or reload the page
-        //no custom message is possible....
-      }
+
+      window.onbeforeunload = this.handler
     }
+  }
+
+  componentWillUnmount() {
+    if (this.props.game.winner) {
+      window.onbeforeunload = () => {}
+      this.props.clearGame();
+    }
+  }
+
+  handler(e) {
+    e.preventDefault();
+    return 'You may forfeit any current games if you leave.';
+    // this makes the browser ask you if you really want to leave or reload the page
+        //no custom message is possible....
   }
 
   render() {
@@ -106,6 +119,9 @@ const mapDispatchToProps = dispatch => {
     leaderStart () {
       return dispatch(leaderStart());
     },
+    clearGame() {
+      return dispatch(clearGame());
+    }
 
   });
 };

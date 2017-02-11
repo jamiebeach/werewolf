@@ -7,8 +7,7 @@ let scrollDiv = {};
 const OpenGames = (props) => {
   return (
     <div className='splash'>
-      <div
-        className='openGamesTextBox'>
+      <div className='text-box ' >
         <div className='landingText'>
         <h1>Open Games</h1>
           {(scrollDiv.clientHeight > 255)
