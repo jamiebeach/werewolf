@@ -212,20 +212,23 @@ the moderator listens for playeractions and dispences storeactions
 const later = process.nextTick
 
 // Generic Action Listener, will RECEIVE actions whenever firebase/actions updates in /public /:uid
-export const updateGameActions = () => {
+export const updateGameActions = (username) => {
   return (dispatch, getState) => {
     const {gameId, player: {uid, name}} = getState().game
 
-    const roster = firebase.database().ref(`games/${gameId}/roster`)
-    const me = roster.child(uid)
-    me.update({name})
-    const session = me.child('sessions').push({start: firebase.database.ServerValue.TIMESTAMP})
-    // when player disconnects place timestamp
-    session.onDisconnect().update({end: firebase.database.ServerValue.TIMESTAMP})
-    // TODO: There's an uncomfortable asymmetry here between adding and removing users.
-    // Probably we should get rid of the journaled ADD_USER action and just respond
-    // to the roster in the moderator.
-    roster.on('child_removed', user => later(() => dispatch(removeUser(user.val()))))
+    if (username !== '!!!!!') {
+      const roster = firebase.database().ref(`games/${gameId}/roster`)
+      const me = roster.child(uid)
+      me.update({name})
+      const session = me.child('sessions').push({start: firebase.database.ServerValue.TIMESTAMP})
+      // when player disconnects place timestamp
+      session.onDisconnect().update({end: firebase.database.ServerValue.TIMESTAMP})
+      // TODO: There's an uncomfortable asymmetry here between adding and removing users.
+      // Probably we should get rid of the journaled ADD_USER action and just respond
+      // to the roster in the moderator.
+      roster.on('child_removed', user => later(() => dispatch(removeUser(user.val()))))
+    }
+
 
     const storeActions = `games/${getState().game.gameId}/storeActions/`;
 
@@ -350,7 +353,7 @@ export const joinGame = (name, gameId) => {
     const username = name.toLowerCase();
     dispatch(addUserWithUid(username, uid));
     dispatch(updatePlayer({name: username}));
-    dispatch(updateGameActions(gameId));
+    dispatch(updateGameActions(username));
   }
 }
 

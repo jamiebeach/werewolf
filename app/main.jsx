@@ -28,7 +28,7 @@ const onGameEnter = nextRouterState => {
 
   // gets all playernames from roster and adds it to store in takennames array
   roster.on('child_added', function(player) {
-    store.dispatch(recieveTakenName(player.val()));
+    store.dispatch(recieveTakenName(player.val().name));
   })
 }
 
