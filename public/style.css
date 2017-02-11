@@ -93,20 +93,30 @@ body {
 .landingTextBox {
   margin-left: 12%;
   margin-right: 10%;
-  background: rgba(0, 0, 0, .6);
 }
 
 .landingText {
   padding-left: 2%;
+  background: rgba(0, 0, 0, .6);
 }
 
 .landingText h1 {
   font-size: 3rem;
 }
 
-.landingButton{
+.buttonContainer {
   margin-left: 12%;
+}
+
+.landingButton{
   margin-top: 2rem;
+  float: left;
+}
+
+.gameButton {
+  float: left;
+  margin-top: 2rem;
+  margin-left: 2rem;
 }
 
 /* ----- NEW GAME ----- */
@@ -355,6 +365,21 @@ body {
   width: 70%;
 }
 
+/* ------ RULES PAGE ------- */
+
+.openGamesTextBox {
+  margin-left: 12%;
+  margin-right: 10%;
+  margin-top: 5%;
+  height: 100%;
+}
+
+.landingText {
+  padding-left: 2%;
+  height: 400px;
+  overflow-y: scroll;
+}
+    
 
 /*-----  MEDIA QUERIES ----- */
 /* Desktops */
