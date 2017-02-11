@@ -13,7 +13,7 @@ class Navbar extends React.Component {
     console.log(props);
     this.state = {
       percentage: 100,
-      time: 119,
+      time: 59,
     }
 
     this.timer = this.timer.bind(this);
@@ -61,15 +61,19 @@ class Navbar extends React.Component {
         </div>
 
         <div className="navBtnRight">
-          {(this.props.gameInProgress)
-            ? <CircularProgressbar
-                percentage={this.state.percentage}
-                strokeWidth={4}
-                textForPercentage={this.showTime}
-              />
-            : null
-          }
-        <Link className='icons' to={'rules'} >Rules</Link>
+          <div
+            onClick={() => {browserHistory.push(`game/${this.props.gameId}`)}}>
+            {(this.props.gameInProgress)
+              ? <CircularProgressbar
+                  percentage={this.state.percentage}
+                  strokeWidth={4}
+                  textForPercentage={this.showTime}
+                >
+                </CircularProgressbar>
+              : null
+            }
+          </div>
+        <Link className='icons' to={'/rules'} >Rules</Link>
         </div>
       </div>
     )
@@ -82,7 +86,8 @@ const mapState = state => {
   return {
     user: state.game.player,
     day: state.game.day,
-    gameInProgress: state.game.gameInProgress
+    gameInProgress: state.game.gameInProgress,
+    gameId: state.game.gameId,
   }
 };
 

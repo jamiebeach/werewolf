@@ -25,7 +25,6 @@ const onGameEnter = nextRouterState => {
   store.dispatch(recieveGameId(gameId));
   const roster = firebase.database().ref(`games/${gameId}/roster`)
 
-
   // gets all playernames from roster and adds it to store in takennames array
   roster.on('child_added', function(player) {
     store.dispatch(recieveTakenName(player.val().name));

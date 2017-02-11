@@ -93,6 +93,10 @@ export default class Chat extends Component {
     }
 
     else {
+
+      if (e.target.message.value === '') {
+        return;
+      }
 // dead people may only ever talk to one another
       if (!this.props.player.alive) {
         this.props.sendMessage(this.props.player.name, msg, 'purgatory')
