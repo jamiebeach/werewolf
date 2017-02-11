@@ -103,6 +103,9 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         messages: [...state.messages, {text: action.message, user: action.user, color: action.color}],
+        gameInProgress: (action.color === 'wolf win' || action.color === 'village win')
+          ? false
+          : state.gameInProgress
       }
 
     case SELECT_VOTE:
