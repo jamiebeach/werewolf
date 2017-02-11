@@ -19,11 +19,11 @@ body {
 
 /* ----- NAVBAR ----- */
 .navbar {
+  background-color: #1E052B;
 
   display: flex;
   justify-content: space-between;
 
-  background-color: #1E052B;
   opacity: .8;
   position: fixed;
   width: 100%;
@@ -74,20 +74,22 @@ body {
 
 /* ----- LANDING PAGE ----- */
 .splash {
+
+  background-attachment: fixed;
+  background-color: #3c4250;
+  background-image: url('/images/landingPage.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  color: #FFF;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+  justify-content: center;
+
   padding-top: 5%;
   padding-bottom: 5%;
 
-  background-image: url('/images/landingPage.jpg');
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-  color: #FFF;
-
-  display: flex;
-
-  flex-direction: column;
-  justify-content: center;
 }
 
 .landingTextBox {
@@ -111,11 +113,15 @@ body {
 
 /* ----- NEW GAME ----- */
 .newGame {
-  height: 100vh;
-  background-image: url('/images/fullMoon.jpg');
+
   background-attachment: fixed;
+  background-color: rgb(61, 57, 44);
+  background-image: url('/images/fullMoon.jpg');
   background-repeat: no-repeat;
   background-size: cover;
+
+  height: 100vh;
+
   padding-top: 5%;
 }
 
@@ -127,14 +133,63 @@ body {
   padding: 5%;
 }
 
-.formHeader {
-  margin: 0;
+.formContain form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
 .newGame .button {
   margin: 2%;
   float: right;
 }
+
+/* ------ RULES PAGE ------- */
+
+.rules {
+
+  background-attachment: fixed;
+  background-color: rgb(61, 57, 44);
+  background-image: url('/images/fullMoon.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  display: flex;
+  height: 100%;
+  justify-content: center;
+
+  padding-top: 5%;
+
+}
+
+.rules-container {
+  width: 75%;
+  margin-top: 0%;
+  margin-bottom: 2%;
+  padding: 5%;
+  text-align : left;
+  background: rgba(0, 0, 0, .5);
+  color: #FFF;
+}
+
+.rules-header {
+  color : #D6C967;
+  text-align: center;
+}
+
+.col-4 {
+  display:inline-block;
+  width: 30%;
+  vertical-align: top;
+  text-align: left;
+}
+
+.rules-col-8 {
+  display:inline-block;
+  width: 70%;
+}
+
 /* ----- CHAT CONTAINER ----- */
 .chatHalf {
   width: 70%;
@@ -187,29 +242,33 @@ body {
 }
 
 .day {
-  background-image: url('/images/village.jpg');
   background-attachment: fixed;
+  background-color: rgb(67, 92, 77);
+  background-image: url('/images/village.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }
 
 .night {
-  background-image: url('/images/werewolf.jpg');
   background-attachment: fixed;
+  background-color: rgb(95, 92, 110);
+  background-image: url('/images/werewolf.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }
 
 .villagers-victory {
-  background-image: url('/images/villagersvictory.jpg');
   background-attachment: fixed;
+  background-color: rgb(124, 104, 55);
+  background-image: url('/images/villagersvictory.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }
 
 .werewolves-victory {
-  background-image: url('/images/werewolvesvictory.jpg');
   background-attachment: fixed;
+  background-color: rgb(141, 152, 137);
+  background-image: url('/images/werewolvesvictory.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -219,28 +278,17 @@ body {
   text-transform: uppercase !important;
 }
 
-.victory-modal {
+.victory-modal-container {
   padding: 0% !important;
   margin: 0% !important;
-  border: 0% !important;
-  height: 600px !important;
+  width: 100%;
+  height: 100%
 }
 
-#werewolveswon {
-  background-image: url('/images/werewolvesvictory.jpg') !important;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
+.victory-modal {
+  width: inherit;
+  height: 100%;
 }
-
-
-#villagerswon {
-  background-image: url('/images/villagersvictory.jpg') !important;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
 
 /* ----- CHAT BOX ----- */
 #chat-input form {
@@ -355,252 +403,4 @@ body {
 .avatar img {
   width: 100%;
 }
-
-
-/* ------ RULES PAGE ------- */
-.rules {
-  height: 100%;
-  background-image: url('/images/fullMoon.jpg');
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-  padding-top: 5%;
-  display: flex;
-  justify-content: center;
-}
-
-.rules-container {
-  width: 75%;
-  margin-top: 0%;
-  margin-bottom: 2%;
-  padding: 5%;
-  text-align : left;
-  background: rgba(0, 0, 0, .5);
-  color: #FFF;
-}
-
-.rules-header {
-  color : #D6C967;
-  text-align: center;
-}
-
-.col-4 {
-  display:inline-block;
-  width: 30%;
-  vertical-align: top;
-  text-align: left;
-}
-
-.rules-col-8 {
-  display:inline-block;
-  width: 70%;
-}
-
-
-/*-----  MEDIA QUERIES ----- */
-/* Desktops */
-@media (min-width : 769px) {
-  .home{
-    display: flex;
-  }
-}
-
-/* Tablets */
-@media only screen and (max-width : 768px) {
-  .home{
-    width: 100%;
-    display: block;
-    overflow: hidden;
-  }
-  .rules-row {
-    margin-right: 0%;
-    margin-left: 0%;
-  }
-}
-
-/* Phones - Portrait */
-@media only screen and (max-width : 570px) and (orientation: portrait) {
-
-  /* SPLASH PAGE */
-  .home{
-    width: 100%;
-    display: block;
-    overflow: hidden;
-  }
-
-  .splash{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .landingButton{
-    margin-left: 0;
-  }
-
-  /* CHAT PAGES */
-  .day .night {
-    display: flex;
-    justify-content: center;
-  }
-
-  .chatHalf {
-    display: flex;
-    width: 95%;
-    height: 70%;
-    margin-top: 65px;
-  }
-
-  .chat-window {
-    width: 100%;
-  }
-
-  .players-container {
-    margin: 0px;
-    margin-bottom: 10px;
-
-    width: 95%;
-    display: flex;
-
-    height: 20%;
-  }
-
-  .players-list {
-    flex-direction: row;
-    overflow-x: scroll;
-    overflow-y: visible;
-
-    padding: 0;
-
-    height: auto;
-    width: auto;
-  }
-
-  .players{
-    flex-direction: column;
-    width: auto;
-
-  }
-
-  /* NEW GAME PAGES */
-  .formContain {
-    width: 85%;
-    margin: auto;
-    margin-top: 15%;
-  }
-
-  /* RULES PAGE */
-  .rules {
-    height: 100%;
-    background-image: url('/images/fullMoon.jpg');
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding-top: 5%;
-    display: flex;
-    justify-content: center;
-  }
-
-  .rules-container {
-    width: 100%;
-    margin-top: 5%;
-    margin-bottom: 5%;
-    padding: 5%;
-    text-align : left;
-    background: rgba(0, 0, 0, .5);
-    color: #FFF;
-  }
-
-  .rules-header {
-    color : #D6C967;
-    text-align: center;
-  }
-
-  .rules-row {
-    margin-right: 0%;
-    margin-left: 0%;
-  }
-  .rules-col-4 {
-    z-index: 1;
-    width: 100%;
-    vertical-align: top;
-    text-align: left;
-  }
-
-  .rules-col-8 {
-    z-index: 2;
-    width: 100%;
-  }
-
-}
-
-/* Phones - Landscape */
-@media only screen and (max-width : 700px) and (orientation: landscape) {
-  /* SPLASH PAGE */
-  .home{
-    width: 100%;
-    display: block;
-    overflow: hidden;
-  }
-
-  .splash{
-    height: 100%;
-  }
-
-  /* NEW GAME PAGES */
-  .newGame{
-    height: 100%;
-  }
-
-  .formContain {
-    width: 80%;
-    height: auto;
-    margin: auto;
-
-  }
-
-  .chatHalf {
-    display: flex;
-    height: 75%;
-    margin-top: 65px;
-  }
-
-  .players-container {
-    margin-left: 10px;
-    margin-top: 65px;
-    height: 75%;
-  }
-
-  .player-btn {
-    min-width: 90px;
-  }
-
-    /* RULES PAGE */
-  .rules-container {
-    width: 100%;
-    margin-top: 0%;
-    margin-bottom: 0%;
-    padding: 5%;
-    text-align : left;
-    background: rgba(0, 0, 0, .5);
-    color: #FFF;
-  }
-
-  .rules-row {
-    margin-right: 0%;
-    margin-left: 0%;
-  }
-
-  .rules-col-4 {
-    width: 30%;
-    vertical-align: top;
-    text-align: left;
-  }
-
-  .rules-col-8 {
-    width: 70%;
-  }
-
-}
-
 

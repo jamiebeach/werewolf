@@ -1,19 +1,23 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
 
 /**
  * A modal dialog can only be closed by selecting one of the actions.
  */
 export default class DialogExampleModal extends React.Component {
-  state = {
-    open: true,
-  };
 
-  handleClose = () => {
+  constructor(props) {
+    super(props)
+    this.state = {
+      open: true,
+    }
+    this.handleClose = this.handleClose.bind(this);
+  }
+
+  handleClose() {
     this.setState({open: false});
-  };
+  }
 
   render() {
     const actions = [
@@ -29,10 +33,18 @@ export default class DialogExampleModal extends React.Component {
         <Dialog className='victory-dialog'
           title={`${this.props.winner} won!`}
           actions={actions}
-          modal={true}
           open={this.state.open}
+          onRequestClose={this.handleClose}
         >
-        <div className='victory-modal' id={`${this.props.winner}won`}></div>
+          <div className='victory-modal-container'>
+            <img
+              className='victory-modal'
+              src={ this.props.winner ?
+                "/images/villagersvictory.jpg" :
+                "/images/werewolvesvictory.jpg" }
+            />
+          </div>
+
         </Dialog>
       </div>
     );

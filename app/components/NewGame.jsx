@@ -101,6 +101,9 @@ export class NewGame extends React.Component {
 								onKeyPress={this.handleKeyPress}
 								onKeyDown={this.handleKeyDown}
 								/>
+                <br/>
+              </div>
+
       					<RaisedButton
       						className="button"
       						type="submit"
@@ -115,11 +118,10 @@ export class NewGame extends React.Component {
 				          modal={true}
 				          open={this.state.open}
 				        >
-				          <p>As the leader, you will be responsible for prompting the moderator to assign roles and starting the game when all players are present.</p><p>
-				          You may NOT leave Nightfall or refresh the page until the game ends.</p>
+				          <p>As the leader, you will be responsible for prompting the moderator to assign roles and starting the game when all players are present.</p>
 
 				        </Dialog>
-        			</div>
+
 						{(this.state.warning) ? <div>{this.state.warning}</div> : null}
 					</form>
 					</div>

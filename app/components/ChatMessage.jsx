@@ -30,7 +30,7 @@ function ChatMessage(props) {
         <div className="message-content">
           {message.text.split('\n').map(line => {
             return (
-              <p>{line}</p>
+              <div>{line}</div>
             )
           })}
         </div>
