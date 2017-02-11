@@ -25,6 +25,7 @@ export default class Chat extends Component {
       switch (cmd) {
 
         case '/vote':
+          if (!this.props.player.alive) break;
           if (this.props.day && this.props.gameloop) this.props.sendVote(this.props.player.name, target);
           else if (!this.props.day && this.props.player.role === 'werewolf' && this.props.gameloop) this.props.sendVote(this.props.player.name, target);
           else {
@@ -33,6 +34,7 @@ export default class Chat extends Component {
           break;
 
         case '/save':
+          if (!this.props.player.alive) break;
           if (this.props.player.role === 'priest' && !this.props.day && this.props.gameloop) {
             this.props.sendSave(this.props.player, target);
           }
@@ -42,6 +44,7 @@ export default class Chat extends Component {
           break;
 
         case '/scry':
+          if (!this.props.player.alive) break;
           if (this.props.player.role === 'seer' && !this.props.day && this.props.gameloop) {
             this.props.sendScry(this.props.player, target);
           }
@@ -51,6 +54,7 @@ export default class Chat extends Component {
           break;
 
         case '/help':
+          if (!this.props.player.alive) break;
           this.props.sendMessage(
             'moderator',
             `Hi, ${this.props.player.name.toUpperCase()}. Your role is ${this.props.player.role ? this.props.player.role.toUpperCase() : 'not assigned yet'}.\n` +
@@ -86,7 +90,6 @@ export default class Chat extends Component {
         default:
           break;
       }
-
     }
 
     else {

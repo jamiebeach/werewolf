@@ -546,6 +546,8 @@ Type '/help' to ask me for help.`
 // unlike save and scry, playerAction ONLY contains straight up NAMES for voting
   handleVote(playerAction) {
     const sender = this.players[playerAction.user];
+    if (!sender.alive) return;
+
     let role = this.day ? 'public' : 'wolf';
 
     // ignore votes for users that dont exist, send message eventually
@@ -658,14 +660,6 @@ Type '/help' to ask me for help.`
       this.narrate(msg, 'public', null, 'rgba(110,3,0, .8)', 'morning');
     }
 
-    // once news of the night has been absorbed, call the village to action
-    // has green msg background
-    setTimeout(()=>{
-      let msg2 = `ALL: Vote to put a suspect to death by typing '/vote [name]'.
-       You may vote multiple times. Votes will be publicly announced.`;
-      this.narrate(msg2, 'public', null, 'rgba(13,122,88, .5)', 'morning');
-    }, timeToRead)
-
     //resetting the night props
     this.chosen = null;
     this.didScry = false;
@@ -733,6 +727,14 @@ Type '/help' to ask me for help.`
     }
 
     else {
+      // once news of the night has been absorbed, call the village to action
+      // has green msg background
+      setTimeout(()=>{
+        let msg2 = `ALL: Vote to put a suspect to death by typing '/vote [name]'.
+        You may vote multiple times. Votes will be publicly announced.`;
+        this.narrate(msg2, 'public', null, 'rgba(13,122,88, .5)', 'morning');
+      }, timeToRead)
+
       // settimeout for daytime discussions
       this.dayTimers[dayNum] = setTimeout(() => {
         this.executeActions();
