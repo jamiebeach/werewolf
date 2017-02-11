@@ -54,7 +54,7 @@ export class ChatContainer extends React.Component {
               />
             : <NightImage/>
           }
-          {props.game.winner ? <VictoryModal winner={props.game.winner} /> : null}
+          {this.props.game.winner ? <VictoryModal winner={this.props.game.winner} /> : null}
         </div>
         <div className="players-container column-4">
           <PlayersList
