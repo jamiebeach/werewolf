@@ -39,7 +39,7 @@ export default class DialogExampleModal extends React.Component {
           <div className='victory-modal-container'>
             <img
               className='victory-modal'
-              src={ this.props.winner ?
+              src={ this.props.winner === 'villagers' ?
                 "/images/villagersvictory.jpg" :
                 "/images/werewolvesvictory.jpg" }
             />

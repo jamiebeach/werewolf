@@ -7,7 +7,7 @@ import { Link } from 'react-router'
 const OpenGames = (props) => {
   return (
     <div className='splash'>
-      <div className='openGamesTextBox ' >
+      <div className='text-box ' >
         <div className='landingText'>
         <h1>Open Games</h1>
           <div className='flexContainer'>

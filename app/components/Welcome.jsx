@@ -9,7 +9,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 const Welcome = () => {
 	return (
 		<div className='splash'>
-			<div className='landingTextBox ' >
+			<div className='text-box ' >
 				<div className='landingText'>
 					<h1>Nightfall</h1>
 					<h2>What side will you be on when night falls? </h2>
@@ -21,7 +21,7 @@ const Welcome = () => {
 			<div className='buttonContainer'>
 				<div className='landingButton'>
 					<RaisedButton
-						label="Create new game"
+						label="New Game"
 						backgroundColor={'#1E052B'}
 						labelStyle={ {color: 'white', fontFamily: 'IM Fell English SC'} }
 						containerElement={ <Link to="/newgame" /> }
@@ -29,7 +29,7 @@ const Welcome = () => {
 				</div>
 				<div className='gameButton'>
 					<RaisedButton
-						label="See open games"
+						label="Open Games"
 						backgroundColor={'#0D7A58'}
 						labelStyle={ {color: 'white', fontFamily: 'IM Fell English SC'} }
 						containerElement={ <Link to="/opengames" /> }
