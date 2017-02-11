@@ -44,8 +44,6 @@ export const anonLogin = () =>
         alive: true,
         won: false,
         uid: uid,
-        //TODO add color somehow
-        color: null,
       }
       dispatch(setPlayer(player));
     })
@@ -74,8 +72,6 @@ export const whoami = () =>
             alive: true,
             won: false,
             uid: user.uid,
-            //TODO add color somehow
-            color: null,
           }
           dispatch(authenticated({uid: user.uid}));
           dispatch(setPlayer(player));
