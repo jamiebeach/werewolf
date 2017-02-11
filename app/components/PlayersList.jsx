@@ -122,7 +122,7 @@ const PlayersList = (props) => {
         backgroundColor={ target ? '#0D7A58' : 'rgba(192, 192, 192)' }
         hoverColor={ target ? '#5cc4a3' : 'rgba(192, 192, 192)' }
         onClick={ () => {sendAction(player, target, day)} }
-        disabled={!target || !gameloop || !player.alive}
+        disabled={!target || !gameloop || !player.alive || (player.name === '!!!!!') || (!day && player.role === 'villager')}
       />
     </div>
   )
