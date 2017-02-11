@@ -16,7 +16,6 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import { recieveGameId, fetchAllGames, recieveTakenName} from './reducers/game';
 
-
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
@@ -24,9 +23,11 @@ injectTapEventPlugin();
 const onGameEnter = nextRouterState => {
   const gameId = nextRouterState.params.id;
   store.dispatch(recieveGameId(gameId));
+  const roster = firebase.database().ref(`games/${gameId}/roster`)
+
 
   // gets all playernames from roster and adds it to store in takennames array
-  firebase.database().ref(`games/${gameId}/roster`).on('child_added', function(player) {
+  roster.on('child_added', function(player) {
     store.dispatch(recieveTakenName(player.val()));
   })
 }

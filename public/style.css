@@ -19,10 +19,10 @@ body {
 
 /* ----- NAVBAR ----- */
 .navbar {
-/*
+
   display: flex;
   justify-content: space-between;
-*/
+
   background-color: #1E052B;
   opacity: .8;
   position: fixed;
@@ -31,12 +31,15 @@ body {
 }
 
 .navBtnLeft{
-  float: left;
-  margin: 1rem;
+  display: flex;
+  align-items: center;
 }
 
 .navBtnRight {
-  float: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .CircularProgressbar {
@@ -61,12 +64,9 @@ body {
   font-family: 'IM Fell Great Primer SC';
   dominant-baseline: middle;
   text-anchor: middle;
-  float: left;
 }
 
 .navBtnRight .icons{
-  /*padding-right: 3%;*/
-  float: right;
   margin: 1rem;
   text-decoration: none;
   color: #FFF;
@@ -121,11 +121,10 @@ body {
 
 .formContain {
   width: 75%;
-  margin: 0 auto;
+  margin: 5% auto;
   background: rgba(0, 0, 0, .5);
   color: #FFF;
   padding: 5%;
-  margin-top: 5%;
 }
 
 .formHeader {

@@ -20,6 +20,7 @@ export class JoinGame extends React.Component {
 		const userName = evt.target.userName.value.toLowerCase();
 		if (this.props.takenNames.indexOf(userName) !== -1)
 			this.setState({warning: 'A player in this game already has that name.'});
+		else if (userName === '') this.setState({warning: 'Please provide a name.'})
 		else this.props.joinGame(userName, gameId);
 	}
 
@@ -46,7 +47,8 @@ export class JoinGame extends React.Component {
 					<div className="formContain">
 					<h1 className="formHeader">Join A Game</h1>
 					<h2>You have been invited to join a Werewolf game</h2>
-					<h3>Please pick a Player Name. You will then be redirected to your game page to chat with your friends.</h3>
+					<h3>If you've already joined this game, refresh this page.</h3>
+					<h3>Otherwise, please pick a Player Name.</h3>
 					<form onSubmit={this.handleSubmit} >
 						<div>
 							<TextField

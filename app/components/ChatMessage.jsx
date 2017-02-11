@@ -28,7 +28,11 @@ function ChatMessage(props) {
           {message.user.toUpperCase()}
         </div>
         <div className="message-content">
-          {message.text}
+          {message.text.split('\n').map(line => {
+            return (
+              <p>{line}</p>
+            )
+          })}
         </div>
       </div>
     </li>);
