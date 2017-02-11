@@ -19,11 +19,10 @@ const ADD_USER = 'ADD_USER';
 const UPDATE_USER = 'UPDATE_USER';
 const SCRYING = 'SCRYING';
 const SAVING = 'SAVING';
-const KILLING = 'KILLING';
+const GHOST = 'GHOST';
 const ADD_GAMEID = 'ADD_GAMEID';
 const RECIEVE_USER = 'RECIEVE_USER';
 const UPDATE_WINNER ='UPDATE_WINNER';
-const UPDATE_PLAYER = 'UPDATE_PLAYER';
 
 /* ----------------- SETTINGS ------------------ */
 
@@ -234,6 +233,14 @@ export default class Moderator {
                     }
                   })
                 }
+
+                 this.moderate({
+                  type: GHOST,
+                  players: this.players,
+                  seerId: this.seerId,
+                  priestId: this.priestId
+                },
+                  theplayer.uid, 'extra info')
 
                 this.playerNames.splice(this.playerNames.indexOf(person.val().name), 1);
                 if (this.wolfNames.indexOf(person.val().name) !== 1) this.wolfNames.splice(this.wolfNames.indexOf(person.val().name), 1);
@@ -732,13 +739,16 @@ Type '/help' to ask me for help.`
       if (chosen.role === 'priest') this.priestDead = true;
       this.deadNames.push(this.chosen);
       let kill = {
-      type: UPDATE_USER,
-      name: chosen.name,
-      updates: {
-          alive: false
+        type: UPDATE_USER,
+        name: chosen.name,
+        updates: {
+            alive: false
+          }
         }
-      }
       this.moderate(kill, 'public', 'death');
+      this.moderate(
+        {type: GHOST, players: this.players, seerId: this.seerId, priestId: this.priestId},
+        chosen.uid, 'extra info')
       msg = `${this.chosen.toUpperCase()} was eaten by werewolves last night! Gossip with your neighbors about who you think the werewolf is.`;
       // red msg background
       this.narrate(msg, 'public', null, 'rgba(110,3,0, .8)', 'morning');
@@ -869,6 +879,9 @@ Type '/help' to ask me for help.`
         }
     }
     this.moderate(kill, 'public', 'death')
+    this.moderate(
+        {type: GHOST, players: this.players, seerId: this.seerId, priestId: this.priestId},
+        chosen.uid, 'extra info')
     if (!this.winner) {
       this.checkWin();
       //if there is a winner, send winner update action to fb

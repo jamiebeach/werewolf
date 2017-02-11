@@ -99,7 +99,7 @@ export default class Chat extends Component {
       }
 // dead people may only ever talk to one another
       if (!this.props.player.alive) {
-        this.props.sendMessage(this.props.player.name, msg, 'purgatory')
+        this.props.sendMessage(this.props.player.name, msg, this.props.gameloop ? 'purgatory' : 'public')
       }
 
 // if it's a morning message that is not a command, this always goes to the public villager channel
@@ -137,7 +137,7 @@ export default class Chat extends Component {
           <TextField
             style={{flexGrow: 1, marginLeft: '10px'}}
             id="message"
-            floatingLabelText={(this.props.player.alive) ? "" : "The living cannot hear you"}
+            floatingLabelText={(this.props.player.alive || (!this.props.player.alive && !this.props.gameloop)) ? "" : "The living cannot hear you"}
             hintText={(this.props.player.name === '!!!!!') ? "You're spectating this game" : ""}
             hintStyle={{fontFamily: 'IM Fell French Canon'}}
             floatingLabelStyle={{color: day ? '#000' : '#AAA', fontFamily: 'IM Fell French Canon' }}
