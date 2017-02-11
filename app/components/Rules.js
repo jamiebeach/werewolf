@@ -6,7 +6,7 @@ const Rules = () => {
     <div className="rules">
       <div className="rules-container">
         <a name="rules-of-game"><h1 className="rules-header">The Rules of the Game</h1></a>
-        <Link to="/rules#roles"><h3 className="rules-header">Go to Roles</h3></Link>
+        <a href="#roles"><h3 className="rules-header">Go to Roles</h3></a>
         <div className="rules-grid">
           <div className="rules-row">
             <div className="rules-col-4">
@@ -78,7 +78,7 @@ const Rules = () => {
             <div className="rules-col-8">
               <p>The priest is a villager who can choose one player to save each night. The priest can choose to save him or herself. The player who is chosen cannot be killed that night. The priest saves a player by typing "/save PlayerName". </p>
             </div>
-            <Link to="/rules#rules-of-game"><h3 className="rules-header">Back to top</h3></Link>
+            <a href="#rules-of-game"><h3 className="rules-header">Back to top</h3></a>
           </div>
         </div>
       </div>
