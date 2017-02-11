@@ -134,13 +134,17 @@ export default class Chat extends Component {
             style={{flexGrow: 1, marginLeft: '10px'}}
             id="message"
             floatingLabelText={(this.props.player.alive) ? "" : "The living cannot hear you"}
+            hintText={(this.props.player.name === '!!!!!') ? "You're spectating this game" : ""}
+            hintStyle={{fontFamily: 'IM Fell French Canon'}}
             floatingLabelStyle={{color: day ? '#000' : '#AAA', fontFamily: 'IM Fell French Canon' }}
             underlineFocusStyle={{borderColor: day ? '#0D7A58' : '#6E0300 ' }}
             inputStyle={{color: day ? '#000' : '#FFF', fontWeight: 'normal', fontFamily: 'IM Fell French Canon' }}
+            disabled={this.props.player.name === '!!!!!'}
           />
            <IconButton
             type="submit"
             className="enterText"
+            disabled={this.props.player.name === '!!!!!'}
           >
             <Send
               color={day ? '#000' : '#FFF'}

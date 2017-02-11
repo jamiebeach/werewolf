@@ -14,7 +14,11 @@ const initialState = {
 
   day: true,
   messages: [],
+  vote: {},
+
   voteTarget: '',
+  winner:'',
+  backgroundImage: 'day container'
 }
 
 
@@ -104,22 +108,37 @@ const reducer = (state = initialState, action) => {
           : state.gameInProgress
       }
 
-    case SWITCH_TIME:
-      return {
-        ...state,
-        day: action.timeofday === 'daytime',
-        messages: [],
-        voteTarget: '',
-      }
-
     case SELECT_VOTE:
       return {
         ...state,
         voteTarget: action.target,
       }
 
+    case SWITCH_TIME:
+      let image;
+      if (state.winner) {
+        image = state.winner === 'villagers' ? 'day container villagers-victory' : 'day container werewolves-victory';
+      }
+      else {
+        image = action.timeofday === 'daytime' ? 'day container' : 'night container';
+      }
+      return {
+        ...state,
+        day: action.timeofday === 'daytime',
+        backgroundImage: image,
+        messages: [],
+        voteTarget: '',
+      }
+
+    case UPDATE_WINNER:
+      return {
+        ...state,
+        winner: action.winner,
+        backgroundImage: action.winner === 'villagers' ? 'day container villagers-victory' : 'day container werewolves-victory'
+      }
+
     default:
-      return state
+      return state;
   }
 }
 
@@ -149,6 +168,7 @@ const SWITCH_TIME = 'SWITCH_TIME';
 const SCRYING = 'SCRYING';
 const SAVING = 'SAVING';
 const KILLING = 'KILLING';
+const UPDATE_WINNER = 'UPDATE_WINNER';
 
 const SET_MODERATOR = 'SET_MODERATOR'
 
@@ -195,20 +215,23 @@ the moderator listens for playeractions and dispences storeactions
 const later = process.nextTick
 
 // Generic Action Listener, will RECEIVE actions whenever firebase/actions updates in /public /:uid
-export const updateGameActions = () => {
+export const updateGameActions = (username) => {
   return (dispatch, getState) => {
     const {gameId, player: {uid, name}} = getState().game
 
-    const roster = firebase.database().ref(`games/${gameId}/roster`)
-    const me = roster.child(uid)
-    me.update({name})
-    const session = me.child('sessions').push({start: firebase.database.ServerValue.TIMESTAMP})
-    // when player disconnects place timestamp
-    session.onDisconnect().update({end: firebase.database.ServerValue.TIMESTAMP})
-    // TODO: There's an uncomfortable asymmetry here between adding and removing users.
-    // Probably we should get rid of the journaled ADD_USER action and just respond
-    // to the roster in the moderator.
-    roster.on('child_removed', user => later(() => dispatch(removeUser(user.val()))))
+    if (username !== '!!!!!') {
+      const roster = firebase.database().ref(`games/${gameId}/roster`)
+      const me = roster.child(uid)
+      me.update({name})
+      const session = me.child('sessions').push({start: firebase.database.ServerValue.TIMESTAMP})
+      // when player disconnects place timestamp
+      session.onDisconnect().update({end: firebase.database.ServerValue.TIMESTAMP})
+      // TODO: There's an uncomfortable asymmetry here between adding and removing users.
+      // Probably we should get rid of the journaled ADD_USER action and just respond
+      // to the roster in the moderator.
+      roster.on('child_removed', user => later(() => dispatch(removeUser(user.val()))))
+    }
+
 
     const storeActions = `games/${getState().game.gameId}/storeActions/`;
 
@@ -333,7 +356,7 @@ export const joinGame = (name, gameId) => {
     const username = name.toLowerCase();
     dispatch(addUserWithUid(username, uid));
     dispatch(updatePlayer({name: username}));
-    dispatch(updateGameActions(gameId));
+    dispatch(updateGameActions(username));
   }
 }
 
