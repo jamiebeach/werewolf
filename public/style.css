@@ -94,6 +94,7 @@ body {
 
 .text-box {
   margin: 0 10%;
+  overflow-y: scroll;
 }
 
 .landingText {
