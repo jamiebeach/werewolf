@@ -200,9 +200,26 @@ body {
   background-size: cover;
 }
 
-/* ----- VICTORY MODALS ----- */
+.villagers-victory {
+  background-image: url('/images/villagersvictory.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 
-.victorymodal {
+.werewolves-victory {
+  background-image: url('/images/werewolvesvictory.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* ----- VICTORY MODALS ----- */
+.victory-dialog {
+  text-transform: uppercase !important;
+}
+
+.victory-modal {
   padding: 0% !important;
   margin: 0% !important;
   border: 0% !important;

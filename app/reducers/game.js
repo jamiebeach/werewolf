@@ -17,7 +17,8 @@ const initialState = {
   vote: {},
 
   voteTarget: '',
-  winner:''
+  winner:'',
+  backgroundImage: 'day container'
 }
 
 
@@ -104,28 +105,37 @@ const reducer = (state = initialState, action) => {
         messages: [...state.messages, {text: action.message, user: action.user, color: action.color}],
       }
 
-    case SWITCH_TIME:
-      return {
-        ...state,
-        day: action.timeofday === 'daytime',
-        messages: [],
-        voteTarget: '',
-      }
-
     case SELECT_VOTE:
       return {
         ...state,
         voteTarget: action.target,
       }
 
+    case SWITCH_TIME:
+      let image;
+      if (state.winner) {
+        image = state.winner === 'villagers' ? 'day container villagers-victory' : 'day container werewolves-victory';
+      }
+      else {
+        image = action.timeofday === 'daytime' ? 'day container' : 'night container';
+      }
+      return {
+        ...state,
+        day: action.timeofday === 'daytime',
+        backgroundImage: image,
+        messages: [],
+        voteTarget: '',
+      }
+
     case UPDATE_WINNER:
       return {
         ...state,
-        winner: action.winner
+        winner: action.winner,
+        backgroundImage: action.winner === 'villagers' ? 'day container villagers-victory' : 'day container werewolves-victory'
       }
 
     default:
-      return state
+      return state;
   }
 }
 
