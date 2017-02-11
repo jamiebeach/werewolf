@@ -13,7 +13,7 @@ export class GameContainer extends Component {
     if (!prevProps.auth.uid && this.props.auth.uid) {
       const rosterPlayer = firebase.database().ref(`games/${this.props.gameId}/roster/${this.props.auth.uid}`).once('value');
       rosterPlayer.then(res => {
-        if (res) {
+        if (res.val()) {
           this.props.updatePlayer({name: res.val().name});
           this.props.updateGameActions();
         }
@@ -36,8 +36,7 @@ export class GameContainer extends Component {
   render () {
     return (
       <div>
-        {this.props.player.joined ? <ChatContainer /> : <JoinGame />}
-        }
+        {this.props.player.joined ? <ChatContainer /> : <JoinGame gameId={this.props.gameId}/>}
       </div>
     )
   }
