@@ -26,12 +26,13 @@ export default class DialogExampleModal extends React.Component {
 
     return (
       <div>
-        <Dialog className={`${this.props.winner}-modal`}
+        <Dialog
           title={`${this.props.winner} won!`}
           actions={actions}
           modal={true}
           open={this.state.open}
         >
+        <div className='victorymodal' id={`${this.props.winner}won`}></div>
         </Dialog>
       </div>
     );

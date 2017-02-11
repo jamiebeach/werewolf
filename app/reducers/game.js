@@ -22,6 +22,7 @@ const initialState = {
   vote: {},
 
   voteTarget: '',
+  winner:''
 }
 
 //TODOS
