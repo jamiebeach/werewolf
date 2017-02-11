@@ -17,7 +17,8 @@ export class NewGame extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			warning: '',
+			playerNameWarning: '',
+			gameNameWarning: '',
 			newgame: {},
 			open: false,
 		};
@@ -33,25 +34,26 @@ export class NewGame extends React.Component {
 		evt.preventDefault();
 		const userName = evt.target.userName.value;
 		const gameName = evt.target.gameName.value;
-		if (userName.toLowerCase() === 'moderator') this.setState({warning: 'That name is already taken'})
-		else if (userName === '') this.setState({warning: 'Please provide a name.'})
+		if (userName.toLowerCase() === 'moderator') this.setState({playerNameWarning: 'That name is already taken'})
+		else if (userName === '') this.setState({playerNameWarning: 'Please provide a name.'})
+		else if (gameName === '') this.setState({gameNameWarning: 'Please provide a game name.'})
 		else this.setState({newgame: {userName, gameName}, open: true});
 	}
 
 	handleKeyDown(evt) {
-		if (evt.keyCode === 8) this.setState({warning: ''});
+		if (evt.keyCode === 8) this.setState({playerNameWarning: ''});
 		else if (evt.target.value.length === 12) {
-			this.setState({warning: 'Names cannot be longer than 12 characters'});
+			this.setState({playerNameWarning: 'Names cannot be longer than 12 characters'});
 			if (evt.keyCode !== 8) evt.preventDefault();
 		}
 	}
 
 	handleKeyPress(evt) {
 		if (/[^a-zA-Z0-9]/.test(evt.key)) {
-			this.setState({warning: 'Names can only contain letters and numbers'});
+			this.setState({playerNameWarning: 'Names can only contain letters and numbers'});
 			evt.preventDefault();
 		}
-		else this.setState({warning: ''});
+		else this.setState({playerNameWarning: ''});
 	}
 
   handleOK() {
@@ -90,6 +92,8 @@ export class NewGame extends React.Component {
 								underlineFocusStyle={{borderColor: "#FFFFFF"}}
 								inputStyle={{color: "#FFF", fontWeight: 'normal', fontFamily: 'IM Fell Great Primer SC'}}
 								floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
+								onChange={() => {this.setState({gameNameWarning: ''})}}
+								errorText={this.state.gameNameWarning}
 							/><br />
 							<TextField
 								name="userName"
@@ -100,6 +104,7 @@ export class NewGame extends React.Component {
 								floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
 								onKeyPress={this.handleKeyPress}
 								onKeyDown={this.handleKeyDown}
+								errorText={this.state.playerNameWarning}
 								/>
       					<RaisedButton
       						className="button"
@@ -120,7 +125,6 @@ export class NewGame extends React.Component {
 
 				        </Dialog>
         			</div>
-						{(this.state.warning) ? <div>{this.state.warning}</div> : null}
 					</form>
 					</div>
 				</div>

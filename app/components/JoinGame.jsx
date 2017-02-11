@@ -77,11 +77,11 @@ export class JoinGame extends React.Component {
 										floatingLabelStyle={{color: '#FFF', fontFamily: 'IM Fell Great Primer SC'}}
 										onKeyPress={this.handleKeyPress}
 										onKeyDown={this.handleKeyDown}
+										errorText={this.state.warning}
 										/>
 							: null}
 							<RaisedButton type="submit" value="buildGame" label={`${(this.state.didStart) ? 'Watch' : 'Join'} Game`} backgroundColor="#6E0300" className="button" labelStyle={{color: 'white', fontFamily: 'IM Fell English SC'}}/>
 						</div>
-						{(this.state.warning) ? <div>{this.state.warning}</div> : null}
 					</form>
 					</div>
 				</div>
