@@ -93,6 +93,7 @@ body {
 .landingTextBox {
   margin-left: 12%;
   margin-right: 10%;
+  background: rgba(0, 0, 0, .6);
 }
 
 .landingText {
@@ -372,9 +373,8 @@ body {
   margin-right: 10%;
   margin-top: 5%;
   height: 100%;
-  background: rgba(0, 0, 0, .6);
-
 }
+
 .landingText {
   padding-left: 2%;
   height: 400px;
