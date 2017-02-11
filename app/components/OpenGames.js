@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router'
 
 /* -----------------    COMPONENT     ------------------ */
-let scrollDiv = {}, containerDiv = {}, headerDiv = {};
+let scrollDiv = {};
 const OpenGames = (props) => {
   return (
     <div className='splash'>
