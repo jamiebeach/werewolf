@@ -13,7 +13,7 @@ class Navbar extends React.Component {
     console.log(props);
     this.state = {
       percentage: 100,
-      time: 60,
+      time: 59,
     }
 
     this.timer = this.timer.bind(this);
