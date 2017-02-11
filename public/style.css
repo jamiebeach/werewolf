@@ -95,20 +95,30 @@ body {
 .landingTextBox {
   margin-left: 12%;
   margin-right: 10%;
-  background: rgba(0, 0, 0, .6);
 }
 
 .landingText {
   padding-left: 2%;
+  background: rgba(0, 0, 0, .6);
 }
 
 .landingText h1 {
   font-size: 3rem;
 }
 
-.landingButton{
+.buttonContainer {
   margin-left: 12%;
+}
+
+.landingButton{
   margin-top: 2rem;
+  float: left;
+}
+
+.gameButton {
+  float: left;
+  margin-top: 2rem;
+  margin-left: 2rem;
 }
 
 /* ----- NEW GAME ----- */
@@ -402,5 +412,59 @@ body {
 
 .avatar img {
   width: 100%;
+}
+
+/* ------ RULES PAGE ------- */
+.rules {
+  height: 100%;
+  background-image: url('/images/fullMoon.jpg');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-top: 5%;
+  display: flex;
+  justify-content: center;
+}
+
+.rules-container {
+  width: 75%;
+  margin-top: 0%;
+  margin-bottom: 2%;
+  padding: 5%;
+  text-align : left;
+  background: rgba(0, 0, 0, .5);
+  color: #FFF;
+}
+
+.rules-header {
+  color : #D6C967;
+  text-align: center;
+}
+
+.col-4 {
+  display:inline-block;
+  width: 30%;
+  vertical-align: top;
+  text-align: left;
+}
+
+.rules-col-8 {
+  display:inline-block;
+  width: 70%;
+}
+
+/* ------ RULES PAGE ------- */
+
+.openGamesTextBox {
+  margin-left: 12%;
+  margin-right: 10%;
+  margin-top: 5%;
+  height: 100%;
+}
+
+.landingText {
+  padding-left: 2%;
+  height: 400px;
+  overflow-y: scroll;
 }
 
