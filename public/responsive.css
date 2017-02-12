@@ -17,6 +17,28 @@
     margin-right: 0%;
     margin-left: 0%;
   }
+
+  .splash {
+   background-image: url('/images/landingpage-responsive.jpg');
+  }
+
+  .newGame {
+    background-image: url('/images/fullmoon-responsive.jpg');
+  }
+
+  .rules {
+    background-image: url('/images/fullmoon-responsive.jpg');
+    }
+
+  .day {
+    background-image: url('/images/village-responsive.jpg');
+  }
+
+  .night {
+    background-image: url('/images/werewolf-responsive.jpg');
+  }
+
+
 }
 
 /* Phones - Portrait */
@@ -30,6 +52,7 @@
   }
 
   .splash{
+    background-image: url('/images/landingpage-responsive.jpg');
     padding: 0px;
     justify-content: space-between;
   }
@@ -113,6 +136,7 @@
   /* NEW GAME PAGES */
 
   .newGame {
+    background-image: url('/images/fullmoon-responsive.jpg');
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -130,10 +154,14 @@
   flex-direction: column;
 /*  justify-content: space-between;
   align-items: flex-end;*/
-}
+  }
 
 
   /* RULES PAGE */
+
+  .rules {
+  background-image: url('/images/fullmoon-responsive.jpg');
+  }
 
   .rules-container {
     width: 100%;
@@ -163,6 +191,23 @@
   .rules-col-8 {
     z-index: 2;
     width: 100%;
+  }
+
+
+  .day {
+    background-image: url('/images/village-responsive.jpg');
+  }
+
+  .night {
+    background-image: url('/images/werewolf-responsive.jpg');
+  }
+
+  .villagers-victory {
+    background-image: none;
+  }
+
+  .werewolves-victory {
+    background-image: none;
   }
 
 }
@@ -232,6 +277,34 @@
 
   .rules-col-8 {
     width: 70%;
+  }
+
+  .splash {
+   background-image: url('/images/landingpage-responsive.jpg');
+  }
+
+  .newGame {
+    background-image: url('/images/fullmoon-responsive.jpg');
+  }
+
+  .rules {
+    background-image: url('/images/fullmoon-responsive.jpg');
+    }
+
+  .day {
+    background-image: url('/images/village-responsive.jpg');
+  }
+
+  .night {
+    background-image: url('/images/werewolf-responsive.jpg');
+  }
+
+  .villagers-victory {
+    background-image: none;
+  }
+
+  .werewolves-victory {
+    background-image: none;
   }
 
 }

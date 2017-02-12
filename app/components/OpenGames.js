@@ -10,7 +10,8 @@ const OpenGames = (props) => {
       <div className='text-box ' >
         <div className='landingText'>
         <h1>Open Games</h1>
-          {(scrollDiv.clientHeight > 255)
+        {console.log(scrollDiv)}
+          {(scrollDiv && scrollDiv.clientHeight > 255)
             ? <h3>(Scroll Down for More)</h3>
             : null
           }
