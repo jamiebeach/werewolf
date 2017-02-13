@@ -23,6 +23,7 @@ export default class DialogExampleModal extends React.Component {
     const actions = [
       <FlatButton
         label="Close"
+        labelStyle={ {color: '#1E052B', fontFamily: 'IM Fell English SC'} }
         primary={true}
         onTouchTap={this.handleClose}
       />,
@@ -32,6 +33,7 @@ export default class DialogExampleModal extends React.Component {
       <div>
         <Dialog className='victory-dialog'
           title={`${this.props.winner} won!`}
+          titleStyle={{fontFamily: 'IM Fell English SC'}}
           actions={actions}
           open={this.state.open}
           onRequestClose={this.handleClose}
