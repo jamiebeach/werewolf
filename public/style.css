@@ -285,19 +285,17 @@ body {
 
 /* ----- VICTORY MODALS ----- */
 .victory-dialog {
-  text-transform: uppercase !important;
+  top: -200px !important;
 }
 
 .victory-modal-container {
-  padding: 0% !important;
-  margin: 0% !important;
   width: 100%;
-  height: 100%
+  height: auto;
 }
 
 .victory-modal {
   width: inherit;
-  height: 100%;
+  height: auto;
 }
 
 /* ----- CHAT BOX ----- */
