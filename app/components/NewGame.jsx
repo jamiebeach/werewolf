@@ -65,11 +65,13 @@ export class NewGame extends React.Component {
 		const actions = [
       <FlatButton
         label="Cancel"
+				labelStyle={ {color: '#1E052B', fontFamily: 'IM Fell English SC'} }
         primary={true}
         onTouchTap={() => this.setState({open: false})}
       />,
       <FlatButton
         label="OK"
+				labelStyle={ {color: '#0D7A58', fontFamily: 'IM Fell English SC'} }
         primary={true}
         onTouchTap={this.handleOK}
       />,
@@ -119,11 +121,12 @@ export class NewGame extends React.Component {
   					/>
 		        <Dialog
 		          title="Confirm Leadership"
+							titleStyle={{fontFamily: 'IM Fell English SC'}}
 		          actions={actions}
 		          modal={true}
 		          open={this.state.open}
 		        >
-		          <p>As the leader, you will be responsible for prompting the moderator to assign roles and starting the game when all players are present.</p>
+		          <p className="dialogText">As the leader, you will be responsible for prompting the moderator to assign roles and starting the game when all players are present.</p>
 
 		        </Dialog>
 				  </form>
