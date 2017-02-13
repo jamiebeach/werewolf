@@ -181,8 +181,7 @@ export default class Moderator {
           })
         }
         else {
-          console.log(this.deadNames);
-          if (this.deadNames.indexOf(person.val().name) === -1) this.narrate(`${person.val().name.toUpperCase()} is back!`)
+          if ((this.deadNames.indexOf(person.val().name) === -1) && !this.winner) this.narrate(`${person.val().name.toUpperCase()} is back!`)
         }
 
         const endKey = session.ref.child('end')
@@ -202,12 +201,15 @@ export default class Moderator {
           // debug('it looks like', person.key, 'may be dead...')
           const timeout = 30000 - (Date.now() - end.val())
           // debug(`${person.key}, you have ${timeout} seconds to respond...`)
-          this.narrate(`Oh no, ${person.val().name.toUpperCase()} got lost in the woods... [disconnected]`)
+          if (!this.winner) this.narrate(`Oh no, ${person.val().name.toUpperCase()} got lost in the woods... [disconnected]`)
 
           // if user doesn't return before setTimeout, they are dead
           toeBell = setTimeout(
             () => {
               // debug(`${person.key} is an ex-parrot.`)
+              // don't kill a person after a game has ended
+              if (this.winner) return;
+
               if (this.deadNames.indexOf(person.val().name) === -1) {
                 this.narrate(`${person.val().name.toUpperCase()} fell down a well and died!`)
                 let kill = {
