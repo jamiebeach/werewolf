@@ -785,16 +785,18 @@ Type '/help' to ask me for help.`
         You must agree on a single target.`
         this.narrate(wmsg2, 'wolf', 'werewolves', 'rgba(54,4,87, .5)', 'awaken wolves');
 
-        let smsg = `Seer, awaken. Choose a player whose identity you wish to discover. You can only discover one player's identity each night.`
-        this.narrate(smsg, 'seer', this.seerId, 'awaken seer');
-        let smsg2 = `SEER: To check if a certain villager is a werewolf, type '/scry [name]' or select a player from the roster and click the scry button.`;
-        this.narrate(smsg2, 'seer', this.seerId, 'rgba(54,4,87, .5)', 'awaken seer');
-
-        let pmsg = `Priest, awaken. Choose a player to save. You are allowed to save yourself or another player. You may only save once per night.`
-        this.narrate(pmsg, 'priest', this.priestId, 'awaken priest');
-        let pmsg2 = `PRIEST: To protect a villager from death by werewolves, type '/save [name]' or select a player from the roster and click the SAVE button`;
-        this.narrate(pmsg2, 'priest', this.priestId, 'rgba(54,4,87, .5)', 'awaken priest');
-
+        if (!this.seerDead) {
+          let smsg = `Seer, awaken. Choose a player whose identity you wish to discover. You can only discover one player's identity each night.`
+          this.narrate(smsg, 'seer', this.seerId, 'awaken seer');
+          let smsg2 = `SEER: To check if a certain villager is a werewolf, type '/scry [name]' or select a player from the roster and click the scry button.`;
+          this.narrate(smsg2, 'seer', this.seerId, 'rgba(54,4,87, .5)', 'awaken seer');
+        }
+        if (!this.priestDead) {
+          let pmsg = `Priest, awaken. Choose a player to save. You are allowed to save yourself or another player. You may only save once per night.`
+          this.narrate(pmsg, 'priest', this.priestId, 'awaken priest');
+          let pmsg2 = `PRIEST: To protect a villager from death by werewolves, type '/save [name]' or select a player from the roster and click the SAVE button`;
+          this.narrate(pmsg2, 'priest', this.priestId, 'rgba(54,4,87, .5)', 'awaken priest');
+        }
       }, timeToRead * 2) // ... bad way to line up the settimeouts, i know
 
       this.nightTimers[dayNum] = setTimeout(() => {
