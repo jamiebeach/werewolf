@@ -474,9 +474,9 @@ export default class Moderator {
         let msg = `You are a WEREWOLF. As a werewolf, you will vote to slay one villager each night. During the day, you pretend to be an innocent villager.`
         this.narrate(msg, 'wolf', player.uid, 'rgba(13,122,88, .5)', 'werewolf role');
       }
-      else if (player.role === 'villager') {
+      else if (player.role === 'villager' && player.alive) {
         let msg = `You are a VILLAGER. As a villager, you will deduce which of your fellow villagers is a werewolf in disguise and vote to execute them.`
-        this.narrate(msg, 'public', player.uid, 'rgba(13,122,88, .5)', 'werewolf role');
+        this.narrate(msg, 'public', player.uid, 'rgba(13,122,88, .5)', 'villager role');
       }
 
       let msg = `${player.name.toUpperCase()}, the leader will start the game when everyone is ready.
