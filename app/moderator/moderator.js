@@ -219,14 +219,16 @@ export default class Moderator {
                 }
                 this.moderate(kill, 'public', 'death')
 
-                let theplayer;
+                let theplayer, allplayers;
 
                 if (this.inGameLoop) {
                   theplayer = this.players[person.val().name];
+                  allplayers = this.players;
                   this.players[person.val().name].alive = false;
                 }
                 else {
                   this.players.forEach(player => {
+                    allplayers[player.name] = player;
                     if (player.name === person.val().name){
                       theplayer = player;
                       player.alive = false;
@@ -236,7 +238,7 @@ export default class Moderator {
 
                  this.moderate({
                   type: GHOST,
-                  players: this.players,
+                  players: allplayers,
                   seerId: this.seerId,
                   priestId: this.priestId
                 },
@@ -264,7 +266,7 @@ export default class Moderator {
                     this.narrate(msg, 'public', null, 'wolf win')
                   }
                   else if (this.winner === 'villagers'){
-                    msg = `The last werewolf has drowned! Your village and can sleep peacefully now.`
+                    msg = `The last werewolf has drowned! The village is safe and you can sleep peacefully now.`
                     this.narrate(msg, 'public', null, 'village win')
                   }
                   const dayornight = (this.day) ? 'day' : 'night';
@@ -830,6 +832,10 @@ Type '/help' to ask me for help.`
       if (this.winner === 'werewolves'){
         let msg = `Werewolves have overrun your village and there is no hope for the innocent.`
         this.narrate(msg, 'public', null, 'wolf win')
+      }
+      else if (this.winner === 'villagers'){
+        let msg = `In a stunning turn of events, the last of the werewolves died last night.  The village is safe and you can sleep peacefully now.`
+        this.narrate(msg, 'public', null, 'village win')
       }
 
       else {
