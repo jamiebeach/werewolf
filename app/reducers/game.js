@@ -247,7 +247,7 @@ const later = process.nextTick
 // Generic Action Listener, will RECEIVE actions whenever firebase/actions updates in /public /:uid
 export const updateGameActions = (username) => {
   return (dispatch, getState) => {
-    const {gameId, player: {uid, name, role}} = getState().game
+    const {gameId, player: {uid, name}} = getState().game
 
     if (username !== '!!!!!') {
       const roster = firebase.database().ref(`games/${gameId}/roster`)
@@ -274,6 +274,7 @@ export const updateGameActions = (username) => {
 
     firebase.database().ref(`${storeActions}/${getState().game.player.uid}`).on('child_added', function(action){
       later(() => dispatch(action.val()))
+      const role = getState().game.player.role;
 
       if (action.val().type === 'UPDATE_USER' && action.val().name === name && action.val().updates.role === 'werewolf'){
         firebase.database().ref(`${storeActions}/werewolves`).on('child_added', function(action){
