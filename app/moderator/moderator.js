@@ -201,7 +201,7 @@ export default class Moderator {
           // debug('it looks like', person.key, 'may be dead...')
           const timeout = 30000 - (Date.now() - end.val())
           // debug(`${person.key}, you have ${timeout} seconds to respond...`)
-          if (!this.winner) this.narrate(`Oh no, ${person.val().name.toUpperCase()} got lost in the woods... [disconnected]`)
+          if ((this.deadNames.indexOf(person.val().name) === -1) && !this.winner) this.narrate(`Oh no, ${person.val().name.toUpperCase()} got lost in the woods... [disconnected]`)
 
           // if user doesn't return before setTimeout, they are dead
           toeBell = setTimeout(
@@ -221,7 +221,7 @@ export default class Moderator {
                 }
                 this.moderate(kill, 'public', 'death')
 
-                let theplayer, allplayers;
+                let theplayer, allplayers = {};
 
                 if (this.inGameLoop) {
                   theplayer = this.players[person.val().name];
@@ -368,6 +368,9 @@ export default class Moderator {
   // ref = the address in storeActions, in a string,
   moderate(action, ref, error) {
     let channel = ref ? ref : 'public'
+
+    if ((error === 'msg') && (this.deadNames.indexOf(action.user) !== -1)) action.color = 'rgba(128, 128, 128, .5)';
+
     firebase.database().ref(`games/${this.gameName}/storeActions/${channel}`)
     .push(action)
     .catch(err => console.error(`Error: moderator sending ${error} action to firebase`, err))

@@ -226,16 +226,17 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  transition: background .8s ease-in-out;
   /*margin: auto;*/
 }
 
 .night #chat-window-container {
   background: rgba(0, 0, 0, .8);
+  transition: background-image .8s ease-in-out;
 }
 
 .day #chat-window-container {
   background: rgba(255, 255, 255, .8);
+  transition: background-image .8s ease-in-out;
 }
 
 .chat-window {
@@ -248,7 +249,6 @@ body {
   height: 100vh;
   justify-content: center;
   align-items: flex-start;
-  transition: background-image .8s ease-in-out;
 }
 
 .day {
@@ -389,7 +389,6 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  transition: background .8s ease-in-out;
 }
 
 .player-btn {
