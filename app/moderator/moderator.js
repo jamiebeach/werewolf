@@ -261,18 +261,19 @@ export default class Moderator {
                     winner: this.winner
                     };
                     this.moderate(winaction, 'public', 'update winner');
+
+                    let msg;
+                    if (theplayer.role !== 'werewolf'){
+                      msg = `With the death of ${person.val().name.toUpperCase()}, werewolves have overrun your village and there is no hope for the innocent.`
+                      this.narrate(msg, 'public', null, 'wolf win')
+                    }
+                    else if (theplayer.role === 'werewolf'){
+                      msg = `The last werewolf has drowned! The village is safe and you can sleep peacefully now.`
+                      this.narrate(msg, 'public', null, 'village win')
+                    }
+                    const dayornight = (this.day) ? 'day' : 'night';
+                    clearTimeout(this[`${dayornight}Timers`][this.dayNum])
                   }
-                  let msg;
-                  if (theplayer.role !== 'werewolf'){
-                    msg = `With the death of ${person.val().name.toUpperCase()}, werewolves have overrun your village and there is no hope for the innocent.`
-                    this.narrate(msg, 'public', null, 'wolf win')
-                  }
-                  else if (theplayer.role === 'werewolf'){
-                    msg = `The last werewolf has drowned! The village is safe and you can sleep peacefully now.`
-                    this.narrate(msg, 'public', null, 'village win')
-                  }
-                  const dayornight = (this.day) ? 'day' : 'night';
-                  clearTimeout(this[`${dayornight}Timers`][this.dayNum])
                 }
                 session.ref.update({moderated: true})
               }
@@ -411,7 +412,7 @@ export default class Moderator {
     if (this.didAssign) return;
     else if (this.playerNames.length < 5) {
       this.narrate('You need a minimum 5 active players to start.', 'public', 'public', '/roles')
-      return;
+      // return;
     }
     else if (this.playerNames.length > 30) {
       this.narrate('You have too many players to begin a game (max 30).', 'public', 'public', '/roles')

@@ -137,10 +137,11 @@ const reducer = (state = initialState, action) => {
       }
 
     case UPDATE_WINNER:
+      const dayornight = (state.day) ? "day" : "night";
       return {
         ...state,
         winner: action.winner,
-        backgroundImage: action.winner === 'villagers' ? 'day container villagers-victory' : 'day container werewolves-victory'
+        backgroundImage: action.winner === 'villagers' ? `${dayornight} container villagers-victory` : `${dayornight} container werewolves-victory`
       }
 
     case CLEAR_GAME:
@@ -265,13 +266,6 @@ export const updateGameActions = (username) => {
 
     const storeActions = `games/${gameId}/storeActions/`;
 
-    firebase.database().ref(`${storeActions}/public`).on('child_added', function(action) {
-      // Without delaying until the next tick, we sometimes encounter "Reducer can't dispatch"
-      // errors from Redux. Suspicion: setting values in Firebase calls attached local listeners
-      // synchronously. Forcing the dispatch to occur on the next tick fixes it.
-      later(() => dispatch(action.val()))
-    })
-
     firebase.database().ref(`${storeActions}/${getState().game.player.uid}`).on('child_added', function(action){
       later(() => dispatch(action.val()))
       const role = getState().game.player.role;
@@ -302,6 +296,13 @@ export const updateGameActions = (username) => {
           dispatch(firebaseUpdate(action.val()))
         })
       }
+    })
+
+    firebase.database().ref(`${storeActions}/public`).on('child_added', function(action) {
+      // Without delaying until the next tick, we sometimes encounter "Reducer can't dispatch"
+      // errors from Redux. Suspicion: setting values in Firebase calls attached local listeners
+      // synchronously. Forcing the dispatch to occur on the next tick fixes it.
+      later(() => dispatch(action.val()))
     })
   }
 }
