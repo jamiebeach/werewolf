@@ -49,7 +49,7 @@ module.exports = {
     return env.BASE_URL || `http://localhost:${PORT}`
   },
   get port() {
-    return env.PORT || 1337
+    return env.PORT || 80
   },
   package: pkg,
   env,
